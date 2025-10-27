@@ -40,6 +40,7 @@ public class AuthenticationSuccessListener implements ApplicationListener<Authen
             } catch (Exception ignored) {}
 
             // audit
+            System.out.println(">>> Login audit recorded for user ID: " + user.getId());
             auditLogService.record(user.getId(), "LOGIN", "Cognito login successful", request);
         }
     }
