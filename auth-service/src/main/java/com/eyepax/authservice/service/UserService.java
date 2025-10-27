@@ -121,5 +121,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+//    // normalise roles
+//    private Set<String> mapRolesForSpringSecurity(Set<Role> roles) {
+//        return roles.stream()
+//                .map(r -> "ROLE_" + r.getName().toUpperCase()) // convert Admin -> ROLE_ADMIN
+//                .collect(Collectors.toSet());
+//    }
+
 }
 

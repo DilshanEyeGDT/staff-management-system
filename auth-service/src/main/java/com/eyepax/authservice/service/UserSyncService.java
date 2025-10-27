@@ -33,6 +33,10 @@ public class UserSyncService {
             if (displayName != null) u.setDisplayName(displayName);
             if (email != null) u.setEmail(email);
             u.setUpdatedAt(Instant.now());
+
+            // Load roles eagerly
+            u.setRoles(u.getRoles());
+
             return userRepository.save(u);
         }
         // create user
@@ -54,4 +58,5 @@ public class UserSyncService {
 
         return userRepository.save(u);
     }
+
 }
