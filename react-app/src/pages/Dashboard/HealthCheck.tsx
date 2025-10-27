@@ -26,7 +26,7 @@ const HealthCheck: React.FC = () => {
   return (
     <Box sx={{ mt: 6 }}>
       <Typography variant="h5" gutterBottom>
-        System Health Check
+        System Health
       </Typography>
 
       {status === "loading" && (
@@ -38,13 +38,13 @@ const HealthCheck: React.FC = () => {
 
       {status === "ok" && (
         <Alert severity="success" sx={{ mt: 2 }}>
-          ✅ Server is healthy (Status: 200 OK)
+          Server is Healthy (Status: 200 OK)
         </Alert>
       )}
 
       {status === "not_ok" && (
         <Alert severity="error" sx={{ mt: 2 }}>
-          ❌ Server is not reachable or returned an error.
+          Server is not reachable or returned an error.
           {error && <Typography variant="body2">{error}</Typography>}
         </Alert>
       )}
