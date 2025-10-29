@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "audit_log")
 @Data
@@ -15,8 +17,10 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = true) // FK to users.id
+    @JsonIgnoreProperties("auditLogs") // prevent infinite recursion when serializing JSON
+    private User user;
 
     @Column(name = "event_type", nullable = false)
     private String eventType;
@@ -33,4 +37,3 @@ public class AuditLog {
     @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;
 }
-

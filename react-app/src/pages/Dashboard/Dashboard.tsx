@@ -319,18 +319,25 @@ const Dashboard: React.FC = () => {
           >
             <ListItemText primary="Profile" />
           </ListItemButton>
-          <ListItemButton
-            selected={selectedPage === "users"}
-            onClick={() => setSelectedPage("users")}
-          >
-            <ListItemText primary="Users" />
-          </ListItemButton>
-          <ListItemButton
-            selected={selectedPage === "roleAssign"}
-            onClick={() => setSelectedPage("roleAssign")}
-          >
-            <ListItemText primary="Role Assign" />
-          </ListItemButton>
+          
+          {profile?.roles?.includes("Admin") && (
+            <>
+              <ListItemButton
+                selected={selectedPage === "users"}
+                onClick={() => setSelectedPage("users")}
+              >
+                <ListItemText primary="Users" />
+              </ListItemButton>
+
+              <ListItemButton
+                selected={selectedPage === "roleAssign"}
+                onClick={() => setSelectedPage("roleAssign")}
+              >
+                <ListItemText primary="Role Assign" />
+              </ListItemButton>
+            </>
+          )}
+
           <ListItemButton
             selected={selectedPage === "health"}
             onClick={() => setSelectedPage("health")}
