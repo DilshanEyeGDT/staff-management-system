@@ -17,6 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String preferredUsername = '';
   bool isLoading = true;
 
+  final BackendSyncService _userService = BackendSyncService(); // <-- ADDED
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +58,98 @@ class _HomeScreenState extends State<HomeScreen> {
       safePrint('Error fetching attributes: $e');
     }
   }
+
+  // ------------------ NEW: update display name flow ------------------
+  Future<void> _showEditDisplayNameDialog() async {
+    final controller = TextEditingController(text: preferredUsername);
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Edit display name'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: 'Enter display name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (newName != null && newName.isNotEmpty && newName != preferredUsername) {
+      await _updateDisplayName(newName);
+    }
+  }
+
+  Future<void> _updateDisplayName(String newName) async {
+    setState(() => isLoading = true);
+    try {
+      // 1) Update Cognito preferred_username attribute
+      final attr = CognitoUserAttributeKey.preferredUsername;
+      final updateResult = await Amplify.Auth.updateUserAttribute(
+        userAttributeKey: CognitoUserAttributeKey.preferredUsername,
+        value: newName,
+      );
+
+      // updateResult.nextStep is used only if confirmation is required.
+      if (updateResult.isUpdated == false) {
+        // If Cognito requires confirmation step for this attribute, handle it.
+        // For minimal flow we assume isUpdated == true. If not, show message.
+        safePrint('Cognito update returned nextStep: ${updateResult.nextStep}');
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cognito requires confirmation for this attribute.'),
+          ),
+        );
+        return;
+      }
+
+      // 2) Get access token (backend expects access token for /api/v1/me)
+      final session =
+          await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+      final accessToken = session.userPoolTokensResult.value.accessToken.raw;
+
+      // 3) Patch backend to update DB
+      final resp = await _userService.updateDisplayName(accessToken, newName);
+
+      if (resp.statusCode == 200 || resp.statusCode == 201) {
+        // success: update UI
+        setState(() {
+          preferredUsername = newName;
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Display name updated')));
+      } else {
+        // backend failed -> inform user (Cognito already updated)
+        setState(() => isLoading = false);
+        safePrint('Backend update failed: ${resp.statusCode} ${resp.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to update server profile (${resp.statusCode})',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      safePrint('Error updating display name: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update display name')),
+      );
+    }
+  }
+  // ------------------ END NEW flow ------------------
 
   Future<void> _logout(BuildContext context) async {
     try {
@@ -128,7 +222,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'Username: ',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Text(preferredUsername),
+                              Expanded(child: Text(preferredUsername)),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed:
+                                    _showEditDisplayNameDialog, // <-- ADDED
+                                child: const Text('Edit'),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(80, 36),
+                                ),
+                              ),
                             ],
                           ),
                         ],
