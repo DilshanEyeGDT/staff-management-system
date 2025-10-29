@@ -194,6 +194,39 @@ const Dashboard: React.FC = () => {
                   <Typography>Email: {selectedUser.email}</Typography>
                   <Typography>Display Name: {selectedUser.displayName}</Typography>
                   <Typography>Roles: {selectedUser.roles?.join(", ")}</Typography>
+
+                {/* ✅ Audit Logs Section */}
+                {selectedUser.auditLogs && selectedUser.auditLogs.length > 0 ? (
+                  <Box sx={{ mt: 3 }}>
+                    <Typography variant="h6">Audit Logs</Typography>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Event Type</TableCell>
+                          <TableCell>Description</TableCell>
+                          <TableCell>IP Address</TableCell>
+                          <TableCell>User Agent</TableCell>
+                          <TableCell>Created At</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {selectedUser.auditLogs.map((log: any) => (
+                          <TableRow key={log.id}>
+                            <TableCell>{log.eventType}</TableCell>
+                            <TableCell>{log.eventDesc}</TableCell>
+                            <TableCell>{log.ipAddress}</TableCell>
+                            <TableCell>{log.userAgent}</TableCell>
+                            <TableCell>
+                              {new Date(log.createdAt).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Typography sx={{ mt: 2 }}>No audit logs available.</Typography>
+                )}
                 </Box>
               </Box>
             ) : (
