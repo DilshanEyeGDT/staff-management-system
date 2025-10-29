@@ -13,7 +13,8 @@ import {
   TableBody,
   Select,
   MenuItem,
-  IconButton
+  IconButton,
+  TextField
 } from "@mui/material";
 import axios from "../../axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
@@ -28,6 +29,8 @@ const Dashboard: React.FC = () => {
   const [health, setHealth] = useState<string>("Checking...");
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [roleChanges, setRoleChanges] = useState<{ [userId: number]: string }>({});
+  const [editName, setEditName] = useState<string>(""); // ✅ For editing display name
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   // ✅ Logout handler
   const handleLogout = () => {
@@ -56,7 +59,10 @@ const Dashboard: React.FC = () => {
 
     axios
       .get("/me")
-      .then((res) => setProfile(res.data))
+      .then((res) => {
+        setProfile(res.data);
+        setEditName(res.data.displayName || ""); // preload name
+      })
       .catch((err) => {
         console.error(err);
         setError(err?.response?.data?.message || "Failed to load profile");
@@ -65,7 +71,7 @@ const Dashboard: React.FC = () => {
 
   // ✅ Step 3: Fetch users list when selected
   useEffect(() => {
-    if (selectedPage === "users") {
+    if (selectedPage === "users" || selectedPage === "roleAssign") {
       axios
         .get("/admin/users?page=0&size=10")
         .then((res) => setUsers(res.data.content || []))
@@ -83,18 +89,32 @@ const Dashboard: React.FC = () => {
     }
   }, [selectedPage]);
 
+  // ✅ Handle role save
   const handleSaveRole = async (userId: number) => {
-  const newRole = roleChanges[userId];
-  if (!newRole) return;
+    const newRole = roleChanges[userId];
+    if (!newRole) return;
 
-  try {
-    await axios.patch(`/admin/users/${userId}/roles`, { roles: [newRole] });
-    alert("Role updated successfully!");
-  } catch (err: any) {
-    console.error(err);
-    alert(err?.response?.data?.message || "Failed to update role.");
-  }
-};
+    try {
+      await axios.patch(`/admin/users/${userId}/roles`, { roles: [newRole] });
+      alert("Role updated successfully!");
+    } catch (err: any) {
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to update role.");
+    }
+  };
+
+  // ✅ Handle display name update
+  const handleUpdateDisplayName = async () => {
+    try {
+      await axios.patch("/me", { displayName: editName });
+      alert("Display name updated successfully!");
+      setProfile((prev: any) => ({ ...prev, displayName: editName }));
+      setIsEditing(false);
+    } catch (err: any) {
+      console.error(err);
+      alert(err?.response?.data?.message || "Failed to update display name.");
+    }
+  };
 
   // ✅ Content Renderer
   const renderContent = () => {
@@ -104,12 +124,52 @@ const Dashboard: React.FC = () => {
           <Box sx={{ mt: 4 }}>
             {profile ? (
               <>
-                <Typography variant="h6">
-                  Welcome, {profile.displayName || profile.email}
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  Role: {profile.roles?.[0] || "—"}
-                </Typography>
+                <Typography variant="h6">Profile</Typography>
+
+                {!isEditing ? (
+                  <>
+                    <Typography sx={{ mt: 2 }}>
+                      Welcome, {profile.displayName || profile.email}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      Role: {profile.roles?.[0] || "—"}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      sx={{ mt: 2 }}
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit Display Name
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <TextField
+                      label="Display Name"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      size="small"
+                      sx={{ mt: 2 }}
+                    />
+                    <Box sx={{ mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleUpdateDisplayName}
+                        sx={{ mr: 2 }}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={() => setIsEditing(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </Box>
+                  </>
+                )}
               </>
             ) : (
               <Typography>Loading profile...</Typography>
@@ -120,7 +180,9 @@ const Dashboard: React.FC = () => {
       case "users":
         return (
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>User List</Typography>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              User List
+            </Typography>
             {selectedUser ? (
               <Box>
                 <Button variant="outlined" onClick={() => setSelectedUser(null)}>
@@ -132,32 +194,6 @@ const Dashboard: React.FC = () => {
                   <Typography>Email: {selectedUser.email}</Typography>
                   <Typography>Display Name: {selectedUser.displayName}</Typography>
                   <Typography>Roles: {selectedUser.roles?.join(", ")}</Typography>
-
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle1">Audit Logs</Typography>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Event</TableCell>
-                          <TableCell>Description</TableCell>
-                          <TableCell>IP</TableCell>
-                          <TableCell>User Agent</TableCell>
-                          <TableCell>Time</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {selectedUser.auditLogs?.map((log: any) => (
-                          <TableRow key={log.id}>
-                            <TableCell>{log.eventType}</TableCell>
-                            <TableCell>{log.eventDesc}</TableCell>
-                            <TableCell>{log.ipAddress}</TableCell>
-                            <TableCell>{log.userAgent}</TableCell>
-                            <TableCell>{new Date(log.createdAt).toLocaleString()}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </Box>
                 </Box>
               </Box>
             ) : (
@@ -177,10 +213,10 @@ const Dashboard: React.FC = () => {
                       hover
                       sx={{ cursor: "pointer" }}
                       onClick={() => {
-                        // Fetch user details
-                        axios.get(`/admin/users/${user.id}`)
-                          .then(res => setSelectedUser(res.data))
-                          .catch(err => console.error(err));
+                        axios
+                          .get(`/admin/users/${user.id}`)
+                          .then((res) => setSelectedUser(res.data))
+                          .catch((err) => console.error(err));
                       }}
                     >
                       <TableCell>{user.id}</TableCell>
@@ -195,129 +231,128 @@ const Dashboard: React.FC = () => {
           </Box>
         );
 
-        case "roleAssign":
-          return (
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Assign Roles
-              </Typography>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Display Name</TableCell>
-                    <TableCell>Role</TableCell>
-                    <TableCell>Action</TableCell>
+      case "roleAssign":
+        return (
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Assign Roles
+            </Typography>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Display Name</TableCell>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Action</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {users.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.displayName}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={roleChanges[user.id] || user.roles?.[0] || ""}
+                        onChange={(e) =>
+                          setRoleChanges((prev) => ({
+                            ...prev,
+                            [user.id]: e.target.value,
+                          }))
+                        }
+                        size="small"
+                      >
+                        {[
+                          "Admin",
+                          "HR",
+                          "Management_L1",
+                          "Management_L2",
+                          "Management_L3",
+                          "Employee",
+                        ].map((role) => (
+                          <MenuItem key={role} value={role}>
+                            {role}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton color="primary" onClick={() => handleSaveRole(user.id)}>
+                        <SaveIcon />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.displayName}</TableCell>
-                      <TableCell>
-                        <Select
-                          value={roleChanges[user.id] || user.roles?.[0] || ""}
-                          onChange={(e) =>
-                            setRoleChanges((prev) => ({
-                              ...prev,
-                              [user.id]: e.target.value,
-                            }))
-                          }
-                          size="small"
-                        >
-                          {["Admin", "HR", "Management_L1", "Management_L2", "Management_L3", "Employee"].map((role) => (
-                            <MenuItem key={role} value={role}>
-                              {role}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleSaveRole(user.id)}
-                        >
-                          <SaveIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          );
-
-        case "health":
-          return (
-            <Box sx={{ mt: 4 }}>
-              <HealthCheck />
-            </Box>
-          );
-
-        default:
-          return null;
-      }
-    };
-
-    return (
-      <Box display="flex" height="100vh">
-        {/* Side Panel */}
-        <Box
-          width="220px"
-          bgcolor="#f5f5f5"
-          p={2}
-          sx={{ borderRight: "1px solid #ddd" }}
-        >
-          <Typography variant="h5" sx={{ mb: 3 }}>
-            Admin Portal
-          </Typography>
-          <List>
-            <ListItemButton
-              selected={selectedPage === "profile"}
-              onClick={() => setSelectedPage("profile")}
-            >
-              <ListItemText primary="Profile" />
-            </ListItemButton>
-            <ListItemButton
-              selected={selectedPage === "users"}
-              onClick={() => setSelectedPage("users")}
-            >
-              <ListItemText primary="Users" />
-            </ListItemButton>
-            <ListItemButton
-              selected={selectedPage === "roleAssign"}
-              onClick={() => setSelectedPage("roleAssign")}
-            >
-              <ListItemText primary="Role Assign" />
-            </ListItemButton>
-            <ListItemButton
-              selected={selectedPage === "health"}
-              onClick={() => setSelectedPage("health")}
-            >
-              <ListItemText primary="Health" />
-            </ListItemButton>
-          </List>
-
-          <Box mt="auto">
-            <Button
-              variant="outlined"
-              color="error"
-              onClick={handleLogout}
-              fullWidth
-            >
-              Logout
-            </Button>
+                ))}
+              </TableBody>
+            </Table>
           </Box>
-        </Box>
+        );
 
-        {/* Main Content */}
-        <Box flexGrow={1} p={4}>
-          {error && <Typography color="error">{error}</Typography>}
-          {renderContent()}
-        </Box>
-      </Box>
-    );
+      case "health":
+        return (
+          <Box sx={{ mt: 4 }}>
+            <HealthCheck />
+          </Box>
+        );
+
+      default:
+        return null;
+    }
   };
 
-  export default Dashboard;
+  return (
+    <Box display="flex" height="100vh">
+      {/* Side Panel */}
+      <Box
+        width="220px"
+        bgcolor="#f5f5f5"
+        p={2}
+        sx={{ borderRight: "1px solid #ddd" }}
+      >
+        <Typography variant="h5" sx={{ mb: 3 }}>
+          Admin Portal
+        </Typography>
+        <List>
+          <ListItemButton
+            selected={selectedPage === "profile"}
+            onClick={() => setSelectedPage("profile")}
+          >
+            <ListItemText primary="Profile" />
+          </ListItemButton>
+          <ListItemButton
+            selected={selectedPage === "users"}
+            onClick={() => setSelectedPage("users")}
+          >
+            <ListItemText primary="Users" />
+          </ListItemButton>
+          <ListItemButton
+            selected={selectedPage === "roleAssign"}
+            onClick={() => setSelectedPage("roleAssign")}
+          >
+            <ListItemText primary="Role Assign" />
+          </ListItemButton>
+          <ListItemButton
+            selected={selectedPage === "health"}
+            onClick={() => setSelectedPage("health")}
+          >
+            <ListItemText primary="Health" />
+          </ListItemButton>
+        </List>
+
+        <Box mt="auto">
+          <Button variant="outlined" color="error" onClick={handleLogout} fullWidth>
+            Logout
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Main Content */}
+      <Box flexGrow={1} p={4}>
+        {error && <Typography color="error">{error}</Typography>}
+        {renderContent()}
+      </Box>
+    </Box>
+  );
+};
+
+export default Dashboard;
