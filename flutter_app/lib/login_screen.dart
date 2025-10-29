@@ -1,5 +1,7 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:flutter_app/services/backend_sync_service.dart';
 import 'auth_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
@@ -120,7 +122,20 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     try {
       final res = await auth.signIn(email.text.trim(), pass.text);
+
       if (res.isSignedIn) {
+        // ✅ Get Cognito session
+        final session =
+            await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+        final idToken = session.userPoolTokens?.idToken;
+
+        // ✅ Sync login with backend
+        if (idToken != null) {
+          await BackendSyncService().syncLogin(idToken.raw);
+        }
+
+        // ✅ Navigate to home
+        if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -129,11 +144,20 @@ class _LoginScreenState extends State<LoginScreen> {
         final code = await _showCodeDialog();
         if (code != null) {
           await Amplify.Auth.confirmSignIn(confirmationValue: code);
+
+          // ✅ After MFA confirm, get token and sync login
+          final session =
+              await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+          final idToken = session.userPoolTokens?.idToken;
+          if (idToken != null) {
+            await BackendSyncService().syncLogin(idToken.raw);
+          }
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+          );
         }
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
       } else {
         setState(() => message = 'Next step: ${res.nextStep?.signInStep}');
       }

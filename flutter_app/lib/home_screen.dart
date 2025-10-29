@@ -1,5 +1,7 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/login_screen.dart';
+import 'package:flutter_app/services/backend_sync_service.dart';
 import 'auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
@@ -52,6 +54,32 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       setState(() => isLoading = false);
       safePrint('Error fetching attributes: $e');
+    }
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    try {
+      // ✅ 1. Get access token before signing out
+      final session =
+          await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+      final idToken = session.userPoolTokensResult.value.idToken.raw;
+
+      // ✅ 3. Sync logout with your backend
+      await BackendSyncService().syncLogout(idToken);
+
+      // ✅ 2. Sign out from Cognito
+      await AuthService().signOut();
+
+      // ✅ 4. Navigate to login screen
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      safePrint('Logout error: $e');
     }
   }
 
@@ -110,12 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
-                      await AuthService().signOut();
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        (route) => false,
-                      );
+                      await _logout(context);
                     },
                     child: const Text('Logout'),
                   ),
