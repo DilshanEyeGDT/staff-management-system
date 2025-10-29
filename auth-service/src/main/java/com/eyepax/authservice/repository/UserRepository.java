@@ -14,9 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.auditLogs WHERE u.id = :id")
-    Optional<User> findByIdWithAuditLogs(@Param("id") Long id);
-
     Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String username, String email,
             Pageable pageable);
 

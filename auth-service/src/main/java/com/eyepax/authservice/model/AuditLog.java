@@ -17,12 +17,10 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = true) // FK to users.id
-    @JsonIgnoreProperties("auditLogs") // prevent infinite recursion when serializing JSON
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @Column(name = "event_type", nullable = false)
+    @Column(name   = "event_type", nullable = false)
     private String eventType;
 
     @Column(name = "event_desc")

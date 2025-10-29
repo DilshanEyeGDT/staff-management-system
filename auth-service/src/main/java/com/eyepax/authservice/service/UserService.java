@@ -94,12 +94,20 @@ public class UserService {
     }
 
     // Fetch single user + audit logs in one query
-    @Transactional
-    public UserDetailDto getUserDetails(Long userId) {
-        User user = userRepository.findByIdWithAuditLogs(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    // @Transactional
+    // public UserDetailDto getUserDetails(Long userId) {
+    //     User user = userRepository.findByIdWithAuditLogs(userId)
+    //             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<AuditLog> logs = new ArrayList<>(user.getAuditLogs()); // avoids lazy proxies
+    //     List<AuditLog> logs = new ArrayList<>(user.getAuditLogs()); // avoids lazy proxies
+    //     return new UserDetailDto(user, logs);
+    // }
+
+    // Fetch single user + audit logs
+    public UserDetailDto getUserDetails(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<AuditLog> logs = auditLogRepository.findByUserId(userId);
         return new UserDetailDto(user, logs);
     }
 

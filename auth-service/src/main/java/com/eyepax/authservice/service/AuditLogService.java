@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuditLogService {
     private final AuditLogRepository auditLogRepository;
-    private final UserRepository userRepository; // ✅ Add this
+    // private final UserRepository userRepository; // ✅ Add this
 
     public AuditLogService(AuditLogRepository auditLogRepository, UserRepository userRepository) {
         this.auditLogRepository = auditLogRepository;
-        this.userRepository = userRepository;
+        // this.userRepository = userRepository;
     }
 
     @Transactional
@@ -23,10 +23,10 @@ public class AuditLogService {
         AuditLog log = new AuditLog();
 
         // ✅ Fetch the user entity and link it
-        if (userId != null) {
-            userRepository.findById(userId).ifPresent(log::setUser);
-        }
-
+        // if (userId != null) {
+        // userRepository.findById(userId).ifPresent(log::setUser);
+        // }
+        log.setUserId(userId);
         log.setEventType(eventType);
         log.setEventDesc(eventDesc);
         if (request != null) {
