@@ -10,15 +10,12 @@ import com.eyepax.authservice.repository.AuditLogRepository;
 import com.eyepax.authservice.repository.RoleRepository;
 import com.eyepax.authservice.repository.UserRepository;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -93,16 +90,6 @@ public class UserService {
         });
     }
 
-    // Fetch single user + audit logs in one query
-    // @Transactional
-    // public UserDetailDto getUserDetails(Long userId) {
-    //     User user = userRepository.findByIdWithAuditLogs(userId)
-    //             .orElseThrow(() -> new RuntimeException("User not found"));
-
-    //     List<AuditLog> logs = new ArrayList<>(user.getAuditLogs()); // avoids lazy proxies
-    //     return new UserDetailDto(user, logs);
-    // }
-
     // Fetch single user + audit logs
     public UserDetailDto getUserDetails(Long userId) {
         User user = userRepository.findById(userId)
@@ -136,12 +123,5 @@ public class UserService {
         return userRepository.findByCognitoSub(cognitoSub)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
-
-    // // normalise roles
-    // private Set<String> mapRolesForSpringSecurity(Set<Role> roles) {
-    // return roles.stream()
-    // .map(r -> "ROLE_" + r.getName().toUpperCase()) // convert Admin -> ROLE_ADMIN
-    // .collect(Collectors.toSet());
-    // }
 
 }

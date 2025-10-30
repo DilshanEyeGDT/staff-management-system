@@ -5,8 +5,6 @@ import lombok.*;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
 @Table(name = "audit_log")
 @Data
@@ -20,7 +18,7 @@ public class AuditLog {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name   = "event_type", nullable = false)
+    @Column(name = "event_type", nullable = false)
     private String eventType;
 
     @Column(name = "event_desc")

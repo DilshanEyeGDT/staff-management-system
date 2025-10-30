@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
@@ -34,8 +33,8 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request,
-                                HttpServletResponse response,
-                                Authentication authentication)
+            HttpServletResponse response,
+            Authentication authentication)
             throws IOException, ServletException {
 
         String userId = null;
@@ -69,4 +68,3 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         response.sendRedirect(FRONTEND_LOGIN_URL);
     }
 }
-
