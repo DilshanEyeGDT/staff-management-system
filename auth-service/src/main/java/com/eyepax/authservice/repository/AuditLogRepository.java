@@ -8,5 +8,5 @@ import java.util.List;
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
     // Find all audit logs for a specific user
-    List<AuditLog> findByUserId(Long userId);
+    List<AuditLog> findByUserId(Long user_Id);
 }

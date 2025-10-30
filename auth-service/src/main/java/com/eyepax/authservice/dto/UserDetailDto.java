@@ -1,12 +1,15 @@
 package com.eyepax.authservice.dto;
 
 import com.eyepax.authservice.model.AuditLog;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 import java.util.List;
 import java.util.Set;
 
 @Data
+// @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserDetailDto {
     private Long id;
     private String username;
@@ -24,4 +27,3 @@ public class UserDetailDto {
         this.auditLogs = auditLogs;
     }
 }
-

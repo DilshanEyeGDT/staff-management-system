@@ -20,6 +20,7 @@ import axios from "../../axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import HealthCheck from "./HealthCheck";
 import SaveIcon from "@mui/icons-material/Save";
+import { toast } from "react-toastify";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -31,6 +32,8 @@ const Dashboard: React.FC = () => {
   const [roleChanges, setRoleChanges] = useState<{ [userId: number]: string }>({});
   const [editName, setEditName] = useState<string>(""); // ✅ For editing display name
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true); // ✅ new
+const [authorized, setAuthorized] = useState(false); // ✅ new
 
   // ✅ Logout handler
   const handleLogout = () => {
@@ -51,6 +54,8 @@ const Dashboard: React.FC = () => {
 
   // ✅ Step 2: Fetch profile using token
   useEffect(() => {
+    let hasRedirected = false; // ✅ prevent multiple redirects
+
     const token = getToken();
     if (!token) {
       setError("No token found. Please log in again.");
@@ -58,15 +63,36 @@ const Dashboard: React.FC = () => {
     }
 
     axios
-      .get("/me")
+      .get("/me", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
-        setProfile(res.data);
-        setEditName(res.data.displayName || ""); // preload name
+        const user = res.data;
+        setProfile(user);
+        setEditName(user.displayName || "");
+
+        if (!user.roles?.includes("Admin")) {
+          if (!hasRedirected) {
+            hasRedirected = true;
+            toast.error("You are not authorized to access this system.", {
+              onClose: () => {
+                localStorage.removeItem("token");
+                window.location.href = `http://localhost:8080/logout?token=${token}`;
+              },
+            });
+          }
+        } else {
+          setAuthorized(true);
+        }
       })
       .catch((err) => {
         console.error(err);
         setError(err?.response?.data?.message || "Failed to load profile");
-      });
+      })
+      .finally(() => setLoading(false));
+
+    // ✅ clean up to prevent toast after unmount
+    return () => {
+      hasRedirected = true;
+    };
   }, []);
 
   // ✅ Step 3: Fetch users list when selected
@@ -83,7 +109,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     if (selectedPage === "health") {
       axios
-        .get("http://localhost:8080/healthz")
+        .get("/healthz")
         .then((res) => setHealth(res.data))
         .catch(() => setHealth("Error"));
     }
@@ -194,6 +220,39 @@ const Dashboard: React.FC = () => {
                   <Typography>Email: {selectedUser.email}</Typography>
                   <Typography>Display Name: {selectedUser.displayName}</Typography>
                   <Typography>Roles: {selectedUser.roles?.join(", ")}</Typography>
+
+                {/* ✅ Audit Logs Section */}
+                {selectedUser.auditLogs && selectedUser.auditLogs.length > 0 ? (
+                  <Box sx={{ mt: 3 }}>
+                    <Typography variant="h6">Audit Logs</Typography>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Event Type</TableCell>
+                          <TableCell>Description</TableCell>
+                          <TableCell>IP Address</TableCell>
+                          <TableCell>User Agent</TableCell>
+                          <TableCell>Created At</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {selectedUser.auditLogs.map((log: any) => (
+                          <TableRow key={log.id}>
+                            <TableCell>{log.eventType}</TableCell>
+                            <TableCell>{log.eventDesc}</TableCell>
+                            <TableCell>{log.ipAddress}</TableCell>
+                            <TableCell>{log.userAgent}</TableCell>
+                            <TableCell>
+                              {new Date(log.createdAt).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Box>
+                ) : (
+                  <Typography sx={{ mt: 2 }}>No audit logs available.</Typography>
+                )}
                 </Box>
               </Box>
             ) : (
@@ -300,6 +359,11 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+  // 🚫 If not authorized, don’t render anything (to prevent dashboard flash)
+  if (!authorized) return null;
+
   return (
     <Box display="flex" height="100vh">
       {/* Side Panel */}
@@ -319,18 +383,25 @@ const Dashboard: React.FC = () => {
           >
             <ListItemText primary="Profile" />
           </ListItemButton>
-          <ListItemButton
-            selected={selectedPage === "users"}
-            onClick={() => setSelectedPage("users")}
-          >
-            <ListItemText primary="Users" />
-          </ListItemButton>
-          <ListItemButton
-            selected={selectedPage === "roleAssign"}
-            onClick={() => setSelectedPage("roleAssign")}
-          >
-            <ListItemText primary="Role Assign" />
-          </ListItemButton>
+          
+          {profile?.roles?.includes("Admin") && (
+            <>
+              <ListItemButton
+                selected={selectedPage === "users"}
+                onClick={() => setSelectedPage("users")}
+              >
+                <ListItemText primary="Users" />
+              </ListItemButton>
+
+              <ListItemButton
+                selected={selectedPage === "roleAssign"}
+                onClick={() => setSelectedPage("roleAssign")}
+              >
+                <ListItemText primary="Role Assign" />
+              </ListItemButton>
+            </>
+          )}
+
           <ListItemButton
             selected={selectedPage === "health"}
             onClick={() => setSelectedPage("health")}
