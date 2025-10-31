@@ -33,7 +33,7 @@ import java.net.URL;
 public class SecurityConfiguration {
 
     @Value("${cognito.jwk-set-uri}")
-    private String jwkSetUri; // e.g.,
+    private String jwkSetUri; // e.g. ->
                               // https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json
 
     @Bean

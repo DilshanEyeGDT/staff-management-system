@@ -2,7 +2,6 @@ package com.eyepax.authservice.service;
 
 import com.eyepax.authservice.model.AuditLog;
 import com.eyepax.authservice.repository.AuditLogRepository;
-import com.eyepax.authservice.model.User;
 import com.eyepax.authservice.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;

@@ -6,13 +6,8 @@ import com.eyepax.authservice.repository.RoleRepository;
 import com.eyepax.authservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
