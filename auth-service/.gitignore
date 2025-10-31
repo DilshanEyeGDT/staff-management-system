@@ -38,3 +38,6 @@ build/
 
 ### Properties ###
 /src/main/resources/application.properties
+
+### allure-report ###
+.allure

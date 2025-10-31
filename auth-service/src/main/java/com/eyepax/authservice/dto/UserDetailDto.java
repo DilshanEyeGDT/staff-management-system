@@ -1,7 +1,6 @@
 package com.eyepax.authservice.dto;
 
 import com.eyepax.authservice.model.AuditLog;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;
 
