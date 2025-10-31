@@ -1,0 +1,1 @@
+{"uuid":"d7f6b3f2-828e-4553-a8f3-551b018fa5cc","name":"getUserDetails returns UserDetailDto with audit logs","children":["dbe0d513-cdab-4545-a243-b3d4916e792b"],"befores":[],"afters":[],"start":1761819953888,"stop":1761819953921}
