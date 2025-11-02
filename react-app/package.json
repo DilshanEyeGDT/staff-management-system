@@ -28,7 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:ui": "mocha tests/ui --timeout 60000 --reporter mochawesome"
   },
   "eslintConfig": {
     "extends": [
@@ -47,5 +48,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "chromedriver": "^142.0.0",
+    "mocha": "^11.7.4",
+    "mochawesome": "^7.1.4",
+    "selenium-webdriver": "^4.38.0"
   }
 }

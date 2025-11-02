@@ -24,28 +24,37 @@ const HealthCheck: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ mt: 6 }}>
-      <Typography variant="h5" gutterBottom>
+    <Box sx={{ mt: 6 }} id="healthcheck-container">
+      <Typography variant="h5" gutterBottom id="healthcheck-title">
         System Health
       </Typography>
 
       {status === "loading" && (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <CircularProgress size={20} />
-          <Typography>Checking server status...</Typography>
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          id="healthcheck-loading"
+        >
+          <CircularProgress size={20} id="healthcheck-spinner" />
+          <Typography id="healthcheck-loading-text">
+            Checking server status...
+          </Typography>
         </Box>
       )}
 
       {status === "ok" && (
-        <Alert severity="success" sx={{ mt: 2 }}>
+        <Alert severity="success" sx={{ mt: 2 }} id="healthcheck-success">
           Server is Healthy (Status: 200 OK)
         </Alert>
       )}
 
       {status === "not_ok" && (
-        <Alert severity="error" sx={{ mt: 2 }}>
+        <Alert severity="error" sx={{ mt: 2 }} id="healthcheck-error">
           Server is not reachable or returned an error.
-          {error && <Typography variant="body2">{error}</Typography>}
+          {error && (
+            <Typography variant="body2" id="healthcheck-error-text">
+              {error}
+            </Typography>
+          )}
         </Alert>
       )}
     </Box>
