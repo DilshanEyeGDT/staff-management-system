@@ -19,21 +19,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Reset Password')),
+    appBar: AppBar(
+      title: const Text('Reset Password'),
+      key: const Key('forgot_appbar'),
+    ),
     body: Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          // Email, Confirmation Code, New Password Fields
           TextField(
+            key: const Key('forgot_email_field'),
             controller: email,
             decoration: const InputDecoration(labelText: 'Email'),
           ),
           if (showConfirm) ...[
             TextField(
+              key: const Key('forgot_code_field'),
               controller: code,
               decoration: const InputDecoration(labelText: 'Confirmation Code'),
             ),
             TextField(
+              key: const Key('forgot_newpass_field'),
               controller: newPass,
               decoration: const InputDecoration(labelText: 'New Password'),
               obscureText: true,
@@ -41,13 +48,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ],
           const SizedBox(height: 12),
           ElevatedButton(
+            key: const Key('forgot_action_button'),
             onPressed: _handleAction,
             child: Text(showConfirm ? 'Confirm Reset' : 'Send Code'),
           ),
           if (msg != null)
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Text(msg!, style: const TextStyle(color: Colors.red)),
+              child: Text(
+                msg!,
+                key: const Key('forgot_message_text'),
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
         ],
       ),
