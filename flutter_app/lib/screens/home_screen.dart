@@ -1,8 +1,8 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/login_screen.dart';
+import 'package:flutter_app/screens/login_screen.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
-import 'auth_service.dart';
+import '../services/auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -65,17 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
     final newName = await showDialog<String>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Edit display name'),
+        key: const Key('edit_name_dialog'),
+        title: const Text('Edit display name', key: Key('edit_name_title')),
         content: TextField(
+          key: const Key('edit_name_field'),
           controller: controller,
           decoration: const InputDecoration(hintText: 'Enter display name'),
         ),
         actions: [
           TextButton(
+            key: const Key('edit_name_cancel_button'),
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
           ),
           TextButton(
+            key: const Key('edit_name_save_button'),
             onPressed: () => Navigator.pop(context, controller.text.trim()),
             child: const Text('Save'),
           ),
@@ -180,15 +184,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      key: const Key('home_screen'),
+      appBar: AppBar(title: const Text('Home', key: Key('home_title'))),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(key: Key('loading_indicator')),
+            )
           : Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Card(
+                    key: const Key('profile_card'),
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -200,6 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           const Text(
                             'Profile',
+                            key: Key('profile_title'),
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -210,9 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               const Text(
                                 'My Email: ',
+                                key: Key('label_email'),
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Text(email),
+                              Text(email, key: const Key('value_email')),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -220,11 +230,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               const Text(
                                 'Username: ',
+                                key: Key('label_username'),
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              Expanded(child: Text(preferredUsername)),
+                              Expanded(
+                                child: Text(
+                                  preferredUsername,
+                                  key: const Key('value_username'),
+                                ),
+                              ),
                               const SizedBox(width: 8),
                               ElevatedButton(
+                                key: const Key('edit_button'),
                                 onPressed:
                                     _showEditDisplayNameDialog, // <-- ADDED
                                 child: const Text('Edit'),
@@ -240,6 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
+                    key: const Key('logout_button'),
                     onPressed: () async {
                       await _logout(context);
                     },

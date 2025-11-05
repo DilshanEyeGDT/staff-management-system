@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/login_screen.dart';
-import 'auth_service.dart';
+import 'package:flutter_app/screens/login_screen.dart';
+import '../services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,38 +20,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Register')),
+    appBar: AppBar(
+      title: const Text('Register'),
+      key: const Key('register_appbar'),
+    ),
     body: Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          // Email, Password, Preferred Username, Confirmation Code Fields
           TextField(
+            key: const Key('register_email_field'),
             controller: email,
             decoration: const InputDecoration(labelText: 'Email'),
           ),
           TextField(
+            key: const Key('register_password_field'),
             controller: pass,
             decoration: const InputDecoration(labelText: 'Password'),
             obscureText: true,
           ),
           TextField(
+            key: const Key('register_username_field'),
             controller: preferredUsername,
             decoration: const InputDecoration(labelText: 'Preferred Username'),
           ),
           if (showCodeField)
             TextField(
+              key: const Key('register_code_field'),
               controller: code,
               decoration: const InputDecoration(labelText: 'Confirmation Code'),
             ),
           const SizedBox(height: 12),
           ElevatedButton(
+            key: const Key('register_action_button'),
             onPressed: _handleAction,
             child: Text(showCodeField ? 'Confirm' : 'Register'),
           ),
           if (msg != null)
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Text(msg!, style: const TextStyle(color: Colors.red)),
+              child: Text(
+                msg!,
+                key: const Key('register_message_text'),
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
         ],
       ),

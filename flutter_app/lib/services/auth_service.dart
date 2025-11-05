@@ -32,9 +32,30 @@ class AuthService {
     return result;
   }
 
-  // ✅ Sign In
+  // ✅ Sign In (updated)
   Future<SignInResult> signIn(String email, String password) async {
-    return await Amplify.Auth.signIn(username: email, password: password);
+    try {
+      await _ensureAmplifyConfigured(); // 🟢 ensure Amplify ready
+
+      // 🔹 Check if a user is already signed in
+      final session = await Amplify.Auth.fetchAuthSession();
+      if (session.isSignedIn) {
+        safePrint('⚠️ A user is already signed in. Signing out first...');
+        await Amplify.Auth.signOut();
+      }
+
+      // 🔹 Proceed with login
+      final result = await Amplify.Auth.signIn(
+        username: email,
+        password: password,
+      );
+
+      safePrint('✅ Login successful');
+      return result;
+    } on AuthException catch (e) {
+      safePrint('❌ Login error: ${e.message}');
+      rethrow;
+    }
   }
 
   // ✅ Sign Out
@@ -69,5 +90,17 @@ class AuthService {
       return token;
     }
     return null;
+  }
+
+  Future<void> _ensureAmplifyConfigured() async {
+    try {
+      // This throws if Amplify is not configured
+      await Amplify.Auth.fetchAuthSession();
+    } catch (e) {
+      safePrint("⚠️ Amplify not ready yet, waiting...");
+      await Future.delayed(const Duration(seconds: 2));
+      // Try again once
+      await Amplify.Auth.fetchAuthSession();
+    }
   }
 }
