@@ -3,8 +3,10 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'services/amplifyconfiguration.dart';
 import 'screens/login_screen.dart';
+import 'package:flutter_driver/driver_extension.dart';
 
 void main() {
+  //enableFlutterDriverExtension();
   runApp(const MyApp());
 }
 
