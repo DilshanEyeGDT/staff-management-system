@@ -52,10 +52,10 @@ const RoleAssignSection: React.FC<Props> = ({ users, roleChanges, setRoleChanges
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Email</TableCell>
-            <TableCell>Display Name</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Action</TableCell>
+            <TableCell scope="col">Email</TableCell>
+            <TableCell scope="col">Display Name</TableCell>
+            <TableCell scope="col">Role</TableCell>
+            <TableCell scope="col">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -66,6 +66,7 @@ const RoleAssignSection: React.FC<Props> = ({ users, roleChanges, setRoleChanges
               <TableCell>
                 <Select
                   id={`role-select-${user.id}`}
+                  aria-label={`Select role for ${user.displayName}`}
                   value={roleChanges[user.id] || user.roles?.[0] || ""}
                   onChange={(e) =>
                     setRoleChanges((prev) => ({
@@ -87,6 +88,8 @@ const RoleAssignSection: React.FC<Props> = ({ users, roleChanges, setRoleChanges
                   id={`save-role-${user.id}`}
                   color="primary"
                   onClick={() => handleSaveRole(user.id)}
+                  aria-label={`Save role for ${user.displayName}`}
+                  title="Save Role" // optional tooltip for mouse users
                 >
                   <SaveIcon />
                 </IconButton>
