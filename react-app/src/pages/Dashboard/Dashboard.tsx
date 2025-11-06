@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Box, List, ListItemButton, ListItemText } from "@mui/material";
+import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem } from "@mui/material";
 import axios from "../../axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import { toast } from "react-toastify";
@@ -119,29 +119,65 @@ const Dashboard: React.FC = () => {
         <Typography variant="h5" sx={{ mb: 3 }} id="dashboard-title">
           Admin Portal
         </Typography>
-        <List>
-          <ListItemButton id="nav-profile" selected={selectedPage === "profile"} onClick={() => setSelectedPage("profile")}>
-            <ListItemText primary="Profile" />
-          </ListItemButton>
 
+        <List>
+          {/* Profile */}
+          <ListItem disablePadding>
+            <ListItemButton
+              id="nav-profile"
+              selected={selectedPage === "profile"}
+              onClick={() => setSelectedPage("profile")}
+            >
+              <ListItemText primary="Profile" />
+            </ListItemButton>
+          </ListItem>
+
+          {/* Admin-only items */}
           {profile?.roles?.includes("Admin") && (
             <>
-              <ListItemButton id="nav-users" selected={selectedPage === "users"} onClick={() => setSelectedPage("users")}>
-                <ListItemText primary="Users" />
-              </ListItemButton>
-              <ListItemButton id="nav-roleAssign" selected={selectedPage === "roleAssign"} onClick={() => setSelectedPage("roleAssign")}>
-                <ListItemText primary="Role Assign" />
-              </ListItemButton>
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-users"
+                  selected={selectedPage === "users"}
+                  onClick={() => setSelectedPage("users")}
+                >
+                  <ListItemText primary="Users" />
+                </ListItemButton>
+              </ListItem>
+
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-roleAssign"
+                  selected={selectedPage === "roleAssign"}
+                  onClick={() => setSelectedPage("roleAssign")}
+                >
+                  <ListItemText primary="Role Assign" />
+                </ListItemButton>
+              </ListItem>
             </>
           )}
 
-          <ListItemButton id="nav-health" selected={selectedPage === "health"} onClick={() => setSelectedPage("health")}>
-            <ListItemText primary="Health" />
-          </ListItemButton>
+          {/* Health */}
+          <ListItem disablePadding>
+            <ListItemButton
+              id="nav-health"
+              selected={selectedPage === "health"}
+              onClick={() => setSelectedPage("health")}
+            >
+              <ListItemText primary="Health" />
+            </ListItemButton>
+          </ListItem>
         </List>
 
+        {/* Logout */}
         <Box mt="auto">
-          <Button id="logout-button" variant="outlined" color="error" onClick={handleLogout} fullWidth>
+          <Button
+            id="logout-button"
+            variant="outlined"
+            color="error"
+            onClick={handleLogout}
+            fullWidth
+          >
             Logout
           </Button>
         </Box>
@@ -153,6 +189,7 @@ const Dashboard: React.FC = () => {
       </Box>
     </Box>
   );
+
 };
 
 export default Dashboard;
