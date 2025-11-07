@@ -21,10 +21,17 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
     private final AuditLogService auditLogService;
 
     @Value("${cognito.jwk-set-uri}")
-    private String jwkSetUri; // inject JWK URI here
+    private String jwkSetUri;
 
-    // ✅ Frontend URL to redirect after logout
-    private static final String FRONTEND_LOGIN_URL = "http://localhost:3000/";
+    @Value("${spring.security.oauth2.client.registration.cognito.client-id}")
+    private String clientId;
+
+    // ✅ Cognito domain and redirect URL (after logout)
+    @Value("${cognito.domain}")
+    private String cognitoDomain;
+
+    @Value("${cognito.logout-redirect-uri}")
+    private String logoutRedirectUri;
 
     public CustomLogoutSuccessHandler(UserRepository userRepository, AuditLogService auditLogService) {
         this.userRepository = userRepository;
@@ -40,31 +47,38 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         String userId = null;
 
         if (authentication != null && authentication.getName() != null) {
-            // normal session logout
+            // ✅ Normal logout (user is authenticated in session)
             userId = String.valueOf(userRepository.findByEmail(authentication.getName())
                     .or(() -> userRepository.findByCognitoSub(authentication.getName()))
                     .map(u -> u.getId())
                     .orElse(null));
         } else {
-            // logout via token in query param
+            // ✅ Logout via token in query param
             String token = request.getParameter("token");
             if (token != null && !token.isEmpty()) {
                 try {
-                    // decode JWT to get sub
                     Jwt jwt = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build().decode(token);
                     String sub = jwt.getClaimAsString("sub");
-                    userId = String.valueOf(userRepository.findByCognitoSub(sub).map(u -> u.getId()).orElse(null));
+                    userId = String.valueOf(userRepository.findByCognitoSub(sub)
+                            .map(u -> u.getId())
+                            .orElse(null));
                 } catch (Exception e) {
-                    System.out.println(">>> Failed to decode JWT for logout: " + e.getMessage());
+                    System.out.println("⚠️ Failed to decode JWT for logout: " + e.getMessage());
                 }
             }
         }
 
         if (userId != null) {
             auditLogService.record(Long.valueOf(userId), "LOGOUT", "User logged out successfully", request);
-            System.out.println(">>> Logout audit recorded for user ID: " + userId);
+            System.out.println("✅ Logout audit recorded for user ID: " + userId);
         }
 
-        response.sendRedirect(FRONTEND_LOGIN_URL);
+        // ✅ Redirect to Cognito logout (clear hosted UI session)
+        String cognitoLogoutUrl = String.format(
+                "https://%s/logout?client_id=%s&logout_uri=%s",
+                cognitoDomain, clientId, logoutRedirectUri);
+
+        System.out.println("🔁 Redirecting to Cognito logout: " + cognitoLogoutUrl);
+        response.sendRedirect(cognitoLogoutUrl);
     }
 }
