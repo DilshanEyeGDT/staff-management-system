@@ -1,0 +1,7 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","2126","should logout successfully -> Redirected to the login page","Flutter Login Flow","Wed Nov 05 17:21:11 IST 2025","passed","Wed Nov 05 17:21:13 IST 2025","","","",""
+"","12865","Should login successfully -> Reach home screen","Flutter Login Flow","Wed Nov 05 17:20:52 IST 2025","passed","Wed Nov 05 17:21:05 IST 2025","","","",""
+"","7979","should reset the password successfully","🔐 Forgot Password Flow","Wed Nov 05 22:34:31 IST 2025","broken","Wed Nov 05 22:34:39 IST 2025","","","",""
+"","6244","Should edit username -> Verify","Flutter Login Flow","Wed Nov 05 17:21:05 IST 2025","passed","Wed Nov 05 17:21:11 IST 2025","","","",""
+"","156780","Should navigate to Register screen -> fill fields -> enter OTP manually -> confirm -> redirect to Login","Flutter User Registration Flow","Wed Nov 05 22:08:36 IST 2025","passed","Wed Nov 05 22:11:13 IST 2025","","","",""
+"","42611","should reset password successfully -> redirect to login page","Flutter Forgot Password Flow","Wed Nov 05 22:49:11 IST 2025","passed","Wed Nov 05 22:49:54 IST 2025","","","",""
