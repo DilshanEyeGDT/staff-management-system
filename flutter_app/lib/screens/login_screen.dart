@@ -140,13 +140,44 @@ class _LoginScreenState extends State<LoginScreen> {
       final res = await auth.signIn(email.text.trim(), pass.text);
 
       if (res.isSignedIn) {
-        // ✅ Get Cognito session
+        // ✅ Fetch Cognito user attributes
+        final user = await Amplify.Auth.getCurrentUser();
+        final attributes = await Amplify.Auth.fetchUserAttributes();
+
+        final sub = user.userId;
+        final emailAttr = attributes
+            .firstWhere((a) => a.userAttributeKey.key == 'email')
+            .value;
+        final displayNameAttr = attributes
+            .firstWhere(
+              (a) => a.userAttributeKey.key == 'preferred_username',
+              orElse: () => const AuthUserAttribute(
+                userAttributeKey: CognitoUserAttributeKey.name,
+                value: 'Unknown',
+              ),
+            )
+            .value;
+
+        // ✅ Get Cognito session & tokens
         final session =
             await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+        final accessToken = session.userPoolTokens?.accessToken;
         final idToken = session.userPoolTokens?.idToken;
 
-        // ✅ Sync login with backend
-        if (idToken != null) {
+        // print("Access token: $accessToken");
+        // print("id token: $idToken");
+
+        if (accessToken != null && idToken != null) {
+          // ✅ 1. Sync user record with backend
+          await BackendSyncService().syncUser(
+            sub: sub,
+            email: emailAttr,
+            username: emailAttr,
+            displayName: displayNameAttr,
+            accessToken: accessToken.raw,
+          );
+
+          // ✅ 2. Record login audit
           await BackendSyncService().syncLogin(idToken.raw);
         }
 
@@ -161,11 +192,37 @@ class _LoginScreenState extends State<LoginScreen> {
         if (code != null) {
           await Amplify.Auth.confirmSignIn(confirmationValue: code);
 
-          // ✅ After MFA confirm, get token and sync login
+          // ✅ After MFA confirm
           final session =
               await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+          final accessToken = session.userPoolTokens?.accessToken;
           final idToken = session.userPoolTokens?.idToken;
-          if (idToken != null) {
+
+          if (accessToken != null && idToken != null) {
+            final user = await Amplify.Auth.getCurrentUser();
+            final attributes = await Amplify.Auth.fetchUserAttributes();
+            final emailAttr = attributes
+                .firstWhere((a) => a.userAttributeKey.key == 'email')
+                .value;
+            final displayNameAttr = attributes
+                .firstWhere(
+                  (a) => a.userAttributeKey.key == 'preferred_username',
+                  orElse: () => const AuthUserAttribute(
+                    userAttributeKey: CognitoUserAttributeKey.name,
+                    value: 'Unknown',
+                  ),
+                )
+                .value;
+
+            // ✅ Sync user + audit
+            await BackendSyncService().syncUser(
+              sub: user.userId,
+              email: emailAttr,
+              username: emailAttr,
+              displayName: displayNameAttr,
+              accessToken: accessToken.raw,
+            );
+
             await BackendSyncService().syncLogin(idToken.raw);
           }
 
