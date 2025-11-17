@@ -32,7 +32,7 @@ const handleLogout = () => {
   // ✅ Step 1: Grab token from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const tokenFromUrl = params.get("token");
+    const tokenFromUrl = params.get("id_token");
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
       window.history.replaceState({}, document.title, "/dashboard");
