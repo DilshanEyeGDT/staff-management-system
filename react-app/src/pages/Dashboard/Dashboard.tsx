@@ -17,13 +17,6 @@ const Dashboard: React.FC = () => {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Logout handler
-  // const handleLogout = () => {
-  //   const token = getToken();
-  //   removeToken();
-  //   window.location.href = `http://localhost:8080/logout?token=${token}`;
-  // };
-
 const handleLogout = () => {
   removeToken();
   window.location.href = "http://localhost:8080/logout";
@@ -133,7 +126,7 @@ const handleLogout = () => {
               selected={selectedPage === "profile"}
               onClick={() => setSelectedPage("profile")}
             >
-              <ListItemText primary="Profile" />
+              <ListItemText primary="My Profile" />
             </ListItemButton>
           </ListItem>
 
@@ -156,7 +149,7 @@ const handleLogout = () => {
                   selected={selectedPage === "roleAssign"}
                   onClick={() => setSelectedPage("roleAssign")}
                 >
-                  <ListItemText primary="Role Assign" />
+                  <ListItemText primary="User Roles" />
                 </ListItemButton>
               </ListItem>
             </>
@@ -169,7 +162,7 @@ const handleLogout = () => {
               selected={selectedPage === "health"}
               onClick={() => setSelectedPage("health")}
             >
-              <ListItemText primary="Health" />
+              <ListItemText primary="Systems Health" />
             </ListItemButton>
           </ListItem>
         </List>
