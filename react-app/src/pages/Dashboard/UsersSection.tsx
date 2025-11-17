@@ -62,7 +62,7 @@ const UsersSection: React.FC<Props> = ({ users }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
+              {/* <TableCell>ID</TableCell> */}
               <TableCell>Email</TableCell>
               <TableCell>Display Name</TableCell>
               <TableCell>Roles</TableCell>
@@ -82,7 +82,7 @@ const UsersSection: React.FC<Props> = ({ users }) => {
                     .catch(console.error)
                 }
               >
-                <TableCell>{user.id}</TableCell>
+                {/* <TableCell>{user.id}</TableCell> */}
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.displayName}</TableCell>
                 <TableCell>{user.roles?.join(", ")}</TableCell>
