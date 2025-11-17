@@ -50,4 +50,37 @@ class BackendSyncService {
       body: jsonEncode({'displayName': displayName}),
     );
   }
+
+  Future<void> syncUser({
+    required String sub,
+    required String email,
+    required String username,
+    required String displayName,
+    required String accessToken,
+  }) async {
+    final uri = Uri.parse('$baseUrl/user');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: jsonEncode({
+          'sub': sub,
+          'email': email,
+          'username': username,
+          'displayName': displayName,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("✅ User synced successfully with backend");
+      } else {
+        print("❌ Failed to sync user: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("❌ Error syncing user: $e");
+    }
+  }
 }

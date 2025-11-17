@@ -18,11 +18,16 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // ✅ Logout handler
-  const handleLogout = () => {
-    const token = getToken();
-    removeToken();
-    window.location.href = `http://localhost:8080/logout?token=${token}`;
-  };
+  // const handleLogout = () => {
+  //   const token = getToken();
+  //   removeToken();
+  //   window.location.href = `http://localhost:8080/logout?token=${token}`;
+  // };
+
+const handleLogout = () => {
+  removeToken();
+  window.location.href = "http://localhost:8080/logout";
+};
 
   // ✅ Step 1: Grab token from URL
   useEffect(() => {
