@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem } from "@mui/material";
+import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import axios from "../../axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import { toast } from "react-toastify";
@@ -18,10 +18,15 @@ const Dashboard: React.FC = () => {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
-const handleLogout = () => {
-  removeToken();
-  window.location.href = "http://localhost:8080/logout";
-};
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+
+  const handleLogoutClick = () => setLogoutDialogOpen(true);
+    const handleCancel = () => setLogoutDialogOpen(false);
+    const handleConfirmLogout = () => {
+      setLogoutDialogOpen(false);
+      removeToken();
+      window.location.href = "http://localhost:8080/logout";
+  };
 
   // ✅ Step 1: Grab token from URL
   useEffect(() => {
@@ -187,12 +192,27 @@ const handleLogout = () => {
             id="logout-button"
             variant="outlined"
             color="error"
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             fullWidth
           >
             Logout
           </Button>
         </Box>
+
+        <Dialog open={logoutDialogOpen} onClose={handleCancel}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to log out?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmLogout} color="error" variant="contained">
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
       </Box>
 
       {/* Main Content */}
