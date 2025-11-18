@@ -3,10 +3,11 @@ import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem }
 import axios from "../../axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import { toast } from "react-toastify";
-import HealthCheck from "./HealthCheck";
-import ProfileSection from "./ProfileSection";
-import UsersSection from "./UsersSection";
-import RoleAssignSection from "./RoleAssignSection";
+import HealthCheck from "./Auth/HealthCheck";
+import ProfileSection from "./Auth/ProfileSection";
+import UsersSection from "./Auth/UsersSection";
+import RoleAssignSection from "./Auth/RoleAssignSection";
+import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -93,6 +94,8 @@ const handleLogout = () => {
         return <UsersSection users={users} />;
       case "roleAssign":
         return <RoleAssignSection users={users} roleChanges={roleChanges} setRoleChanges={setRoleChanges} />;
+      case "leaveAttendance":
+        return <LeaveAttendance />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -150,6 +153,17 @@ const handleLogout = () => {
                   onClick={() => setSelectedPage("roleAssign")}
                 >
                   <ListItemText primary="User Roles" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* ⭐ NEW MENU ITEM */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-leaveAttendance"
+                  selected={selectedPage === "leaveAttendance"}
+                  onClick={() => setSelectedPage("leaveAttendance")}
+                >
+                  <ListItemText primary="Leave & Attendance" />
                 </ListItemButton>
               </ListItem>
             </>
