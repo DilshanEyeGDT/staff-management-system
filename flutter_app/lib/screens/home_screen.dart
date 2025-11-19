@@ -1,7 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dart';
-import 'package:flutter_app/screens/login_screen.dart';
+import 'package:flutter_app/screens/login/login_screen.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
 import '../services/auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
