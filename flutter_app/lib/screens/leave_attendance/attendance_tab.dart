@@ -92,27 +92,40 @@ class _AttendanceTabState extends State<AttendanceTab> {
   }
 
   Future<void> _fetchAttendanceLogs() async {
+    if (!mounted) return;
     setState(() => isLogsLoading = true);
+
     final token = await _getIdToken();
     if (token == null) {
+      if (!mounted) return;
       setState(() => isLogsLoading = false);
       return;
     }
 
     final response = await _lambdaService.getAttendanceLogs(token);
+
+    if (!mounted) return; // <--- IMPORTANT
+
     if (response.statusCode == 200) {
       final data = Map<String, dynamic>.from(jsonDecode(response.body)['data']);
+
       final logs = (data['attendanceLogs'] as List)
           .map((e) => AttendanceLog.fromJson(e))
           .toList()
           .reversed
-          .toList(); // Reverse to show latest first
+          .toList();
+
+      if (!mounted) return;
+
       setState(() {
         attendanceLogs = logs;
         isLogsLoading = false;
       });
     } else {
+      if (!mounted) return;
+
       setState(() => isLogsLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Failed to fetch logs (${response.statusCode})"),
