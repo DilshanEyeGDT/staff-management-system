@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem } from "@mui/material";
+import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import axios from "../../axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import { toast } from "react-toastify";
-import HealthCheck from "./HealthCheck";
-import ProfileSection from "./ProfileSection";
-import UsersSection from "./UsersSection";
-import RoleAssignSection from "./RoleAssignSection";
+import HealthCheck from "./Auth/HealthCheck";
+import ProfileSection from "./Auth/ProfileSection";
+import UsersSection from "./Auth/UsersSection";
+import RoleAssignSection from "./Auth/RoleAssignSection";
+import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -17,22 +18,20 @@ const Dashboard: React.FC = () => {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Logout handler
-  // const handleLogout = () => {
-  //   const token = getToken();
-  //   removeToken();
-  //   window.location.href = `http://localhost:8080/logout?token=${token}`;
-  // };
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
-const handleLogout = () => {
-  removeToken();
-  window.location.href = "http://localhost:8080/logout";
-};
+  const handleLogoutClick = () => setLogoutDialogOpen(true);
+    const handleCancel = () => setLogoutDialogOpen(false);
+    const handleConfirmLogout = () => {
+      setLogoutDialogOpen(false);
+      removeToken();
+      window.location.href = "http://localhost:8080/logout";
+  };
 
   // ✅ Step 1: Grab token from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const tokenFromUrl = params.get("token");
+    const tokenFromUrl = params.get("id_token");
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
       window.history.replaceState({}, document.title, "/dashboard");
@@ -100,6 +99,8 @@ const handleLogout = () => {
         return <UsersSection users={users} />;
       case "roleAssign":
         return <RoleAssignSection users={users} roleChanges={roleChanges} setRoleChanges={setRoleChanges} />;
+      case "leaveAttendance":
+        return <LeaveAttendance />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -133,7 +134,7 @@ const handleLogout = () => {
               selected={selectedPage === "profile"}
               onClick={() => setSelectedPage("profile")}
             >
-              <ListItemText primary="Profile" />
+              <ListItemText primary="My Profile" />
             </ListItemButton>
           </ListItem>
 
@@ -156,7 +157,18 @@ const handleLogout = () => {
                   selected={selectedPage === "roleAssign"}
                   onClick={() => setSelectedPage("roleAssign")}
                 >
-                  <ListItemText primary="Role Assign" />
+                  <ListItemText primary="User Roles" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* ⭐ NEW MENU ITEM */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-leaveAttendance"
+                  selected={selectedPage === "leaveAttendance"}
+                  onClick={() => setSelectedPage("leaveAttendance")}
+                >
+                  <ListItemText primary="Leave & Attendance" />
                 </ListItemButton>
               </ListItem>
             </>
@@ -169,7 +181,7 @@ const handleLogout = () => {
               selected={selectedPage === "health"}
               onClick={() => setSelectedPage("health")}
             >
-              <ListItemText primary="Health" />
+              <ListItemText primary="Systems Health" />
             </ListItemButton>
           </ListItem>
         </List>
@@ -180,12 +192,27 @@ const handleLogout = () => {
             id="logout-button"
             variant="outlined"
             color="error"
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             fullWidth
           >
             Logout
           </Button>
         </Box>
+
+        <Dialog open={logoutDialogOpen} onClose={handleCancel}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to log out?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmLogout} color="error" variant="contained">
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
       </Box>
 
       {/* Main Content */}

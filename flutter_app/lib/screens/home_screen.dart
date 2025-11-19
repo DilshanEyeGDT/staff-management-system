@@ -1,6 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/login_screen.dart';
+import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dart';
+import 'package:flutter_app/screens/login/login_screen.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
 import '../services/auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -195,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // profile card
                   Card(
                     key: const Key('profile_card'),
                     elevation: 4,
@@ -255,6 +257,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+
+                  // leave & attendance card
+                  SizedBox(height: 24),
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const LeaveAttendanceScreen(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.calendar_month, size: 32),
+                            SizedBox(width: 16),
+                            Text(
+                              "Leave & Attendance",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
                   const SizedBox(height: 24),
                   ElevatedButton(
                     key: const Key('logout_button'),
