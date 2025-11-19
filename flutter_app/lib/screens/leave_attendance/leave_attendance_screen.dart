@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/leave_attendance/attendance_tab.dart';
+import 'package:flutter_app/screens/leave_attendance/leave_tab.dart';
 
 class LeaveAttendanceScreen extends StatefulWidget {
   const LeaveAttendanceScreen({super.key});
@@ -23,12 +24,7 @@ class _LeaveAttendanceScreenState extends State<LeaveAttendanceScreen> {
             ],
           ),
         ),
-        body: const TabBarView(
-          children: [
-            Center(child: Text("Leave Page", style: TextStyle(fontSize: 18))),
-            AttendanceTab(), // <-- SEPARATE FILE
-          ],
-        ),
+        body: const TabBarView(children: [LeaveTab(), AttendanceTab()]),
       ),
     );
   }
