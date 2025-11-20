@@ -42,11 +42,11 @@ class _LeaveTabState extends State<LeaveTab>
   }
 
   Future<void> _loadData() async {
-    if (!mounted) return; // in case called when widget is already disposed
+    if (!mounted) return;
     setState(() => loading = true);
 
     final token = await _getIdToken();
-    if (!mounted) return; // widget might have been disposed while waiting
+    if (!mounted) return;
     if (token == null) {
       if (mounted) setState(() => loading = false);
       return;
@@ -71,11 +71,9 @@ class _LeaveTabState extends State<LeaveTab>
     final token = await _getIdToken();
     if (token == null) return;
 
-    // 1) Fetch current user ID
     final userId = await _lambdaService.getCurrentUserId(token);
     if (userId == null) return;
 
-    // 2) Fetch leave balance
     final leaveBalance = await _lambdaService.getLeaveBalance(token, userId);
     if (leaveBalance == null || leaveBalance.isEmpty) {
       if (!mounted) return;
@@ -97,13 +95,9 @@ class _LeaveTabState extends State<LeaveTab>
     await showDialog(
       context: context,
       builder: (dialogContext) {
-        // Use a separate StateSetter for the dialog
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            // Attach listener to reasonController to rebuild the dialog
-            reasonController.removeListener(
-              () {},
-            ); // remove previous listener if any
+            reasonController.removeListener(() {});
             reasonController.addListener(() {
               setDialogState(() {});
             });
@@ -116,12 +110,17 @@ class _LeaveTabState extends State<LeaveTab>
             }
 
             return AlertDialog(
-              title: const Text("Create Leave Request"),
+              key: const Key('leave_request_dialog'),
+              title: const Text(
+                "Create Leave Request",
+                key: Key('dialog_title'),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<int>(
+                      key: const Key('dropdown_leave_type'),
                       decoration: const InputDecoration(
                         labelText: "Leave Type",
                       ),
@@ -146,6 +145,7 @@ class _LeaveTabState extends State<LeaveTab>
                       children: [
                         Expanded(
                           child: TextButton(
+                            key: const Key('button_pick_start_date'),
                             child: Text(
                               startDate == null
                                   ? "Pick Start Date"
@@ -174,6 +174,7 @@ class _LeaveTabState extends State<LeaveTab>
                         const SizedBox(width: 12),
                         Expanded(
                           child: TextButton(
+                            key: const Key('button_pick_end_date'),
                             child: Text(
                               endDate == null
                                   ? "Pick End Date"
@@ -204,10 +205,14 @@ class _LeaveTabState extends State<LeaveTab>
                     if (totalDays > 0)
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
-                        child: Text("Total Days: $totalDays"),
+                        child: Text(
+                          "Total Days: $totalDays",
+                          key: const Key('text_total_days'),
+                        ),
                       ),
                     const SizedBox(height: 12),
                     TextField(
+                      key: const Key('textfield_reason'),
                       controller: reasonController,
                       decoration: const InputDecoration(labelText: "Reason"),
                     ),
@@ -216,12 +221,14 @@ class _LeaveTabState extends State<LeaveTab>
               ),
               actions: [
                 TextButton(
+                  key: const Key('button_cancel'),
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   },
                   child: const Text("Cancel"),
                 ),
                 ElevatedButton(
+                  key: const Key('button_submit'),
                   onPressed: isSubmitEnabled()
                       ? () async {
                           final resp = await _lambdaService.createLeaveRequest(
@@ -259,30 +266,36 @@ class _LeaveTabState extends State<LeaveTab>
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: _openLeaveRequestDialog, // we will implement this
+        key: const Key('fab_add_leave_request'),
+        onPressed: _openLeaveRequestDialog,
         child: const Icon(Icons.add),
       ),
       body: Column(
         children: [
           TabBar(
+            key: const Key('tabbar_leave_requests'),
             controller: _tabController,
             tabs: const [
-              Tab(text: "All"),
-              Tab(text: "Pending"),
-              Tab(text: "Approved"),
-              Tab(text: "Rejected"),
+              Tab(text: "All", key: Key('tab_all')),
+              Tab(text: "Pending", key: Key('tab_pending')),
+              Tab(text: "Approved", key: Key('tab_approved')),
+              Tab(text: "Rejected", key: Key('tab_rejected')),
             ],
           ),
           Expanded(
             child: loading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      key: Key('loading_indicator'),
+                    ),
+                  )
                 : TabBarView(
                     controller: _tabController,
                     children: [
-                      _buildList(all),
-                      _buildList(pending),
-                      _buildList(approved),
-                      _buildList(rejected),
+                      _buildList(all, 'all'),
+                      _buildList(pending, 'pending'),
+                      _buildList(approved, 'approved'),
+                      _buildList(rejected, 'rejected'),
                     ],
                   ),
           ),
@@ -291,27 +304,46 @@ class _LeaveTabState extends State<LeaveTab>
     );
   }
 
-  Widget _buildList(List<LeaveRequest> list) {
+  Widget _buildList(List<LeaveRequest> list, String listKey) {
     if (list.isEmpty) {
-      return const Center(child: Text("No leave requests"));
+      return Center(
+        child: Text("No leave requests", key: Key('empty_$listKey')),
+      );
     }
 
     return ListView.builder(
+      key: Key('list_$listKey'),
       padding: const EdgeInsets.all(12),
       itemCount: list.length,
       itemBuilder: (context, index) {
         final r = list[index];
         return Card(
+          key: Key('card_${listKey}_$index'),
           child: ListTile(
-            title: Text("${r.leaveType} Leave (${r.totalDays} days)"),
+            title: Text(
+              "${r.leaveType} Leave (${r.totalDays} days)",
+              key: Key('card_title_${listKey}_$index'),
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("From: ${_fmt(r.startDate)}   To: ${_fmt(r.endDate)}"),
-                Text("Reason: ${r.reason}"),
-                Text("Status: ${r.status}"),
+                Text(
+                  "From: ${_fmt(r.startDate)}   To: ${_fmt(r.endDate)}",
+                  key: Key('card_dates_${listKey}_$index'),
+                ),
+                Text(
+                  "Reason: ${r.reason}",
+                  key: Key('card_reason_${listKey}_$index'),
+                ),
+                Text(
+                  "Status: ${r.status}",
+                  key: Key('card_status_${listKey}_$index'),
+                ),
                 if (r.approvedAt != null)
-                  Text("Approved: ${_fmt(r.approvedAt!)} by ${r.approverName}"),
+                  Text(
+                    "Approved: ${_fmt(r.approvedAt!)} by ${r.approverName}",
+                    key: Key('card_approved_${listKey}_$index'),
+                  ),
               ],
             ),
           ),

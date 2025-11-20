@@ -261,11 +261,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   // leave & attendance card
                   SizedBox(height: 24),
                   Card(
+                    key: const Key('leave-attendance-card'),
                     elevation: 4,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: InkWell(
+                      key: const Key('leave-attendance-card-inkwell'),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -278,10 +280,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(24),
                         child: Row(
                           children: const [
-                            Icon(Icons.calendar_month, size: 32),
+                            Icon(
+                              Icons.calendar_month,
+                              size: 32,
+                              key: Key('leave-attendance-icon'),
+                            ),
                             SizedBox(width: 16),
                             Text(
                               "Leave & Attendance",
+                              key: Key('leave-attendance-text'),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
