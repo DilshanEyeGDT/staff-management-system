@@ -92,39 +92,59 @@ const KPI: React.FC = () => {
   }, [selectedUserId, startDate, endDate]);
 
   return (
-    <Box>
-      <Typography variant="h6" sx={{ mb: 2 }}>
+    <Box id="kpi-page">
+      <Typography variant="h6" sx={{ mb: 2 }} id="kpi-title">
         KPI - Leave & Attendance Summary
       </Typography>
 
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" sx={{ mb: 2 }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: 2 }}
+        id="kpi-filter-section"
+      >
         {/* User Dropdown */}
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Select User</InputLabel>
+        <FormControl sx={{ minWidth: 200 }} id="kpi-user-select-container">
+          <InputLabel id="kpi-user-select-label">Select User</InputLabel>
+
           {usersLoading ? (
-            <CircularProgress size={20} />
+            <CircularProgress size={20} id="kpi-users-loading-spinner" />
           ) : (
             <Select
+              id="kpi-user-select"
+              labelId="kpi-user-select-label"
               value={selectedUserId}
               label="Select User"
               onChange={(e) => setSelectedUserId(e.target.value as number)}
               displayEmpty
             >
-              <MenuItem value="">
+              <MenuItem value="" id="kpi-user-select-empty">
                 <em></em>
               </MenuItem>
+
               {users.map((u) => (
-                <MenuItem key={u.user_id} value={u.user_id}>
+                <MenuItem
+                  key={u.user_id}
+                  value={u.user_id}
+                  id={`kpi-user-option-${u.user_id}`}
+                >
                   {u.display_name}
                 </MenuItem>
               ))}
             </Select>
           )}
-          {usersError && <Typography color="error">{usersError}</Typography>}
+
+          {usersError && (
+            <Typography color="error" id="kpi-users-error">
+              {usersError}
+            </Typography>
+          )}
         </FormControl>
 
         {/* Start Date */}
         <TextField
+          id="kpi-start-date"
           label="Start Date"
           type="date"
           value={startDate}
@@ -134,6 +154,7 @@ const KPI: React.FC = () => {
 
         {/* End Date */}
         <TextField
+          id="kpi-end-date"
           label="End Date"
           type="date"
           value={endDate}
@@ -142,37 +163,61 @@ const KPI: React.FC = () => {
         />
       </Stack>
 
+      {/* Results Section */}
       {loading ? (
-        <Box display="flex" alignItems="center" justifyContent="center" py={6}>
-          <CircularProgress />
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          py={6}
+          id="kpi-loading"
+        >
+          <CircularProgress id="kpi-loading-spinner" />
         </Box>
       ) : error ? (
-        <Typography color="error">{error}</Typography>
+        <Typography color="error" id="kpi-error">
+          {error}
+        </Typography>
       ) : !selectedUserId || !startDate || !endDate ? (
-        <Typography>Please select user, start date, and end date to view KPI.</Typography>
+        <Typography id="kpi-missing-filters">
+          Please select user, start date, and end date to view KPI.
+        </Typography>
       ) : kpiData.length === 0 ? (
-        <Typography>No KPI data found.</Typography>
+        <Typography id="kpi-no-data">No KPI data found.</Typography>
       ) : (
-        <Table>
-          <TableHead>
+        <Table id="kpi-table">
+          <TableHead id="kpi-table-head">
             <TableRow>
-              <TableCell>Leave Type</TableCell>
-              <TableCell>Total Leave Taken</TableCell>
-              <TableCell>Remaining Days</TableCell>
-              <TableCell>Total Present</TableCell>
-              <TableCell>Total Absent</TableCell>
-              <TableCell>Total Leave</TableCell>
+              <TableCell id="col-leave-type">Leave Type</TableCell>
+              <TableCell id="col-total-leave-taken">Total Leave Taken</TableCell>
+              <TableCell id="col-remaining-days">Remaining Days</TableCell>
+              <TableCell id="col-total-present">Total Present</TableCell>
+              <TableCell id="col-total-absent">Total Absent</TableCell>
+              <TableCell id="col-total-leave">Total Leave</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
+
+          <TableBody id="kpi-table-body">
             {kpiData.map((kpi, index) => (
-              <TableRow key={index}>
-                <TableCell>{kpi.leave_type}</TableCell>
-                <TableCell>{kpi.total_leave_taken}</TableCell>
-                <TableCell>{kpi.remaining_days}</TableCell>
-                <TableCell>{kpi.attendance.total_present}</TableCell>
-                <TableCell>{kpi.attendance.total_absent}</TableCell>
-                <TableCell>{kpi.attendance.total_leave}</TableCell>
+              <TableRow key={index} id={`kpi-row-${index}`}>
+                <TableCell id={`kpi-leave-type-${index}`}>
+                  {kpi.leave_type}
+                </TableCell>
+                <TableCell id={`kpi-total-taken-${index}`}>
+                  {kpi.total_leave_taken}
+                </TableCell>
+                <TableCell id={`kpi-remaining-${index}`}>
+                  {kpi.remaining_days}
+                </TableCell>
+                <TableCell id={`kpi-total-present-${index}`}>
+                  {kpi.attendance.total_present}
+                </TableCell>
+                <TableCell id={`kpi-total-absent-${index}`}>
+                  {kpi.attendance.total_absent}
+                </TableCell>
+                <TableCell id={`kpi-total-leave-${index}`}>
+                  {kpi.attendance.total_leave}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -181,6 +226,7 @@ const KPI: React.FC = () => {
 
       {/* Snackbar */}
       <Snackbar
+        id="kpi-snackbar"
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={() => setSnackbarOpen(false)}
@@ -188,6 +234,7 @@ const KPI: React.FC = () => {
       />
     </Box>
   );
+
 };
 
 export default KPI;

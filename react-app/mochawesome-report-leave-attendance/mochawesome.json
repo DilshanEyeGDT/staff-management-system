@@ -1,0 +1,195 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 4,
+    "passes": 4,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-11-20T05:29:25.512Z",
+    "end": "2025-11-20T05:29:51.038Z",
+    "duration": 25526,
+    "testsRegistered": 4,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "e4e38818-1824-4d0e-b746-b7ce222f2155",
+      "title": "",
+      "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\leave_attendance\\leaveAttendance.test.js",
+      "file": "\\tests\\leave_attendance\\leaveAttendance.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+          "title": "Admin Dashboard & Leave/Attendance Tabs Test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\leave_attendance\\leaveAttendance.test.js",
+          "file": "\\tests\\leave_attendance\\leaveAttendance.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Admin Dashboard & Leave/Attendance Tabs Test\"",
+              "fullTitle": "Admin Dashboard & Leave/Attendance Tabs Test \"before all\" hook in \"Admin Dashboard & Leave/Attendance Tabs Test\"",
+              "timedOut": false,
+              "duration": 24169,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "driver = await new Builder().forBrowser(\"chrome\").build();\n// Step 1: Go to Login page\nawait driver.get(BASE_URL);\n// Step 2: Click \"Sign in with Cognito\"\nconst loginButton = await driver.findElement(By.css(\"button\"));\nawait loginButton.click();\nconsole.log(\"Please manually enter your Cognito credentials in the browser...\");\n// Step 3: Wait for dashboard to load\nconst dashboardTitle = await driver.wait(\n  until.elementLocated(By.id(\"dashboard-title\")),\n  60000\n);\nconst titleText = await dashboardTitle.getText();\nassert.strictEqual(titleText, \"Admin Portal\");\nconsole.log(\"Login successful, dashboard loaded!\");",
+              "err": {},
+              "uuid": "afbea165-0e3b-4afe-b15b-e4212baa797c",
+              "parentUUID": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Admin Dashboard & Leave/Attendance Tabs Test\"",
+              "fullTitle": "Admin Dashboard & Leave/Attendance Tabs Test \"after all\" hook in \"Admin Dashboard & Leave/Attendance Tabs Test\"",
+              "timedOut": false,
+              "duration": 286,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "a8525c9d-ca7c-4741-a200-fd9209fd2601",
+              "parentUUID": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should display Leave & Attendance side panel option",
+              "fullTitle": "Admin Dashboard & Leave/Attendance Tabs Test should display Leave & Attendance side panel option",
+              "timedOut": false,
+              "duration": 39,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const leaveTabButton = await driver.findElement(By.id(\"nav-leaveAttendance\"));\nassert.ok(await leaveTabButton.isDisplayed(), \"Leave & Attendance option is visible in sidebar\");",
+              "err": {},
+              "uuid": "1b9100da-c461-4471-ad67-a63725d9bb47",
+              "parentUUID": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Leave Requests tab correctly",
+              "fullTitle": "Admin Dashboard & Leave/Attendance Tabs Test should load Leave Requests tab correctly",
+              "timedOut": false,
+              "duration": 539,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const leaveTabButton = await driver.findElement(By.id(\"nav-leaveAttendance\"));\nawait leaveTabButton.click();\nconst tabLeave = await driver.findElement(By.id(\"tab-leave-requests\"));\nawait tabLeave.click();\nconst leaveTitle = await driver.wait(\n  until.elementLocated(By.id(\"leave-requests-title\")),\n  5000\n);\nassert.strictEqual(await leaveTitle.getText(), \"Leave Requests\");\nconsole.log(\"Leave Requests tab loaded successfully.\");",
+              "err": {},
+              "uuid": "187d729b-1a59-486a-b520-974a006799f7",
+              "parentUUID": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Attendance Log tab correctly",
+              "fullTitle": "Admin Dashboard & Leave/Attendance Tabs Test should load Attendance Log tab correctly",
+              "timedOut": false,
+              "duration": 249,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const tabAttendance = await driver.findElement(By.id(\"tab-attendance-log\"));\nawait tabAttendance.click();\nconst attendanceTitle = await driver.wait(\n  until.elementLocated(By.id(\"title-attendance-log\")),\n  5000\n);\nassert.strictEqual(await attendanceTitle.getText(), \"Attendance Log\");\nconsole.log(\"Attendance Log tab loaded successfully.\");",
+              "err": {},
+              "uuid": "e352412d-4f76-4be7-9405-980f2b6d7d40",
+              "parentUUID": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load KPI tab correctly",
+              "fullTitle": "Admin Dashboard & Leave/Attendance Tabs Test should load KPI tab correctly",
+              "timedOut": false,
+              "duration": 230,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const tabKPI = await driver.findElement(By.id(\"tab-kpi\"));\nawait tabKPI.click();\nconst kpiTitle = await driver.wait(\n  until.elementLocated(By.id(\"kpi-title\")),\n  5000\n);\nassert.strictEqual(await kpiTitle.getText(), \"KPI - Leave & Attendance Summary\");\nconsole.log(\"KPI tab loaded successfully.\");",
+              "err": {},
+              "uuid": "651fe49d-5871-4b72-b93e-57078cca1586",
+              "parentUUID": "30b96892-881b-4332-9be5-3ecfb124c5b6",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "1b9100da-c461-4471-ad67-a63725d9bb47",
+            "187d729b-1a59-486a-b520-974a006799f7",
+            "e352412d-4f76-4be7-9405-980f2b6d7d40",
+            "651fe49d-5871-4b72-b93e-57078cca1586"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1057,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 180000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}
