@@ -146,121 +146,149 @@ const AttendanceLog: React.FC = () => {
   };
 
   return (
-    <Box>
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Attendance Log
-      </Typography>
+  <Box id="attendance-log-page">
+    <Typography variant="h6" sx={{ mb: 2 }} id="title-attendance-log">
+      Attendance Log
+    </Typography>
 
-      {/* Controls */}
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems="center" sx={{ mb: 2 }}>
-        <FormControl sx={{ minWidth: 220 }}>
-          <InputLabel id="select-user-label">Select User</InputLabel>
-          {usersLoading ? (
-            <Box display="flex" alignItems="center" px={2} py={1}>
-              <CircularProgress size={20} />
-              <Typography sx={{ ml: 1 }}></Typography>
-            </Box>
-          ) : (
-            <Select
-              labelId="select-user-label"
-              value={selectedUserId}
-              label="Select User"
-              onChange={(e) => handleUserChange(e.target.value as number)}
-              displayEmpty
-            >
-              <MenuItem value="">
-                <em> </em>
-              </MenuItem>
-              {users.map((u) => (
-                <MenuItem key={u.user_id} value={u.user_id}>
-                  {u.display_name}
-                </MenuItem>
-              ))}
-            </Select>
-          )}
-          {usersError && (
-            <Typography color="error" variant="caption">
-              {usersError}
-            </Typography>
-          )}
-        </FormControl>
+    {/* Controls */}
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={2}
+      alignItems="center"
+      sx={{ mb: 2 }}
+      id="filter-section"
+    >
 
-        <TextField
-          label="Start date"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-        />
+      {/* User Dropdown */}
+      <FormControl sx={{ minWidth: 220 }} id="select-user-container">
+        <InputLabel id="select-user-label">Select User</InputLabel>
 
-        <TextField
-          label="End date"
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-        />
-
-        {/* <Button variant="contained" onClick={handleSearch} disabled={!selectedUserId}>
-          Search
-        </Button>
-
-        <Button variant="outlined" onClick={handleClearFilters}>
-          Clear
-        </Button> */}
-      </Stack>
-
-      {/* Results */}
-      <Box>
-        {logsLoading ? (
-          <Box display="flex" alignItems="center" justifyContent="center" py={6}>
-            <CircularProgress />
+        {usersLoading ? (
+          <Box display="flex" alignItems="center" px={2} py={1} id="loading-users">
+            <CircularProgress size={20} id="loading-users-spinner" />
+            <Typography sx={{ ml: 1 }}></Typography>
           </Box>
-        ) : logsError ? (
-          <Typography color="error">{logsError}</Typography>
-        ) : !selectedUserId ? (
-          <Typography>Please select a user to view attendance logs.</Typography>
-        ) : logs.length === 0 ? (
-          <Typography>No attendance records found for the selected filters.</Typography>
         ) : (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Clock In</TableCell>
-                <TableCell>Clock Out</TableCell>
-                <TableCell>Status</TableCell>
-                {/* <TableCell>Log ID</TableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {logs.map((log) => (
-                <TableRow key={log.attendance_log_id}>
-                  <TableCell>{new Date(log.date).toLocaleDateString()}</TableCell>
-                  <TableCell>{formatDateTime(log.clock_in_time)}</TableCell>
-                  <TableCell>{formatDateTime(log.clock_out_time)}</TableCell>
-                  <TableCell>{log.attendance_status}</TableCell>
-                  {/* <TableCell>{String(log.attendance_log_id)}</TableCell> */}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </Box>
+          <Select
+            id="select-user"
+            labelId="select-user-label"
+            value={selectedUserId}
+            label="Select User"
+            onChange={(e) => handleUserChange(e.target.value as number)}
+            displayEmpty
+          >
+            <MenuItem value="" id="select-user-empty">
+              <em></em>
+            </MenuItem>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Box display="flex" justifyContent="center" mt={2}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(_e, value) => setPage(value)}
-            color="primary"
-          />
+            {users.map((u) => (
+              <MenuItem
+                key={u.user_id}
+                value={u.user_id}
+                id={`select-user-option-${u.user_id}`}
+              >
+                {u.display_name}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+
+        {usersError && (
+          <Typography color="error" variant="caption" id="users-error">
+            {usersError}
+          </Typography>
+        )}
+      </FormControl>
+
+      {/* Date Inputs */}
+      <TextField
+        label="Start date"
+        type="date"
+        id="start-date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <TextField
+        label="End date"
+        type="date"
+        id="end-date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+      />
+
+      {/* If Search & Clear buttons are re-enabled */}
+      {/* <Button id="btn-search" variant="contained" onClick={handleSearch} disabled={!selectedUserId}>
+        Search
+      </Button>
+
+      <Button id="btn-clear" variant="outlined" onClick={handleClearFilters}>
+        Clear
+      </Button> */}
+    </Stack>
+
+    {/* Results */}
+    <Box id="results-section">
+      {logsLoading ? (
+        <Box display="flex" alignItems="center" justifyContent="center" py={6} id="loading-logs">
+          <CircularProgress id="loading-logs-spinner" />
         </Box>
+      ) : logsError ? (
+        <Typography color="error" id="logs-error">{logsError}</Typography>
+      ) : !selectedUserId ? (
+        <Typography id="no-user-selected">Please select a user to view attendance logs.</Typography>
+      ) : logs.length === 0 ? (
+        <Typography id="no-logs">No attendance records found for the selected filters.</Typography>
+      ) : (
+        <Table id="logs-table">
+          <TableHead id="logs-table-head">
+            <TableRow>
+              <TableCell id="col-date">Date</TableCell>
+              <TableCell id="col-clock-in">Clock In</TableCell>
+              <TableCell id="col-clock-out">Clock Out</TableCell>
+              <TableCell id="col-status">Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody id="logs-table-body">
+            {logs.map((log) => (
+              <TableRow key={log.attendance_log_id} id={`log-row-${log.attendance_log_id}`}>
+                <TableCell id={`log-date-${log.attendance_log_id}`}>
+                  {new Date(log.date).toLocaleDateString()}
+                </TableCell>
+                <TableCell id={`log-clock-in-${log.attendance_log_id}`}>
+                  {formatDateTime(log.clock_in_time)}
+                </TableCell>
+                <TableCell id={`log-clock-out-${log.attendance_log_id}`}>
+                  {formatDateTime(log.clock_out_time)}
+                </TableCell>
+                <TableCell id={`log-status-${log.attendance_log_id}`}>
+                  {log.attendance_status}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </Box>
-  );
+
+    {/* Pagination */}
+    {totalPages > 1 && (
+      <Box display="flex" justifyContent="center" mt={2} id="pagination-section">
+        <Pagination
+          id="pagination"
+          count={totalPages}
+          page={page}
+          onChange={(_e, value) => setPage(value)}
+          color="primary"
+        />
+      </Box>
+    )}
+  </Box>
+);
+
 };
 
 export default AttendanceLog;
