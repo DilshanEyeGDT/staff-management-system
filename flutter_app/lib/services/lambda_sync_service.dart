@@ -126,4 +126,26 @@ class LambdaSyncService {
 
     return jsonDecode(response.body);
   }
+
+  // ------------------ GET AVAILABLE ROOMS ------------------
+  Future<List<dynamic>?> getAvailableRooms(String idToken) async {
+    try {
+      final url = Uri.parse("$baseUrl/api/v1/rooms");
+      final response = await http.get(
+        url,
+        headers: {"Authorization": idToken, "Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return body["rooms"]; // matches your API response
+      } else {
+        safePrint("Failed fetching rooms: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      safePrint("Error in getAvailableRooms: $e");
+      return null;
+    }
+  }
 }
