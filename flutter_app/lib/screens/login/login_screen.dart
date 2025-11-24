@@ -2,8 +2,8 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
-import '../services/auth_service.dart';
-import 'home_screen.dart';
+import '../../services/auth_service.dart';
+import '../home_screen.dart';
 import 'register_screen.dart';
 import 'forgot_password_screen.dart';
 

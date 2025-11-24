@@ -29,7 +29,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test:ui": "mocha tests/ui --timeout 60000 --reporter mochawesome"
+    "test:ui": "mocha tests/ui --timeout 60000 --reporter mochawesome",
+    "test:leave": "mocha tests/leave_attendance --timeout 60000 --reporter mochawesome"
   },
   "eslintConfig": {
     "extends": [
