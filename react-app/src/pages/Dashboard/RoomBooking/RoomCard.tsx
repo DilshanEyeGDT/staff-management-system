@@ -18,6 +18,7 @@ interface RoomCardProps {
   equipments: string[];
   is_active: boolean;
   created_at: string;
+  onClick: () => void;
 }
 
 const RoomCard: React.FC<RoomCardProps> = ({
@@ -29,9 +30,11 @@ const RoomCard: React.FC<RoomCardProps> = ({
   equipments,
   is_active,
   created_at,
+  onClick,
 }) => {
   return (
     <Card
+      onClick={onClick}
       sx={{
       mb: 2,
       p: 2,
@@ -42,7 +45,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
       justifyContent: "space-between",
       borderLeft: "6px solid #1976d2",
       transition: "0.2s",
-      "&:hover": { boxShadow: 4 },
+      "&:hover": { transform: "scale(1.02)" },
       }}
       id={`room-card-${room_id}`}
     >

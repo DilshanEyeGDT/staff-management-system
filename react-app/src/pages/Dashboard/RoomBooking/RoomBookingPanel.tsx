@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import RoomList from "./RoomList";
+import RoomBookingsList from "./RoomBooking";
+import MyBookings from "./MyBookings";
+import RoomUtilization from "./RoomUtilization";
 
 const RoomBookingPage: React.FC = () => {
     const [tab, setTab] = useState(0);
@@ -19,14 +22,19 @@ const RoomBookingPage: React.FC = () => {
       id="room-booking-tabs"
     >
       <Tab
-        label="Create Rooms"
+        label="Add Rooms & Reservations"
         id="tab-room-booking"
         data-testid="tab-room-booking"
       />
       <Tab
-        label="Room Reservations"
+        label="All Reservations"
         id="tab-room-reservations"
         data-testid="tab-room-reservations"
+      />
+      <Tab
+        label="My Bookings"
+        id="tab-my-bookings"
+        data-testid="tab-my-bookings"
       />
       <Tab
         label="Rooms KPI"
@@ -44,13 +52,19 @@ const RoomBookingPage: React.FC = () => {
 
       {tab === 1 && (
         <Box id="tab-content-room-reservations">
-          <div>Room Reservations Content Here</div>
+          <RoomBookingsList />
         </Box>
       )}
 
       {tab === 2 && (
+        <Box id="tab-content-my-bookings">
+          <MyBookings />
+        </Box>
+      )}
+
+      {tab === 3 && (
         <Box id="tab-content-kpi">
-          <div>Rooms KPI Content Here</div>
+          <RoomUtilization />
         </Box>
       )}
     </Box>

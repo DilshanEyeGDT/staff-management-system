@@ -16,6 +16,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import axiosLambda from "../../../axiosLambda";
 import RoomCard from "./RoomCard";
+import { useNavigate } from "react-router-dom";
 
 interface Room {
   room_id: number;
@@ -32,6 +33,7 @@ const RoomsList: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -135,6 +137,7 @@ const RoomsList: React.FC = () => {
             equipments={room.equipments}
             is_active={room.is_active}
             created_at={room.created_at}
+            onClick={() => navigate(`/rooms/${room.room_id}`)}
           />
         ))}
 
