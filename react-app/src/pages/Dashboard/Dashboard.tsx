@@ -8,6 +8,7 @@ import ProfileSection from "./Auth/ProfileSection";
 import UsersSection from "./Auth/UsersSection";
 import RoleAssignSection from "./Auth/RoleAssignSection";
 import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
+import RoomBookingPage from "./RoomBooking/Room&ResourcePanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -101,6 +102,8 @@ const Dashboard: React.FC = () => {
         return <RoleAssignSection users={users} roleChanges={roleChanges} setRoleChanges={setRoleChanges} />;
       case "leaveAttendance":
         return <LeaveAttendance />;
+      case "roomBooking":
+        return <RoomBookingPage />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -161,7 +164,7 @@ const Dashboard: React.FC = () => {
                 </ListItemButton>
               </ListItem>
 
-              {/* ⭐ NEW MENU ITEM */}
+              {/* Leave & Attendance */}
               <ListItem disablePadding>
                 <ListItemButton
                   id="nav-leaveAttendance"
@@ -169,6 +172,17 @@ const Dashboard: React.FC = () => {
                   onClick={() => setSelectedPage("leaveAttendance")}
                 >
                   <ListItemText primary="Leave & Attendance" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Room Booking */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-roomBooking"
+                  selected={selectedPage === "roomBooking"}
+                  onClick={() => setSelectedPage("roomBooking")}
+                >
+                  <ListItemText primary="Rooms & Resources" />
                 </ListItemButton>
               </ListItem>
             </>
