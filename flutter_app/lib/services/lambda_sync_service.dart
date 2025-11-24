@@ -148,4 +148,52 @@ class LambdaSyncService {
       return null;
     }
   }
+
+  // ------------------ GET ROOM AVAILABILITY ------------------
+  Future<List<dynamic>?> getRoomAvailability(String idToken, int roomId) async {
+    try {
+      final url = Uri.parse(
+        "$baseUrl/api/v1/rooms/availability?room_id=$roomId",
+      );
+      final response = await http.get(
+        url,
+        headers: {"Authorization": idToken, "Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return body['timeline']; // array of time slots
+      } else {
+        safePrint("Failed fetching room availability: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      safePrint("Error in getRoomAvailability: $e");
+      return null;
+    }
+  }
+
+  // ------------------ CREATE ROOM BOOKING ------------------
+  Future<http.Response> bookRoom({
+    required String idToken,
+    required int roomId,
+    required int userId,
+    required DateTime startTime,
+    required DateTime endTime,
+  }) async {
+    final url = Uri.parse("$baseUrl/api/v1/bookings");
+
+    final body = jsonEncode({
+      "room_id": roomId,
+      "user_id": userId,
+      "start_time": startTime.toIso8601String(),
+      "end_time": endTime.toIso8601String(),
+    });
+
+    return await http.post(
+      url,
+      headers: {"Authorization": idToken, "Content-Type": "application/json"},
+      body: body,
+    );
+  }
 }
