@@ -92,7 +92,6 @@ const cancelBooking = async (booking_id: string) => {
   }
 };
 
-
   useEffect(() => {
     const load = async () => {
       const uid = await fetchCurrentUser();
@@ -102,102 +101,107 @@ const cancelBooking = async (booking_id: string) => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
+  <div id="my-bookings-page" style={{ padding: "20px" }}>
 
-      {/* Loading */}
-      {loading && <p>Loading your bookings...</p>}
+    {/* Loading */}
+    {loading && <p id="my-bookings-loading">Loading your bookings...</p>}
 
-      {/* Error */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    {/* Error */}
+    {error && <p id="my-bookings-error" style={{ color: "red" }}>{error}</p>}
 
-      {/* Empty State */}
-      {!loading && bookings.length === 0 && (
-        <p>You have no bookings yet.</p>
-      )}
+    {/* Empty State */}
+    {!loading && bookings.length === 0 && (
+      <p id="my-bookings-empty">You have no bookings yet.</p>
+    )}
 
-      {/* Booking List */}
-      {!loading &&
-        bookings.length > 0 &&
-        bookings.map((b) => (
-          <div
-            key={b.booking_id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "16px",
-              marginBottom: "16px",
-              borderRadius: "10px",
-            }}
-          >
-            <h3>{b.room_name}</h3>
-
-            <p>
-              <strong>Status:</strong>{" "}
-              <span
-                style={{
-                  color:
-                    b.status === "approved"
-                      ? "green"
-                      : b.status === "cancelled"
-                      ? "red"
-                      : "orange",
-                }}
-              >
-                {b.status}
-              </span>
-            </p>
-
-            <p>
-              <strong>Start:</strong>{" "}
-              {new Date(b.start_time).toLocaleString()}
-            </p>
-
-            <p>
-              <strong>End:</strong>{" "}
-              {new Date(b.end_time).toLocaleString()}
-            </p>
-
-            {/* <p>
-              <strong>Created:</strong>{" "}
-              {new Date(b.created_at).toLocaleString()}
-            </p> */}
-
-            {/* Cancel Button */}
-            {b.status !== "cancelled" && (
-              <button
-                onClick={() => cancelBooking(b.booking_id)}
-                style={{
-                  marginTop: "10px",
-                  padding: "8px 16px",
-                  background: "#d32f2f",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Cancel Booking
-              </button>
-            )}
-          </div>
-        ))}
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
+    {/* Booking List */}
+    {!loading &&
+      bookings.length > 0 &&
+      bookings.map((b) => (
+        <div
+          key={b.booking_id}
+          id={`booking-card-${b.booking_id}`}
+          style={{
+            border: "1px solid #ccc",
+            padding: "16px",
+            marginBottom: "16px",
+            borderRadius: "10px",
+          }}
         >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-    </div>
-  );
+          <h3 id={`booking-room-name-${b.booking_id}`}>{b.room_name}</h3>
+
+          <p>
+            <strong>Status:</strong>{" "}
+            <span
+              id={`booking-status-${b.booking_id}`}
+              style={{
+                color:
+                  b.status === "approved"
+                    ? "green"
+                    : b.status === "cancelled"
+                    ? "red"
+                    : "orange",
+              }}
+            >
+              {b.status}
+            </span>
+          </p>
+
+          <p>
+            <strong>Start:</strong>{" "}
+            <span id={`booking-start-${b.booking_id}`}>
+              {new Date(b.start_time).toLocaleString()}
+            </span>
+          </p>
+
+          <p>
+            <strong>End:</strong>{" "}
+            <span id={`booking-end-${b.booking_id}`}>
+              {new Date(b.end_time).toLocaleString()}
+            </span>
+          </p>
+
+          {/* Cancel Button */}
+          {b.status !== "cancelled" && (
+            <button
+              id={`booking-cancel-btn-${b.booking_id}`}
+              onClick={() => cancelBooking(b.booking_id)}
+              style={{
+                marginTop: "10px",
+                padding: "8px 16px",
+                background: "#d32f2f",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Cancel Booking
+            </button>
+          )}
+        </div>
+      ))}
+
+    {/* Snackbar */}
+    <Snackbar
+      id="my-bookings-snackbar"
+      open={snackbar.open}
+      autoHideDuration={3000}
+      onClose={handleCloseSnackbar}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+    >
+      <Alert
+        id="my-bookings-snackbar-alert"
+        onClose={handleCloseSnackbar}
+        severity={snackbar.severity}
+        variant="filled"
+      >
+        {snackbar.message}
+      </Alert>
+    </Snackbar>
+  </div>
+);
+
 };
 
 export default MyBookings;

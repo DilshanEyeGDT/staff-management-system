@@ -98,82 +98,87 @@ const RoomAvailability: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Room Availability - {roomName}
-      </Typography>
+  <Box id="room-availability-page" sx={{ p: 2 }}>
+    <Typography id="room-availability-title" variant="h5" sx={{ mb: 2 }}>
+      Room Availability - {roomName}
+    </Typography>
 
-      {loading && (
-        <Box sx={{ textAlign: "center" }}>
-          <CircularProgress />
-        </Box>
-      )}
+    {loading && (
+      <Box id="room-availability-loading" sx={{ textAlign: "center" }}>
+        <CircularProgress />
+      </Box>
+    )}
 
-      {error && <Alert severity="error">{error}</Alert>}
+    {error && <Alert id="room-availability-error" severity="error">{error}</Alert>}
 
-      {/* Timeline */}
-      {timeline.map((t, i) => (
-        <Box
-          key={i}
-          sx={{
-            p: 2,
-            mt: 2,
-            borderRadius: 2,
-            background: t.status === "free" ? "#d4ffd4" : "#ffd4d4",
-          }}
+    {/* Timeline */}
+    {timeline.map((t, i) => (
+      <Box
+        key={i}
+        id={`timeline-item-${i}`}
+        sx={{
+          p: 2,
+          mt: 2,
+          borderRadius: 2,
+          background: t.status === "free" ? "#d4ffd4" : "#ffd4d4",
+        }}
+      >
+        <Typography id={`timeline-status-${i}`}>Status: {t.status}</Typography>
+        <Typography id={`timeline-time-${i}`}>
+          {new Date(t.start_time).toLocaleString()} → {new Date(t.end_time).toLocaleString()}
+        </Typography>
+      </Box>
+    ))}
+
+    {/* Booking Form */}
+    {timeline.some((t) => t.status === "free") && (
+      <Box id="room-booking-form" sx={{ mt: 4 }}>
+        <Typography id="room-booking-form-title" variant="h6">Book This Room</Typography>
+
+        <TextField
+          id="booking-start-time"
+          fullWidth
+          label="Start Time"
+          type="datetime-local"
+          sx={{ mt: 2 }}
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+
+        <TextField
+          id="booking-end-time"
+          fullWidth
+          label="End Time"
+          type="datetime-local"
+          sx={{ mt: 2 }}
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+
+        <Button
+          id="booking-submit-btn"
+          variant="contained"
+          sx={{ mt: 2 }}
+          onClick={handleBooking}
         >
-          <Typography>Status: {t.status}</Typography>
-          <Typography>
-            {new Date(t.start_time).toLocaleString()} →{" "}
-            {new Date(t.end_time).toLocaleString()}
-          </Typography>
-        </Box>
-      ))}
+          Book Room
+        </Button>
+      </Box>
+    )}
 
-      {/* If free → show booking form */}
-      {timeline.some((t) => t.status === "free") && (
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h6">Book This Room</Typography>
+    <Snackbar
+      id="room-booking-snackbar"
+      open={snackbarOpen}
+      onClose={() => setSnackbarOpen(false)}
+      message={snackbarMsg}
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      autoHideDuration={4000}
+    />
+  </Box>
+);
 
-          <TextField
-            fullWidth
-            label="Start Time"
-            type="datetime-local"
-            sx={{ mt: 2 }}
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          <TextField
-            fullWidth
-            label="End Time"
-            type="datetime-local"
-            sx={{ mt: 2 }}
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            InputLabelProps={{ shrink: true }}
-          />
-
-          <Button
-            variant="contained"
-            sx={{ mt: 2 }}
-            onClick={handleBooking}
-          >
-            Book Room
-          </Button>
-        </Box>
-      )}
-
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => setSnackbarOpen(false)}
-        message={snackbarMsg}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        autoHideDuration={4000}
-      />
-    </Box>
-  );
 };
 
 export default RoomAvailability;

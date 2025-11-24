@@ -8,7 +8,7 @@ import ProfileSection from "./Auth/ProfileSection";
 import UsersSection from "./Auth/UsersSection";
 import RoleAssignSection from "./Auth/RoleAssignSection";
 import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
-import RoomBookingPage from "./RoomBooking/RoomBookingPanel";
+import RoomBookingPage from "./RoomBooking/Room&ResourcePanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
