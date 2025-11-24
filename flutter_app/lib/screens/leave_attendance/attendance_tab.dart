@@ -156,6 +156,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
             children: [
               Expanded(
                 child: ElevatedButton(
+                  key: const Key('button_clock_in'), // added key
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -172,6 +173,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
+                  key: const Key('button_clock_out'), // added key
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -191,19 +193,28 @@ class _AttendanceTabState extends State<AttendanceTab> {
           // --------- SPACING BELOW BUTTONS ---------
           const SizedBox(height: 24),
 
-          // --------- PLACEHOLDER FOR LATER CONTENT ---------
-          // ---------------- ATTENDANCE LOGS ----------------
+          // --------- ATTENDANCE LOGS ---------
           Expanded(
             child: isLogsLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      key: Key('loading_indicator'),
+                    ),
+                  )
                 : Column(
                     children: [
                       Expanded(
                         child: ListView.builder(
+                          key: const Key(
+                            'attendance_log_list',
+                          ), // added key for ListView
                           itemCount: displayLogs.length,
                           itemBuilder: (context, index) {
                             final log = displayLogs[index];
                             return Card(
+                              key: Key(
+                                'attendance_log_card_$index',
+                              ), // unique key per log
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -211,9 +222,13 @@ class _AttendanceTabState extends State<AttendanceTab> {
                               child: ListTile(
                                 title: Text(
                                   "Date: ${log.date.split('T')[0]}  Status: ${log.status}",
+                                  key: Key('log_title_$index'), // key for title
                                 ),
                                 subtitle: Text(
                                   "Clock In: ${formatTime(log.clockIn)}\nClock Out: ${formatTime(log.clockOut)}",
+                                  key: Key(
+                                    'log_subtitle_$index',
+                                  ), // key for subtitle
                                 ),
                               ),
                             );
@@ -223,6 +238,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
                       // SEE MORE BUTTON
                       if (attendanceLogs.length > 5 && !showAllLogs)
                         ElevatedButton(
+                          key: const Key('button_see_more'), // added key
                           onPressed: () {
                             setState(() {
                               showAllLogs = true;

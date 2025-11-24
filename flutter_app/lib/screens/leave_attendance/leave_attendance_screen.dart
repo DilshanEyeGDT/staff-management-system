@@ -16,15 +16,29 @@ class _LeaveAttendanceScreenState extends State<LeaveAttendanceScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Leave & Attendance"),
+          title: const Text(
+            "Leave & Attendance",
+            key: Key('appbar_title'), // key for AppBar title
+          ),
           bottom: const TabBar(
             tabs: [
-              Tab(text: "Leave"),
-              Tab(text: "Attendance"),
+              Tab(
+                key: Key('tab_leave'), // key for Leave tab
+                text: "Leave",
+              ),
+              Tab(
+                key: Key('tab_attendance'), // key for Attendance tab
+                text: "Attendance",
+              ),
             ],
           ),
         ),
-        body: const TabBarView(children: [LeaveTab(), AttendanceTab()]),
+        body: const TabBarView(
+          children: [
+            LeaveTab(key: Key('leave_tab')), // key for LeaveTab
+            AttendanceTab(key: Key('attendance_tab')), // key for AttendanceTab
+          ],
+        ),
       ),
     );
   }
