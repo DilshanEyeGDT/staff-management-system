@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dart';
 import 'package:flutter_app/screens/login/login_screen.dart';
+import 'package:flutter_app/screens/room_resources/room_resources_screen.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
 import '../services/auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -289,6 +290,48 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               "Leave & Attendance",
                               key: Key('leave-attendance-text'),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // room & resources card
+                  SizedBox(height: 24),
+                  Card(
+                    key: const Key('room-resources-card'),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      key: const Key('room-resources-card-inkwell'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RoomResourcesScreen(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.meeting_room,
+                              size: 32,
+                              key: Key('room-resources-icon'),
+                            ),
+                            SizedBox(width: 16),
+                            Text(
+                              "Room & Resources",
+                              key: Key('room-resources-text'),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
