@@ -196,4 +196,49 @@ class LambdaSyncService {
       body: body,
     );
   }
+
+  // ------------------ GET USER BOOKINGS ------------------
+  Future<List<dynamic>?> getUserBookings(String idToken) async {
+    try {
+      // get current user ID first
+      final userId = await getCurrentUserId(idToken);
+      if (userId == null) {
+        safePrint("Error: User ID not found");
+        return null;
+      }
+
+      final url = Uri.parse("$baseUrl/api/v1/bookings?user_id=$userId");
+
+      final response = await http.get(
+        url,
+        headers: {"Authorization": idToken, "Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        return body['data'] as List<dynamic>?;
+      } else {
+        safePrint("Failed fetching bookings: ${response.statusCode}");
+        return null;
+      }
+    } catch (e) {
+      safePrint("Error in getUserBookings: $e");
+      return null;
+    }
+  }
+
+  // ------------------ CANCEL BOOKING ------------------
+  Future<bool> cancelBooking(
+    String idToken,
+    String bookingId,
+    int userId,
+  ) async {
+    final url = Uri.parse("$baseUrl/api/v1/bookings?booking_id=$bookingId");
+    final response = await http.delete(
+      url,
+      headers: {"Authorization": idToken, "Content-Type": "application/json"},
+      body: jsonEncode({"user_id": userId}),
+    );
+    return response.statusCode == 200;
+  }
 }
