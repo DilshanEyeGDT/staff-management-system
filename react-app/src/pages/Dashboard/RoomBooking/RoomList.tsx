@@ -146,7 +146,7 @@ const RoomsList: React.FC = () => {
       )}
 
       {/* Floating Add Button */}
-      <Fab
+      <Fab id="room-add-floating-button"
         color="primary"
         aria-label="add"
         sx={{ position: "fixed", bottom: 24, right: 24 }}
