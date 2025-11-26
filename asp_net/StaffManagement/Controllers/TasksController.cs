@@ -45,5 +45,19 @@ namespace StaffManagement.Controllers
             var task = await _taskService.CreateTaskAsync(dto);
             return CreatedAtAction(nameof(GetTasks), new { task_id = task.TaskId }, task);
         }
+
+        [HttpPatch("{taskId}")]
+        public async Task<IActionResult> UpdateTask(
+        Guid taskId,
+        [FromBody] UpdateTaskDto dto)
+        {
+            var updatedTask = await _taskService.UpdateTaskAsync(taskId, dto);
+
+            if (updatedTask == null)
+                return NotFound(new { message = "Task not found" });
+
+            return Ok(updatedTask);
+        }
+
     }
 }

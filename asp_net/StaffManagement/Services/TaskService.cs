@@ -87,5 +87,52 @@ namespace StaffManagement.Services
             await _db.SaveChangesAsync();
             return task;
         }
+
+        public async Task<TaskDto?> UpdateTaskAsync(Guid taskId, UpdateTaskDto dto)
+        {
+            var task = await _db.Tasks
+                .Include(t => t.Notes)
+                .FirstOrDefaultAsync(t => t.TaskId == taskId && t.DeletedAt == null);
+
+            if (task == null) return null;
+
+            // Only update fields that are provided
+            if (!string.IsNullOrWhiteSpace(dto.Status))
+                task.Status = dto.Status;
+
+            if (!string.IsNullOrWhiteSpace(dto.Title))
+                task.Title = dto.Title;
+
+            if (!string.IsNullOrWhiteSpace(dto.Description))
+                task.Description = dto.Description;
+
+            if (dto.Priority.HasValue)
+                task.Priority = dto.Priority.Value;
+
+            if (dto.DueAt.HasValue)
+                task.DueAt = dto.DueAt;
+
+            if (dto.AssigneeUserId.HasValue)
+                task.AssigneeUserId = dto.AssigneeUserId;
+
+            task.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+
+            // Return minimal DTO
+            return new TaskDto
+            {
+                TaskId = task.TaskId,
+                Title = task.Title,
+                Description = task.Description,
+                Priority = task.Priority,
+                Status = task.Status,
+                DueAt = task.DueAt,
+                CreatedByUserId = task.CreatedByUserId,
+                AssigneeUserId = task.AssigneeUserId,
+                NotesCount = task.Notes.Count
+            };
+        }
+
     }
 }
