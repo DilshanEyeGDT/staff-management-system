@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StaffManagement.Dtos;
 using StaffManagement.Services;
 
 namespace StaffManagement.Controllers
@@ -35,5 +36,24 @@ namespace StaffManagement.Controllers
                 schedules
             });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateSchedule([FromBody] CreateScheduleDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new { status = "error", message = "Request body cannot be empty" });
+
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest(new { status = "error", message = "Title is required" });
+
+            if (dto.StartAt >= dto.EndAt)
+                return BadRequest(new { status = "error", message = "StartAt must be before EndAt" });
+
+            var createdSchedule = await _scheduleService.CreateScheduleAsync(dto);
+
+            return CreatedAtAction(nameof(GetSchedules),
+                new { schedule_id = createdSchedule.ScheduleId }, createdSchedule);
+        }
+
     }
 }

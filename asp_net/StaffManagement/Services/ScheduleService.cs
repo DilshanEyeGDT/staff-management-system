@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StaffManagement.Dtos;
 using StaffManagement.Persistence;
+using StaffManagement.Persistence.Entities;
 
 namespace StaffManagement.Services
 {
@@ -64,5 +65,46 @@ namespace StaffManagement.Services
 
             return (schedules, totalCount);
         }
+
+        public async Task<ScheduleDto> CreateScheduleAsync(CreateScheduleDto dto)
+        {
+            var schedule = new Schedule
+            {
+                ScheduleId = Guid.NewGuid(),
+                CreatedByUserId = dto.CreatedByUserId,
+                AssigneeUserId = dto.AssigneeUserId ?? dto.CreatedByUserId,
+                TeamId = dto.TeamId,
+                Title = dto.Title,
+                Description = dto.Description,
+                StartAt = dto.StartAt,
+                EndAt = dto.EndAt,
+                RecurrenceRule = dto.RecurrenceRule,
+                Metadata = dto.Metadata,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _db.Schedules.Add(schedule);
+            await _db.SaveChangesAsync();
+
+            // Return DTO
+            return new ScheduleDto
+            {
+                ScheduleId = schedule.ScheduleId,
+                CreatedByUserId = schedule.CreatedByUserId,
+                AssigneeUserId = schedule.AssigneeUserId,
+                TeamId = schedule.TeamId,
+                Title = schedule.Title,
+                Description = schedule.Description,
+                StartAt = schedule.StartAt,
+                EndAt = schedule.EndAt,
+                RecurrenceRule = schedule.RecurrenceRule,
+                Metadata = schedule.Metadata,
+                CreatedAt = schedule.CreatedAt,
+                UpdatedAt = schedule.UpdatedAt,
+                DeletedAt = schedule.DeletedAt
+            };
+        }
+
     }
 }
