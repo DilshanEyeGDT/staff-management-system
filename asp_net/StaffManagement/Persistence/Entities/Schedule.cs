@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace StaffManagement.Persistence.Entities;
 
+[Table("schedules")]
 public class Schedule
 {
     [Column("schedule_id")]

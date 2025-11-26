@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StaffManagement.Persistence.Entities;
 
+[Table("users")]
 public class User
 {
     [Column("id")]

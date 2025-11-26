@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StaffManagement.Persistence.Entities;
 
+[Table("task_notes")]
 public class TaskNote
 {
     [Column("task_note_id")]

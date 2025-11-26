@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace StaffManagement.Persistence.Entities;
 
+[Table("import_jobs")]
 public class ImportJob
 {
     [Column("job_id")]

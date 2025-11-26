@@ -5,6 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace StaffManagement.Persistence.Entities;
 
+[Table("tasks")]
 public class TaskItem
 {
     [Column("task_id")]
