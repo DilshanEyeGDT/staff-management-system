@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using StaffManagement.Persistence;
+using StaffManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<ScheduleService>();      //register ScheduleService
+
 
 //database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
