@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StaffManagement.Dtos;
 using StaffManagement.Services;
 
 namespace StaffManagement.Controllers
@@ -15,7 +16,7 @@ namespace StaffManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTasks(
+        public async Task<IActionResult> GetTasks(          //get task
             [FromQuery] int? assignee,
             [FromQuery] string? status,
             [FromQuery] int page = 1,
@@ -30,6 +31,19 @@ namespace StaffManagement.Controllers
                 size,
                 tasks
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTask([FromBody] CreateTaskDto dto)   //create a task
+        {
+            if (dto == null)
+                return BadRequest(new { status = "error", message = "Request body cannot be empty" });
+
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest(new { status = "error", message = "Title is required" });
+
+            var task = await _taskService.CreateTaskAsync(dto);
+            return CreatedAtAction(nameof(GetTasks), new { task_id = task.TaskId }, task);
         }
     }
 }
