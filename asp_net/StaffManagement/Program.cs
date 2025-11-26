@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<ScheduleService>();      //register ScheduleService
-
+builder.Services.AddScoped<TaskService>();          //register TaskService
 
 //database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
