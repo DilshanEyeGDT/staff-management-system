@@ -142,6 +142,18 @@ namespace StaffManagement.Services
             return (true, "Updated");
         }
 
+        public async Task<bool> DeleteScheduleAsync(Guid scheduleId)    //delete a schedule
+        {
+            var schedule = await _db.Schedules.FindAsync(scheduleId);
+
+            if (schedule == null)
+                return false;
+
+            _db.Schedules.Remove(schedule);
+            await _db.SaveChangesAsync();
+
+            return true;
+        }
 
     }
 }

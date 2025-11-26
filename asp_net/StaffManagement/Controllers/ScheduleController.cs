@@ -55,7 +55,7 @@ namespace StaffManagement.Controllers
                 new { schedule_id = createdSchedule.ScheduleId }, createdSchedule);
         }
 
-        [HttpPatch("{scheduleId:guid}")]
+        [HttpPatch("{scheduleId:guid}")]    // update schedule by id
         public async Task<IActionResult> UpdateSchedule(Guid scheduleId, [FromBody] ScheduleUpdateDto dto)
         {
             if (dto == null)
@@ -68,6 +68,18 @@ namespace StaffManagement.Controllers
 
             return Ok(new { status = "ok", message = "Schedule updated successfully" });
         }
+
+        [HttpDelete("{schedule_id}")]   // delete schedule
+        public async Task<IActionResult> DeleteSchedule(Guid schedule_id)
+        {
+            var deleted = await _scheduleService.DeleteScheduleAsync(schedule_id);
+
+            if (!deleted)
+                return NotFound(new { status = "error", message = "Schedule not found" });
+
+            return Ok(new { status = "ok", message = "Schedule deleted successfully" });
+        }
+
 
     }
 }
