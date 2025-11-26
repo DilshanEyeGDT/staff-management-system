@@ -14,7 +14,7 @@ namespace StaffManagement.Services
             _db = db;
         }
 
-        public async Task<(List<ScheduleDto> schedules, int totalCount)> GetSchedulesAsync(
+        public async Task<(List<ScheduleDto> schedules, int totalCount)> GetSchedulesAsync( //get schedule 
             int? userId = null,
             Guid? teamId = null,
             DateTimeOffset? start = null,
@@ -66,7 +66,7 @@ namespace StaffManagement.Services
             return (schedules, totalCount);
         }
 
-        public async Task<ScheduleDto> CreateScheduleAsync(CreateScheduleDto dto)
+        public async Task<ScheduleDto> CreateScheduleAsync(CreateScheduleDto dto)   // create schedule
         {
             var schedule = new Schedule
             {
@@ -105,6 +105,43 @@ namespace StaffManagement.Services
                 DeletedAt = schedule.DeletedAt
             };
         }
+
+        public async Task<(bool Success, string Message)> UpdateScheduleAsync(Guid scheduleId, ScheduleUpdateDto dto)   //update schedule
+        {
+            var schedule = await _db.Schedules.FirstOrDefaultAsync(s => s.ScheduleId == scheduleId);
+
+            if (schedule == null)
+                return (false, "Schedule not found");
+
+            // Apply partial updates
+            if (dto.AssigneeUserId.HasValue)
+                schedule.AssigneeUserId = dto.AssigneeUserId.Value;
+
+            if (!string.IsNullOrEmpty(dto.Title))
+                schedule.Title = dto.Title;
+
+            if (dto.Description != null)
+                schedule.Description = dto.Description;
+
+            if (dto.StartAt.HasValue)
+                schedule.StartAt = dto.StartAt.Value;
+
+            if (dto.EndAt.HasValue)
+                schedule.EndAt = dto.EndAt.Value;
+
+            if (dto.RecurrenceRule != null)
+                schedule.RecurrenceRule = dto.RecurrenceRule;
+
+            if (dto.Metadata != null)
+                schedule.Metadata = dto.Metadata;
+
+            schedule.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+
+            return (true, "Updated");
+        }
+
 
     }
 }

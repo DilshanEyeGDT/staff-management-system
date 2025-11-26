@@ -15,7 +15,7 @@ namespace StaffManagement.Controllers
             _scheduleService = scheduleService;
         }
 
-        [HttpGet]
+        [HttpGet]   // get schedules
         public async Task<IActionResult> GetSchedules(
             [FromQuery] int? user_id,
             [FromQuery] Guid? team_id,
@@ -37,7 +37,7 @@ namespace StaffManagement.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost]  // create schedules
         public async Task<IActionResult> CreateSchedule([FromBody] CreateScheduleDto dto)
         {
             if (dto == null)
@@ -53,6 +53,20 @@ namespace StaffManagement.Controllers
 
             return CreatedAtAction(nameof(GetSchedules),
                 new { schedule_id = createdSchedule.ScheduleId }, createdSchedule);
+        }
+
+        [HttpPatch("{scheduleId:guid}")]
+        public async Task<IActionResult> UpdateSchedule(Guid scheduleId, [FromBody] ScheduleUpdateDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new { status = "error", message = "Invalid request body" });
+
+            var result = await _scheduleService.UpdateScheduleAsync(scheduleId, dto);
+
+            if (!result.Success)
+                return BadRequest(new { status = "error", message = result.Message });
+
+            return Ok(new { status = "ok", message = "Schedule updated successfully" });
         }
 
     }
