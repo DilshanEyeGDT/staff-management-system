@@ -11,7 +11,7 @@ public class ImportService
         _db = db;
     }
 
-    public async Task<Guid> CreateScheduleImportJobAsync(IFormFile file, int? userId)
+    public async Task<Guid> CreateScheduleImportJobAsync(IFormFile file, int? userId)   //create a schedule from import CSV job file
     {
         if (file == null || file.Length == 0)
             throw new InvalidOperationException("File is empty.");
@@ -35,4 +35,11 @@ public class ImportService
 
         return jobId;
     }
+    public async Task<ImportJob?> GetImportJobAsync(Guid jobId)     // get imported jobs detials
+    {
+        return await _db.ImportJobs
+            .AsNoTracking()
+            .FirstOrDefaultAsync(j => j.JobId == jobId);
+    }
+
 }

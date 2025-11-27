@@ -12,7 +12,7 @@ public class ImportsController : ControllerBase
         _importService = importService;
     }
 
-    [HttpPost("schedules")]
+    [HttpPost("schedules")] // import jobs using a CSV
     public async Task<IActionResult> ImportSchedules([FromForm] IFormFile file)
     {
         try
@@ -37,4 +37,26 @@ public class ImportsController : ControllerBase
             return StatusCode(500, new { message = ex.Message });
         }
     }
+
+    [HttpGet("{jobId}")]
+    public async Task<IActionResult> GetImportStatus(Guid jobId)
+    {
+        var job = await _importService.GetImportJobAsync(jobId);
+
+        if (job == null)
+            return NotFound(new { message = "Import job not found" });
+
+        return Ok(new
+        {
+            jobId = job.JobId,
+            userId = job.UserId,
+            fileName = job.FileName,
+            totalRows = job.TotalRows,
+            status = job.Status,
+            result = job.Result,
+            createdAt = job.CreatedAt,
+            updatedAt = job.UpdatedAt
+        });
+    }
+
 }
