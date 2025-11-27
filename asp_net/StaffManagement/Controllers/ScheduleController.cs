@@ -1,0 +1,85 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using StaffManagement.Dtos;
+using StaffManagement.Services;
+
+namespace StaffManagement.Controllers
+{
+    [ApiController]
+    [Route("api/v1/[controller]")]
+    public class SchedulesController : ControllerBase
+    {
+        private readonly ScheduleService _scheduleService;
+
+        public SchedulesController(ScheduleService scheduleService)
+        {
+            _scheduleService = scheduleService;
+        }
+
+        [HttpGet]   // get schedules
+        public async Task<IActionResult> GetSchedules(
+            [FromQuery] int? user_id,
+            [FromQuery] Guid? team_id,
+            [FromQuery] DateTimeOffset? start,
+            [FromQuery] DateTimeOffset? end,
+            [FromQuery] int page = 1,
+            [FromQuery] int size = 10)
+        {
+            var (schedules, totalCount) = await _scheduleService.GetSchedulesAsync(
+                user_id, team_id, start, end, page, size
+            );
+
+            return Ok(new
+            {
+                totalCount,
+                page,
+                size,
+                schedules
+            });
+        }
+
+        [HttpPost]  // create schedules
+        public async Task<IActionResult> CreateSchedule([FromBody] CreateScheduleDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new { status = "error", message = "Request body cannot be empty" });
+
+            if (string.IsNullOrWhiteSpace(dto.Title))
+                return BadRequest(new { status = "error", message = "Title is required" });
+
+            if (dto.StartAt >= dto.EndAt)
+                return BadRequest(new { status = "error", message = "StartAt must be before EndAt" });
+
+            var createdSchedule = await _scheduleService.CreateScheduleAsync(dto);
+
+            return CreatedAtAction(nameof(GetSchedules),
+                new { schedule_id = createdSchedule.ScheduleId }, createdSchedule);
+        }
+
+        [HttpPatch("{scheduleId:guid}")]    // update schedule by id
+        public async Task<IActionResult> UpdateSchedule(Guid scheduleId, [FromBody] ScheduleUpdateDto dto)
+        {
+            if (dto == null)
+                return BadRequest(new { status = "error", message = "Invalid request body" });
+
+            var result = await _scheduleService.UpdateScheduleAsync(scheduleId, dto);
+
+            if (!result.Success)
+                return BadRequest(new { status = "error", message = result.Message });
+
+            return Ok(new { status = "ok", message = "Schedule updated successfully" });
+        }
+
+        [HttpDelete("{schedule_id}")]   // delete schedule
+        public async Task<IActionResult> DeleteSchedule(Guid schedule_id)
+        {
+            var deleted = await _scheduleService.DeleteScheduleAsync(schedule_id);
+
+            if (!deleted)
+                return NotFound(new { status = "error", message = "Schedule not found" });
+
+            return Ok(new { status = "ok", message = "Schedule deleted successfully" });
+        }
+
+
+    }
+}
