@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ScheduleService>();      // register ScheduleService
 builder.Services.AddScoped<TaskService>();          // register TaskService
 builder.Services.AddScoped<ImportService>();        // register ImportJobsService
+builder.Services.AddScoped<UserService>();          // register userServices
 
 // Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
