@@ -5,14 +5,25 @@ using StaffManagement.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ScheduleService>();      //register ScheduleService
-builder.Services.AddScoped<TaskService>();          //register TaskService
-builder.Services.AddScoped<ImportService>();        //register ImportJobsService
+builder.Services.AddScoped<ScheduleService>();      // register ScheduleService
+builder.Services.AddScoped<TaskService>();          // register TaskService
+builder.Services.AddScoped<ImportService>();        // register ImportJobsService
 
-//database connection
+// Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+// Enable CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // React dev server
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 builder.Services.AddControllers();
@@ -29,8 +40,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// Use CORS BEFORE Authorization and MapControllers
+app.UseCors("AllowReactApp");
 
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
