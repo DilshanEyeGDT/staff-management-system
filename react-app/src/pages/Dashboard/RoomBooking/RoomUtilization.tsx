@@ -15,7 +15,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import axiosLambda from "../../../axiosLambda";
+import axiosLambda from "../../../axiosConfig/axiosLambda";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"; // ✅ default import

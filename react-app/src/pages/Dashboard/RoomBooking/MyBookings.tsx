@@ -1,6 +1,6 @@
 // src/pages/MyBookings.tsx
 import React, { useEffect, useState } from "react";
-import axiosLambda from "../../../axiosLambda";
+import axiosLambda from "../../../axiosConfig/axiosLambda";
 import { Snackbar, Alert } from "@mui/material";
 
 interface Booking {

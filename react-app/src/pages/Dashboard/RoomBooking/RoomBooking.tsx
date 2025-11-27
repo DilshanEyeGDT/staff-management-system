@@ -8,7 +8,7 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import axiosLambda from "../../../axiosLambda"; // adjust path if needed
+import axiosLambda from "../../../axiosConfig/axiosLambda"; // adjust path if needed
 
 interface Booking {
   booking_id: string;

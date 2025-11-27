@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import axiosLambda from "../../../axiosLambda";
+import axiosLambda from "../../../axiosConfig/axiosLambda";
 
 interface TimelineItem {
   start_time: string;

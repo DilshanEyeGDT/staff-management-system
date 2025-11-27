@@ -16,7 +16,7 @@ import {
   CircularProgress,
   Snackbar,
 } from "@mui/material";
-import axiosLambda from "../../../axiosLambda";
+import axiosLambda from "../../../axiosConfig/axiosLambda";
 
 type User = {
   user_id: number;

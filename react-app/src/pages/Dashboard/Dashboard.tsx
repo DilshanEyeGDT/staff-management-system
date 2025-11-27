@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import axios from "../../axiosConfig";
+import axios from "../../axiosConfig/axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import { toast } from "react-toastify";
 import HealthCheck from "./Auth/HealthCheck";

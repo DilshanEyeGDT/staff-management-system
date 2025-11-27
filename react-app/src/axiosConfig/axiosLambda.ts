@@ -1,6 +1,6 @@
 // src/axiosLambda.ts
 import axios, { AxiosInstance } from "axios";
-import { getToken, removeToken } from "./services/auth";
+import { getToken, removeToken } from "../services/auth";
 
 // Use Lambda base URL from env OR fallback
 const lambdaBaseURL =
