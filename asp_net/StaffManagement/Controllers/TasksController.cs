@@ -46,7 +46,7 @@ namespace StaffManagement.Controllers
             return CreatedAtAction(nameof(GetTasks), new { task_id = task.TaskId }, task);
         }
 
-        [HttpPatch("{taskId}")]
+        [HttpPatch("{taskId}")] // modify a task
         public async Task<IActionResult> UpdateTask(
         Guid taskId,
         [FromBody] UpdateTaskDto dto)
@@ -58,6 +58,29 @@ namespace StaffManagement.Controllers
 
             return Ok(updatedTask);
         }
+
+        [HttpPost("{taskId}/comments")]     // add comment to a task
+        public async Task<IActionResult> AddComment(Guid taskId, [FromBody] CreateTaskCommentDto dto)
+        {
+            if (dto == null) return BadRequest(new { message = "Request body required" });
+            if (string.IsNullOrWhiteSpace(dto.Content)) return BadRequest(new { message = "Content is required" });
+
+            try
+            {
+                var note = await _taskService.AddCommentAsync(taskId, dto);
+                return Ok(note);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // log ex if you have logging
+                return StatusCode(500, new { message = "An error occurred", detail = ex.Message });
+            }
+        }
+
 
     }
 }

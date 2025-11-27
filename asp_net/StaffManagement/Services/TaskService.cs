@@ -134,5 +134,41 @@ namespace StaffManagement.Services
             };
         }
 
+        public async Task<TaskNoteResponseDto> AddCommentAsync(Guid taskId, CreateTaskCommentDto dto)
+        {
+            var task = await _db.Tasks.FirstOrDefaultAsync(t => t.TaskId == taskId && t.DeletedAt == null);
+            if (task == null)
+                throw new InvalidOperationException("Task not found");
+
+            var userExists = await _db.Users.AnyAsync(u => u.Id == dto.CreatedByUserId);
+            if (!userExists)
+                throw new InvalidOperationException($"User {dto.CreatedByUserId} not found");
+
+            var note = new TaskNote
+            {
+                TaskNoteId = Guid.NewGuid(),
+                TaskId = taskId,
+                AuthorUserId = dto.CreatedByUserId,
+                Body = dto.Content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.TaskNotes.Add(note);
+            await _db.SaveChangesAsync();
+
+            // Return DTO (no cycles)
+            return new TaskNoteResponseDto
+            {
+                TaskNoteId = note.TaskNoteId,
+                TaskId = note.TaskId,
+                AuthorUserId = note.AuthorUserId,
+                Body = note.Body,
+                CreatedAt = note.CreatedAt
+            };
+        }
+
+
+
+
     }
 }
