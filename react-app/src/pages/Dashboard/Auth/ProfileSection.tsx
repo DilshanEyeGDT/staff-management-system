@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, TextField, Snackbar, Alert } from "@mui/material";
-import axios from "../../../axiosConfig";
-import axiosLambda from "../../../axiosLambda"; // <-- your Lambda axios client
+import axios from "../../../axiosConfig/axiosConfig";
+import axiosLambda from "../../../axiosConfig/axiosLambda"; // <-- your Lambda axios client
 
 interface Props {
   profile: any;

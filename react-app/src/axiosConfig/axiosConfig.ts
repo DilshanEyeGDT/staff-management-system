@@ -1,6 +1,6 @@
 // src/axiosConfig.ts
 import axios from "axios";
-import { getToken, removeToken } from "./services/auth";
+import { getToken, removeToken } from "../services/auth";
 
 const baseURL = process.env.REACT_APP_API_URL || "http://localhost:8080/api/v1";
 
