@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import SchedulePage from "./Schedules";
 import TasksPage from "./Tasks";
+import ScheduleImportPage from "./ScheduleImport";
 
 const TaskSchedulePage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -30,9 +31,9 @@ const TaskSchedulePage: React.FC = () => {
         data-testid="tab-tasks"
       />
       <Tab
-        label="KPI"
-        id="tab-kpi"
-        data-testid="tab-kpi"
+        label="import"
+        id="tab-import"
+        data-testid="tab-import"
       />
     </Tabs>
 
@@ -50,8 +51,8 @@ const TaskSchedulePage: React.FC = () => {
       )}
 
       {tab === 2 && (
-        <Box id="tab-content-kpi">
-          <div>task3</div>
+        <Box id="tab-content-import">
+          <ScheduleImportPage />
         </Box>
       )}
     </Box>
