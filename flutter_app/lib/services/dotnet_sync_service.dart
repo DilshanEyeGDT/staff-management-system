@@ -82,4 +82,19 @@ class DotNetSyncService {
 
     return schedules;
   }
+
+  // --------------------------------------------------
+  // Create schedules
+  // --------------------------------------------------
+  Future<bool> createSchedule(Map<String, dynamic> scheduleData) async {
+    final url = Uri.parse("$baseUrl/schedules");
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(scheduleData),
+    );
+
+    return response.statusCode == 200 || response.statusCode == 201;
+  }
 }

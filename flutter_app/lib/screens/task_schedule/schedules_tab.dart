@@ -1,6 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:flutter_app/screens/task_schedule/add_schedule_screen.dart';
 import 'package:flutter_app/screens/task_schedule/models/date_time_utils.dart';
 import 'package:flutter_app/services/dotnet_sync_service.dart';
 
@@ -53,30 +54,41 @@ class _SchedulesTabState extends State<SchedulesTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          final created = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddScheduleScreen()),
+          );
 
-    if (_schedules.isEmpty) {
-      return const Center(child: Text("No schedules found"));
-    }
-
-    return ListView.builder(
-      itemCount: _schedules.length,
-      itemBuilder: (context, index) {
-        final s = _schedules[index];
-        return Card(
-          margin: const EdgeInsets.all(12),
-          child: ListTile(
-            title: Text(s["title"]),
-            subtitle: Text(
-              "Created by: ${s["createdByUserName"]}\n"
-              "Starts: ${DateTimeUtils.formatDateTime(s["startAt"])}\n"
-              "Ends: ${DateTimeUtils.formatDateTime(s["endAt"])}",
+          if (created == true) {
+            _fetchSchedules(); // refresh after creation
+          }
+        },
+      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _schedules.isEmpty
+          ? const Center(child: Text("No schedules found"))
+          : ListView.builder(
+              itemCount: _schedules.length,
+              itemBuilder: (context, index) {
+                final s = _schedules[index];
+                return Card(
+                  margin: const EdgeInsets.all(12),
+                  child: ListTile(
+                    title: Text(s["title"]),
+                    subtitle: Text(
+                      "Created by: ${s["createdByUserName"]}\n"
+                      "Starts: ${DateTimeUtils.formatDateTime(s["startAt"])}\n"
+                      "Ends: ${DateTimeUtils.formatDateTime(s["endAt"])}",
+                    ),
+                  ),
+                );
+              },
             ),
-          ),
-        );
-      },
     );
   }
 }
