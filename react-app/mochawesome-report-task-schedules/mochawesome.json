@@ -1,0 +1,195 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 4,
+    "passes": 4,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-05T11:54:32.337Z",
+    "end": "2025-12-05T11:55:04.262Z",
+    "duration": 31925,
+    "testsRegistered": 4,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "2f19fee1-fe12-45ff-a8e2-53768bf76ab8",
+      "title": "",
+      "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\task_schedule\\task_scheduling.test.js",
+      "file": "\\tests\\task_schedule\\task_scheduling.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+          "title": "Admin Dashboard & Tasks & Schedules Tabs Test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\task_schedule\\task_scheduling.test.js",
+          "file": "\\tests\\task_schedule\\task_scheduling.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Admin Dashboard & Tasks & Schedules Tabs Test\"",
+              "fullTitle": "Admin Dashboard & Tasks & Schedules Tabs Test \"before all\" hook in \"Admin Dashboard & Tasks & Schedules Tabs Test\"",
+              "timedOut": false,
+              "duration": 29897,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "driver = await new Builder().forBrowser(\"chrome\").build();\n// Step 1: Go to Login page\nawait driver.get(BASE_URL);\n// Step 2: Click \"Sign in with Cognito\" button\nconst loginButton = await driver.findElement(By.css(\"button\"));\nawait loginButton.click();\nconsole.log(\"Please manually enter your Cognito credentials in the browser...\");\n// Step 3: Wait for dashboard to load\nconst dashboardOption = await driver.wait(\n  until.elementLocated(By.id(\"nav-tasksSchedules\")),\n  60000\n);\nassert.ok(await dashboardOption.isDisplayed(), \"Tasks & Schedules option is visible in sidebar\");\nconsole.log(\"Login successful, dashboard loaded!\");",
+              "err": {},
+              "uuid": "81551ce6-fe96-4cf2-b989-f37255b7d72f",
+              "parentUUID": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Admin Dashboard & Tasks & Schedules Tabs Test\"",
+              "fullTitle": "Admin Dashboard & Tasks & Schedules Tabs Test \"after all\" hook in \"Admin Dashboard & Tasks & Schedules Tabs Test\"",
+              "timedOut": false,
+              "duration": 356,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "5945551f-8b12-4a45-ad19-6b27a11d10ee",
+              "parentUUID": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should display Tasks & Schedules side panel option",
+              "fullTitle": "Admin Dashboard & Tasks & Schedules Tabs Test should display Tasks & Schedules side panel option",
+              "timedOut": false,
+              "duration": 37,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const tasksSchedulesOption = await driver.findElement(By.id(\"nav-tasksSchedules\"));\nassert.ok(await tasksSchedulesOption.isDisplayed(), \"Tasks & Schedules option is visible\");",
+              "err": {},
+              "uuid": "02c8e692-e914-4078-b194-78236a574bb0",
+              "parentUUID": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Schedules tab correctly",
+              "fullTitle": "Admin Dashboard & Tasks & Schedules Tabs Test should load Schedules tab correctly",
+              "timedOut": false,
+              "duration": 748,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const tasksSchedulesOption = await driver.findElement(By.id(\"nav-tasksSchedules\"));\nawait tasksSchedulesOption.click();\nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"task-schedule-title\")),\n  5000\n);\nassert.strictEqual(await pageTitle.getText(), \"Tasks & Schedules\");\nconst schedulesTab = await driver.findElement(By.id(\"tab-schedules\"));\nassert.ok(await schedulesTab.isDisplayed(), \"Schedules tab is visible\");\nconst schedulesContent = await driver.findElement(By.id(\"tab-content-schedules\"));\nassert.ok(await schedulesContent.isDisplayed(), \"Schedules tab content is visible\");\nconst userFilter = await driver.findElement(By.id(\"user-filter-control\"));\nassert.ok(await userFilter.isDisplayed(), \"User filter dropdown is visible in Schedules tab\");\nconsole.log(\"Schedules tab loaded successfully.\");",
+              "err": {},
+              "uuid": "a3dd112f-fbf1-40a9-ae17-ad9ed8b18224",
+              "parentUUID": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Tasks tab correctly",
+              "fullTitle": "Admin Dashboard & Tasks & Schedules Tabs Test should load Tasks tab correctly",
+              "timedOut": false,
+              "duration": 546,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const tasksTab = await driver.findElement(By.id(\"tab-tasks\"));\nawait tasksTab.click();\nconst tasksContent = await driver.wait(\n  until.elementLocated(By.id(\"tab-content-tasks\")),\n  5000\n);\nassert.ok(await tasksContent.isDisplayed(), \"Tasks tab content is visible\");\nconst assigneeFilter = await driver.findElement(By.id(\"assignee-filter-select\"));\nassert.ok(await assigneeFilter.isDisplayed(), \"Assignee filter dropdown is visible in Tasks tab\");\nconsole.log(\"Tasks tab loaded successfully.\");",
+              "err": {},
+              "uuid": "975fb32e-78ae-4ed0-b7f8-e462482bbe3c",
+              "parentUUID": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Import tab correctly",
+              "fullTitle": "Admin Dashboard & Tasks & Schedules Tabs Test should load Import tab correctly",
+              "timedOut": false,
+              "duration": 324,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const importTab = await driver.findElement(By.id(\"tab-import\"));\nawait importTab.click();\nconst importContent = await driver.wait(\n  until.elementLocated(By.id(\"tab-content-import\")),\n  5000\n);\nassert.ok(await importContent.isDisplayed(), \"Import tab content is visible\");\nconst csvInput = await driver.findElement(By.id(\"csv-file-input\"));\nconst uploadBtn = await driver.findElement(By.id(\"upload-csv-button\"));\nconst checkStatusBtn = await driver.findElement(By.id(\"check-status-button\"));\nassert.ok(await csvInput.isDisplayed(), \"CSV file input is visible\");\nassert.ok(await uploadBtn.isDisplayed(), \"Upload CSV button is visible\");\nassert.ok(await checkStatusBtn.isDisplayed(), \"Check Status button is visible\");\nconsole.log(\"Import tab loaded successfully.\");",
+              "err": {},
+              "uuid": "79485956-a9d2-4d66-99d1-3b51af7fc86e",
+              "parentUUID": "29c4cd47-eacc-4b5a-9ee0-2d317be77c0f",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "02c8e692-e914-4078-b194-78236a574bb0",
+            "a3dd112f-fbf1-40a9-ae17-ad9ed8b18224",
+            "975fb32e-78ae-4ed0-b7f8-e462482bbe3c",
+            "79485956-a9d2-4d66-99d1-3b51af7fc86e"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1655,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 180000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}
