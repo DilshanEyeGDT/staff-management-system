@@ -74,23 +74,23 @@ const TasksPage: React.FC = () => {
     tasks.filter((t) => t.status.toLowerCase() === status.toLowerCase());
 
   return (
-    <Box p={3}>
-      {/* <Typography variant="h4" mb={3}>
-        Tasks
-      </Typography> */}
-
+    <Box p={3} id="tasks-container">
       {/* Assignee Filter */}
-      <Box mb={3} width={250}>
+      <Box mb={3} width={250} id="assignee-filter-box">
         <FormControl fullWidth>
-          <InputLabel>Filter by Assignee</InputLabel>
+          <InputLabel id="assignee-filter-label">Filter by Assignee</InputLabel>
           <Select
+            id="assignee-filter-select"
+            labelId="assignee-filter-label"
             value={selectedAssignee}
             label="Filter by Assignee"
             onChange={(e) => handleAssigneeChange(e.target.value as any)}
           >
-            <MenuItem value="">All</MenuItem>
+            <MenuItem id="assignee-filter-all" value="">
+              All
+            </MenuItem>
             {users.map((u) => (
-              <MenuItem key={u.id} value={u.id}>
+              <MenuItem key={u.id} value={u.id} id={`assignee-filter-${u.id}`}>
                 {u.displayName}
               </MenuItem>
             ))}
@@ -104,6 +104,7 @@ const TasksPage: React.FC = () => {
         gap={2}
         alignItems="flex-start"
         sx={{ overflowX: "auto" }}
+        id="kanban-board"
       >
         {statuses.map((status) => (
           <Box
@@ -113,17 +114,19 @@ const TasksPage: React.FC = () => {
             bgcolor="#f5f5f5"
             p={2}
             borderRadius={2}
+            id={`status-column-${status}`}
           >
             <Typography
               variant="h6"
               sx={{ textTransform: "capitalize", mb: 2 }}
+              id={`status-title-${status}`}
             >
               {status}
             </Typography>
 
             {/* If empty */}
             {tasksByStatus(status).length === 0 && (
-              <Typography variant="body2" color="gray">
+              <Typography variant="body2" color="text.secondary" id={`status-empty-${status}`}>
                 No tasks
               </Typography>
             )}
@@ -138,25 +141,41 @@ const TasksPage: React.FC = () => {
                   ":hover": { boxShadow: 4, bgcolor: "#fafafa" },
                 }}
                 onClick={() => {
-                    setSelectedTask(task);
-                    setEditOpen(true);
+                  setSelectedTask(task);
+                  setEditOpen(true);
                 }}
-
+                id={`task-card-${task.taskId}`}
               >
                 <CardContent>
-                  <Typography variant="subtitle1" fontWeight={600}>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight={600}
+                    id={`task-title-${task.taskId}`}
+                  >
                     {task.title}
                   </Typography>
 
-                  <Typography variant="body2" color="gray">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    id={`task-description-${task.taskId}`}
+                  >
                     {task.description}
                   </Typography>
 
-                  <Typography variant="caption" color="primary">
+                  <Typography
+                    variant="caption"
+                    color="primary"
+                    id={`task-due-${task.taskId}`}
+                  >
                     Due: {new Date(task.dueAt).toLocaleString()}
                   </Typography>
 
-                  <Typography variant="caption" sx={{ display: "block", mt: 0.5 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{ display: "block", mt: 0.5 }}
+                    id={`task-notes-${task.taskId}`}
+                  >
                     Notes: {task.notesCount}
                   </Typography>
                 </CardContent>
@@ -165,17 +184,18 @@ const TasksPage: React.FC = () => {
           </Box>
         ))}
       </Box>
+
       <CreateTaskButton onTaskCreated={fetchTasks} />
-      
+
       <EditTaskDialog
         task={selectedTask}
         open={editOpen}
         onClose={() => setEditOpen(false)}
         onUpdated={fetchTasks}
-    />
-
+      />
     </Box>
   );
+
 };
 
 export default TasksPage;
