@@ -97,4 +97,47 @@ class DotNetSyncService {
 
     return response.statusCode == 200 || response.statusCode == 201;
   }
+
+  // --------------------------------------------------
+  // GET TASKS FOR CURRENT USER
+  // --------------------------------------------------
+  Future<List<dynamic>> getTasksForUser(String idToken) async {
+    final currentUserId = await getCurrentUserId(idToken);
+    if (currentUserId == null) {
+      throw Exception("Failed to fetch current user ID");
+    }
+
+    final url = Uri.parse("$baseUrl/tasks?assignee=$currentUserId");
+
+    final response = await http.get(
+      url,
+      headers: {"Authorization": "Bearer $idToken"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Failed to load tasks: ${response.statusCode} ${response.body}",
+      );
+    }
+
+    final decoded = jsonDecode(response.body);
+    return decoded["tasks"] ?? [];
+  }
+
+  // --------------------------------------------------
+  // POST COMMENT TO TASK
+  // --------------------------------------------------
+  Future<bool> addTaskComment(String taskId, int userId, String content) async {
+    final url = Uri.parse("$baseUrl/tasks/$taskId/comments");
+
+    final body = {"createdByUserId": userId, "content": content};
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    );
+
+    return response.statusCode == 200 || response.statusCode == 201;
+  }
 }
