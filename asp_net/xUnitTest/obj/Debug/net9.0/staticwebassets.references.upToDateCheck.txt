@@ -1,0 +1,1 @@
+C:\Users\TharakaDilshan\Downloads\staff-management-system\asp_net\StaffManagement\obj\Debug\net9.0\staticwebassets.build.json
