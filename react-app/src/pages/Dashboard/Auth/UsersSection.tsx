@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
-import axios from "../../../axiosConfig";
+import axios from "../../../axiosConfig/axiosConfig";
 
 interface Props {
   users: any[];

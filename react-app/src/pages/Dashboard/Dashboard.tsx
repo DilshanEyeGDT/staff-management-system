@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Box, List, ListItemButton, ListItemText, ListItem, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import axios from "../../axiosConfig";
+import axios from "../../axiosConfig/axiosConfig";
 import { getToken, removeToken, setToken } from "../../services/auth";
 import { toast } from "react-toastify";
 import HealthCheck from "./Auth/HealthCheck";
@@ -9,6 +9,7 @@ import UsersSection from "./Auth/UsersSection";
 import RoleAssignSection from "./Auth/RoleAssignSection";
 import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
 import RoomBookingPage from "./RoomBooking/Room&ResourcePanel";
+import TaskSchedulePage from "./TasksSchedules/TasksSchedulesPanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -104,6 +105,8 @@ const Dashboard: React.FC = () => {
         return <LeaveAttendance />;
       case "roomBooking":
         return <RoomBookingPage />;
+      case "tasksSchedules":
+        return <TaskSchedulePage />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -175,7 +178,7 @@ const Dashboard: React.FC = () => {
                 </ListItemButton>
               </ListItem>
 
-              {/* Room Booking */}
+              {/* Room & Resources */}
               <ListItem disablePadding>
                 <ListItemButton
                   id="nav-roomBooking"
@@ -183,6 +186,17 @@ const Dashboard: React.FC = () => {
                   onClick={() => setSelectedPage("roomBooking")}
                 >
                   <ListItemText primary="Rooms & Resources" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Tasks & Schedules */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-tasksSchedules"
+                  selected={selectedPage === "tasksSchedules"}
+                  onClick={() => setSelectedPage("tasksSchedules")}
+                >
+                  <ListItemText primary="Task & Schedules" />
                 </ListItemButton>
               </ListItem>
             </>

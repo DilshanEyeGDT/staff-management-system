@@ -1,0 +1,2 @@
+createdByUserId,assigneeUserId,teamId,title,description,startAt,endAt,recurrenceRule,metadata_location,metadata_importance
+1,2,7f5a9f14-1c2a-4d3e-a9c3-9b8b2f1a2c3d,Import csv,Initial project meeting,2025-11-27T09:00:00Z,2025-11-27T10:00:00Z,NONE,Room 101,high

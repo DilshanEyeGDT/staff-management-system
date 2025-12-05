@@ -14,7 +14,7 @@ import {
   Alert,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import axios from "../../../axiosConfig";
+import axios from "../../../axiosConfig/axiosConfig";
 
 interface Props {
   users: any[];

@@ -14,7 +14,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import axiosLambda from "../../../axiosLambda";
+import axiosLambda from "../../../axiosConfig/axiosLambda";
 import RoomCard from "./RoomCard";
 import { useNavigate } from "react-router-dom";
 

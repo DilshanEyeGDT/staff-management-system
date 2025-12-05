@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dart';
 import 'package:flutter_app/screens/login/login_screen.dart';
 import 'package:flutter_app/screens/room_resources/room_resources_screen.dart';
+import 'package:flutter_app/screens/task_schedule/task_schedules_screen.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
 import '../services/auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -332,6 +333,48 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               "Room & Resources",
                               key: Key('room-resources-text'),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // task & schedules card
+                  SizedBox(height: 24),
+                  Card(
+                    key: const Key('task-schedules-card'),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      key: const Key('task-schedules-card-inkwell'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TaskSchedulesScreen(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.schedule,
+                              size: 32,
+                              key: Key('task-schedules-icon'),
+                            ),
+                            SizedBox(width: 16),
+                            Text(
+                              "Task & Schedules",
+                              key: Key('task-schedules-text'),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
