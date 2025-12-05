@@ -81,59 +81,65 @@ const ScheduleImportPage: React.FC = () => {
   };
 
   return (
-    <Box p={3}>
-      {/* <Typography variant="h4" mb={3}>
-        Import Schedules
-      </Typography> */}
+  <Box p={3} id="import-schedules-container">
+    {/* File Input */}
+    <input
+      type="file"
+      accept=".csv"
+      onChange={handleFileChange}
+      style={{ marginBottom: "16px" }}
+      id="csv-file-input"
+    />
 
-      <input
-        type="file"
-        accept=".csv"
-        onChange={handleFileChange}
-        style={{ marginBottom: "16px" }}
-      />
-
-      <Box display="flex" gap={2} mb={2}>
-        <Button
-          variant="contained"
-          onClick={handleUpload}
-          disabled={loading || !file}
-        >
-          {loading ? <CircularProgress size={20} /> : "Upload CSV"}
-        </Button>
-
-        <Button
-          variant="outlined"
-          onClick={handleCheckStatus}
-          disabled={loading || !jobId}
-        >
-          Check Status
-        </Button>
-      </Box>
-
-      {jobId && (
-        <Typography>
-          <strong>Job ID:</strong> {jobId} <br />
-          <strong>Status:</strong> {status}
-        </Typography>
-      )}
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+    {/* Action Buttons */}
+    <Box display="flex" gap={2} mb={2} id="import-buttons-box">
+      <Button
+        variant="contained"
+        onClick={handleUpload}
+        disabled={loading || !file}
+        id="upload-csv-button"
       >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-        >
-          {snackbarMsg}
-        </Alert>
-      </Snackbar>
+        {loading ? <CircularProgress size={20} id="upload-loading-spinner" /> : "Upload CSV"}
+      </Button>
+
+      <Button
+        variant="outlined"
+        onClick={handleCheckStatus}
+        disabled={loading || !jobId}
+        id="check-status-button"
+      >
+        Check Status
+      </Button>
     </Box>
-  );
+
+    {/* Job Status Display */}
+    {jobId && (
+      <Typography id="job-status-text">
+        <strong>Job ID:</strong> <span id="job-id">{jobId}</span> <br />
+        <strong>Status:</strong> <span id="job-status">{status}</span>
+      </Typography>
+    )}
+
+    {/* Snackbar Alerts */}
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={() => setSnackbarOpen(false)}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      id="import-snackbar"
+    >
+      <Alert
+        onClose={() => setSnackbarOpen(false)}
+        severity={snackbarSeverity}
+        sx={{ width: "100%" }}
+        id="import-snackbar-alert"
+      >
+        {snackbarMsg}
+      </Alert>
+    </Snackbar>
+  </Box>
+);
+
 };
 
 export default ScheduleImportPage;
