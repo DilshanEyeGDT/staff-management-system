@@ -11,6 +11,7 @@ builder.Services.AddScoped<ImportService>();        // register ImportJobsServic
 builder.Services.AddScoped<UserService>();          // register userServices
 
 builder.Services.AddScoped<TrainingCourseService>();    // register TrainingCourses
+builder.Services.AddScoped<TrainingAssignmentService>(); // register TrainingAssignmentService
 
 // Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>

@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
 
     // --- Phase 6: Training Module ---
     public DbSet<TrainingCourse> TrainingCourses { get; set; }
+    public DbSet<TrainingAssignment> TrainingAssignments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
