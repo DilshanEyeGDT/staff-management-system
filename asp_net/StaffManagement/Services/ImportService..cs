@@ -11,11 +11,13 @@ public class ImportService
 {
     private readonly AppDbContext _db;
     private readonly IWebHostEnvironment _env;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public ImportService(AppDbContext db, IWebHostEnvironment env)
+    public ImportService(AppDbContext db, IWebHostEnvironment env, IServiceScopeFactory scopeFactory)
     {
         _db = db;
         _env = env;
+        _scopeFactory = scopeFactory;
     }
 
     public async Task<Guid> CreateScheduleImportJobAsync(IFormFile file, int? userId)
@@ -128,4 +130,123 @@ public class ImportService
             await _db.SaveChangesAsync();
         }
     }
+
+    public async Task<Guid> CreateKpiActualImportJobAsync(IFormFile file, int? userId)
+    {
+        if (file == null || file.Length == 0)
+            throw new InvalidOperationException("File is empty.");
+
+        var jobId = Guid.NewGuid();
+        var filePath = Path.Combine(_env.ContentRootPath, "Uploads", $"{jobId}.csv");
+
+        Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "Uploads"));
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+            await file.CopyToAsync(stream);
+
+        var job = new ImportJob
+        {
+            JobId = jobId,
+            UserId = userId,
+            FileName = file.FileName,
+            Status = "Pending",
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+            UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
+        };
+
+        _db.ImportJobs.Add(job);
+        await _db.SaveChangesAsync();
+
+        // Run import in background task with scoped DbContext
+        _ = Task.Run(async () =>
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var scopedDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            await ProcessKpiActualImportAsyncScoped(jobId, filePath, scopedDb);
+        });
+
+        return jobId;
+    }
+
+    private async Task ProcessKpiActualImportAsyncScoped(Guid jobId, string filePath, AppDbContext db)
+    {
+        var job = await db.ImportJobs.FirstOrDefaultAsync(j => j.JobId == jobId);
+        if (job == null) return;
+
+        try
+        {
+            job.Status = "Processing";
+            job.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
+
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                HeaderValidated = null,
+                MissingFieldFound = null
+            };
+
+            using var reader = new StreamReader(filePath);
+            using var csv = new CsvReader(reader, config);
+
+            var records = csv.GetRecords<dynamic>().ToList();
+            job.TotalRows = records.Count;
+
+            foreach (var record in records)
+            {
+                var dict = (IDictionary<string, object>)record;
+
+                int userId = int.Parse(dict["user_id"].ToString());
+                int kpiId = int.Parse(dict["kpi_id"].ToString());
+
+                // Safe parsing of period_date with Utc
+                DateTime periodDate = DateTime.ParseExact(
+                    dict["period_date"].ToString(),
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+                );
+                periodDate = DateTime.SpecifyKind(periodDate, DateTimeKind.Utc);
+
+                decimal actualValue = decimal.Parse(dict["actual_value"].ToString());
+
+                // Skip duplicates
+                bool exists = await db.KpiActuals.AnyAsync(a =>
+                    a.UserId == userId &&
+                    a.KpiId == kpiId &&
+                    a.PeriodDate == periodDate
+                );
+
+                if (exists) continue;
+
+                var actual = new KpiActual
+                {
+                    UserId = userId,
+                    KpiId = kpiId,
+                    PeriodDate = DateTime.SpecifyKind(periodDate, DateTimeKind.Utc),
+                    ActualValue = actualValue,
+                    Source = "csv_import",
+                    ImportJobId = jobId,
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                    UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
+                };
+
+                db.KpiActuals.Add(actual);
+            }
+
+            await db.SaveChangesAsync();
+
+            job.Status = "Completed";
+            job.Result = "KPI actuals imported successfully";
+            job.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            job.Status = "Failed";
+            job.Result = ex.Message;
+            job.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
+        }
+    }
+
 }
