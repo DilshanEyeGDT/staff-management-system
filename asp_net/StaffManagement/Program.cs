@@ -10,6 +10,8 @@ builder.Services.AddScoped<TaskService>();          // register TaskService
 builder.Services.AddScoped<ImportService>();        // register ImportJobsService
 builder.Services.AddScoped<UserService>();          // register userServices
 
+builder.Services.AddScoped<TrainingCourseService>();    // register TrainingCourses
+
 // Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

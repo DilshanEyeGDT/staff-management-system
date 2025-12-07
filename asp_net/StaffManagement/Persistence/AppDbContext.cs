@@ -17,11 +17,15 @@ public class AppDbContext : DbContext
     public DbSet<TaskNote> TaskNotes { get; set; }
     public DbSet<ImportJob> ImportJobs { get; set; }
 
+    // --- Phase 6: Training Module ---
+    public DbSet<TrainingCourse> TrainingCourses { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Auto-load all IEntityTypeConfiguration<T> classes
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        // Fix JSONB mapping for Schedule.Metadata
+        // JSONB conversions
         modelBuilder.Entity<Schedule>(entity =>
         {
             entity.Property(e => e.Metadata)
@@ -51,6 +55,8 @@ public class AppDbContext : DbContext
                 )
                 .HasColumnType("jsonb");
         });
+
+        base.OnModelCreating(modelBuilder);
 
     }
 }
