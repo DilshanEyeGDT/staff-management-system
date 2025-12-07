@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<TrainingAssignment> TrainingAssignments { get; set; }
     public DbSet<KpiTarget> KpiTargets { get; set; }
     public DbSet<Kpi> Kpis { get; set; }
+    public DbSet<KpiActual> KpiActuals { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
