@@ -12,6 +12,7 @@ builder.Services.AddScoped<UserService>();          // register userServices
 
 builder.Services.AddScoped<TrainingCourseService>();    // register TrainingCourses
 builder.Services.AddScoped<TrainingAssignmentService>(); // register TrainingAssignmentService
+builder.Services.AddScoped<NotificationService>();
 
 // Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>

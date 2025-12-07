@@ -8,10 +8,12 @@ namespace StaffManagement.Services
     public class TrainingAssignmentService
     {
         private readonly AppDbContext _db;
+        private readonly NotificationService _notificationService;
 
-        public TrainingAssignmentService(AppDbContext db)
+        public TrainingAssignmentService(AppDbContext db, NotificationService notificationService)
         {
             _db = db;
+            _notificationService = notificationService;
         }
 
         public async Task<TrainingAssignmentDto> AssignCourseAsync(AssignTrainingDto dto)
@@ -43,6 +45,9 @@ namespace StaffManagement.Services
             // Load navigation properties
             await _db.Entry(assignment).Reference(a => a.User).LoadAsync();
             await _db.Entry(assignment).Reference(a => a.Course).LoadAsync();
+
+            // Queue reminder
+            await _notificationService.QueueReminderAsync(assignment);
 
             return new TrainingAssignmentDto
             {
@@ -83,6 +88,9 @@ namespace StaffManagement.Services
             assignment.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync();
+
+            // Queue reminder after update
+            await _notificationService.QueueReminderAsync(assignment);
 
             return new TrainingAssignmentDto
             {
