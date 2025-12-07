@@ -59,5 +59,46 @@ namespace StaffManagement.Services
                 CourseTitle = assignment.Course.Title
             };
         }
+
+        public async Task<TrainingAssignmentDto> UpdateAssignmentAsync(int assignmentId, UpdateTrainingAssignmentDto dto)
+        {
+            var assignment = await _db.TrainingAssignments
+                .Include(a => a.User)
+                .Include(a => a.Course)
+                .FirstOrDefaultAsync(a => a.TrainingAssignmentId == assignmentId);
+
+            if (assignment == null)
+                throw new KeyNotFoundException("Training assignment not found.");
+
+            // Update fields if they are provided
+            if (dto.Progress.HasValue)
+                assignment.Progress = dto.Progress.Value;
+
+            if (!string.IsNullOrEmpty(dto.Status))
+                assignment.Status = dto.Status;
+
+            if (dto.DueDate.HasValue)
+                assignment.DueDate = DateTime.SpecifyKind(dto.DueDate.Value, DateTimeKind.Utc);
+
+            assignment.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+
+            return new TrainingAssignmentDto
+            {
+                TrainingAssignmentId = assignment.TrainingAssignmentId,
+                CourseId = assignment.CourseId,
+                UserId = assignment.UserId,
+                AssignedOn = assignment.AssignedOn,
+                DueDate = assignment.DueDate,
+                Progress = assignment.Progress,
+                Status = assignment.Status,
+                CreatedAt = assignment.CreatedAt,
+                UpdatedAt = assignment.UpdatedAt,
+                UserDisplayName = assignment.User.DisplayName,
+                CourseTitle = assignment.Course.Title
+            };
+        }
+
     }
 }

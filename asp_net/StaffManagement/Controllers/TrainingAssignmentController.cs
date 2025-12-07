@@ -31,5 +31,24 @@ namespace StaffManagement.Controllers
                 return BadRequest(new { status = "error", message = ex.Message });
             }
         }
+
+        [HttpPatch("assignments/{id}")]
+        public async Task<IActionResult> UpdateAssignment(int id, [FromBody] UpdateTrainingAssignmentDto dto)
+        {
+            try
+            {
+                var updatedAssignment = await _service.UpdateAssignmentAsync(id, dto);
+                return Ok(updatedAssignment);
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound(new { message = e.Message });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
+
     }
 }
