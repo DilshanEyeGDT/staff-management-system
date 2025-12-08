@@ -20,6 +20,117 @@ public class ImportService
         _scopeFactory = scopeFactory;
     }
 
+    //public async Task<Guid> CreateScheduleImportJobAsync(IFormFile file, int? userId)
+    //{
+    //    if (file == null || file.Length == 0)
+    //        throw new InvalidOperationException("File is empty.");
+
+    //    var jobId = Guid.NewGuid();
+    //    var filePath = Path.Combine(_env.ContentRootPath, "Uploads", $"{jobId}.csv");
+
+    //    Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "Uploads"));
+
+    //    using (var stream = new FileStream(filePath, FileMode.Create))
+    //    {
+    //        await file.CopyToAsync(stream);
+    //    }
+
+    //    var job = new ImportJob
+    //    {
+    //        JobId = jobId,
+    //        UserId = userId,
+    //        FileName = file.FileName,
+    //        Status = "Pending",
+    //        CreatedAt = DateTime.UtcNow,
+    //        UpdatedAt = DateTime.UtcNow
+    //    };
+
+    //    _db.ImportJobs.Add(job);
+    //    await _db.SaveChangesAsync();
+
+    //    _ = Task.Run(async () =>
+    //    {
+    //        await ProcessScheduleImportAsync(jobId, filePath);
+    //    });
+
+    //    return jobId;
+    //}
+
+    public async Task<ImportJob?> GetImportJobAsync(Guid jobId)
+    {
+        return await _db.ImportJobs.AsNoTracking().FirstOrDefaultAsync(j => j.JobId == jobId);
+    }
+
+    //private async Task ProcessScheduleImportAsync(Guid jobId, string filePath)
+    //{
+    //    var job = await _db.ImportJobs.FirstOrDefaultAsync(j => j.JobId == jobId);
+    //    if (job == null) return;
+
+    //    try
+    //    {
+    //        job.Status = "Processing";
+    //        job.UpdatedAt = DateTime.UtcNow;
+    //        await _db.SaveChangesAsync();
+
+    //        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+    //        {
+    //            HeaderValidated = null,
+    //            MissingFieldFound = null
+    //        };
+
+    //        using var reader = new StreamReader(filePath);
+    //        using var csv = new CsvReader(reader, config);
+
+    //        var records = csv.GetRecords<dynamic>().ToList();
+    //        job.TotalRows = records.Count;
+
+    //        foreach (var record in records)
+    //        {
+    //            var dict = (IDictionary<string, object>)record;
+
+    //            var metadata = new Dictionary<string, string>();
+    //            foreach (var kv in dict)
+    //            {
+    //                if (kv.Key.StartsWith("metadata_"))
+    //                {
+    //                    metadata[kv.Key.Replace("metadata_", "")] = kv.Value?.ToString();
+    //                }
+    //            }
+
+    //            var schedule = new Schedule
+    //            {
+    //                CreatedByUserId = int.Parse(dict["createdByUserId"].ToString()),
+    //                AssigneeUserId = int.Parse(dict["assigneeUserId"].ToString()),
+    //                TeamId = Guid.Parse(dict["teamId"].ToString()),
+    //                Title = dict["title"].ToString(),
+    //                Description = dict["description"]?.ToString(),
+    //                StartAt = DateTime.Parse(dict["startAt"].ToString()),
+    //                EndAt = DateTime.Parse(dict["endAt"].ToString()),
+    //                RecurrenceRule = dict["recurrenceRule"]?.ToString(),
+    //                Metadata = JsonSerializer.Serialize(metadata),
+    //                CreatedAt = DateTime.UtcNow,
+    //                UpdatedAt = DateTime.UtcNow
+    //            };
+
+    //            _db.Schedules.Add(schedule);
+    //        }
+
+    //        await _db.SaveChangesAsync();
+
+    //        job.Status = "Completed";
+    //        job.Result = "Imported successfully";
+    //        job.UpdatedAt = DateTime.UtcNow;
+    //        await _db.SaveChangesAsync();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        job.Status = "Failed";
+    //        job.Result = ex.Message;
+    //        job.UpdatedAt = DateTime.UtcNow;
+    //        await _db.SaveChangesAsync();
+    //    }
+    //}
+
     public async Task<Guid> CreateScheduleImportJobAsync(IFormFile file, int? userId)
     {
         if (file == null || file.Length == 0)
@@ -31,9 +142,7 @@ public class ImportService
         Directory.CreateDirectory(Path.Combine(_env.ContentRootPath, "Uploads"));
 
         using (var stream = new FileStream(filePath, FileMode.Create))
-        {
             await file.CopyToAsync(stream);
-        }
 
         var job = new ImportJob
         {
@@ -41,36 +150,34 @@ public class ImportService
             UserId = userId,
             FileName = file.FileName,
             Status = "Pending",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+            UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
         };
 
         _db.ImportJobs.Add(job);
         await _db.SaveChangesAsync();
 
+        // Run import in background with scoped DbContext
         _ = Task.Run(async () =>
         {
-            await ProcessScheduleImportAsync(jobId, filePath);
+            using var scope = _scopeFactory.CreateScope();
+            var scopedDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            await ProcessScheduleImportAsyncScoped(jobId, filePath, scopedDb);
         });
 
         return jobId;
     }
 
-    public async Task<ImportJob?> GetImportJobAsync(Guid jobId)
+    private async Task ProcessScheduleImportAsyncScoped(Guid jobId, string filePath, AppDbContext db)
     {
-        return await _db.ImportJobs.AsNoTracking().FirstOrDefaultAsync(j => j.JobId == jobId);
-    }
-
-    private async Task ProcessScheduleImportAsync(Guid jobId, string filePath)
-    {
-        var job = await _db.ImportJobs.FirstOrDefaultAsync(j => j.JobId == jobId);
+        var job = await db.ImportJobs.FirstOrDefaultAsync(j => j.JobId == jobId);
         if (job == null) return;
 
         try
         {
             job.Status = "Processing";
-            job.UpdatedAt = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
+            job.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
 
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -88,6 +195,18 @@ public class ImportService
             {
                 var dict = (IDictionary<string, object>)record;
 
+                int createdByUserId = int.Parse(dict["createdByUserId"].ToString());
+                int assigneeUserId = int.Parse(dict["assigneeUserId"].ToString());
+                Guid teamId = Guid.Parse(dict["teamId"].ToString());
+                string title = dict["title"].ToString();
+                string description = dict["description"]?.ToString();
+
+                DateTime startAt = DateTime.Parse(dict["startAt"].ToString(), null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
+                DateTime endAt = DateTime.Parse(dict["endAt"].ToString(), null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
+
+                string recurrenceRule = dict["recurrenceRule"]?.ToString();
+
+                // Extract metadata columns starting with "metadata_"
                 var metadata = new Dictionary<string, string>();
                 foreach (var kv in dict)
                 {
@@ -99,35 +218,35 @@ public class ImportService
 
                 var schedule = new Schedule
                 {
-                    CreatedByUserId = int.Parse(dict["createdByUserId"].ToString()),
-                    AssigneeUserId = int.Parse(dict["assigneeUserId"].ToString()),
-                    TeamId = Guid.Parse(dict["teamId"].ToString()),
-                    Title = dict["title"].ToString(),
-                    Description = dict["description"]?.ToString(),
-                    StartAt = DateTime.Parse(dict["startAt"].ToString()),
-                    EndAt = DateTime.Parse(dict["endAt"].ToString()),
-                    RecurrenceRule = dict["recurrenceRule"]?.ToString(),
+                    CreatedByUserId = createdByUserId,
+                    AssigneeUserId = assigneeUserId,
+                    TeamId = teamId,
+                    Title = title,
+                    Description = description,
+                    StartAt = DateTime.SpecifyKind(startAt, DateTimeKind.Utc),
+                    EndAt = DateTime.SpecifyKind(endAt, DateTimeKind.Utc),
+                    RecurrenceRule = recurrenceRule,
                     Metadata = JsonSerializer.Serialize(metadata),
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                    UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc)
                 };
 
-                _db.Schedules.Add(schedule);
+                db.Schedules.Add(schedule);
             }
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
             job.Status = "Completed";
-            job.Result = "Imported successfully";
-            job.UpdatedAt = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
+            job.Result = "Schedules imported successfully";
+            job.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             job.Status = "Failed";
             job.Result = ex.Message;
-            job.UpdatedAt = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
+            job.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
         }
     }
 
