@@ -15,6 +15,7 @@ builder.Services.AddScoped<TrainingAssignmentService>(); // register TrainingAss
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<KpiTargetService>();
 builder.Services.AddScoped<KpiMetricsService>();
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
 
 // Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>

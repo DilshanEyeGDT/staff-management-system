@@ -10,6 +10,7 @@ import RoleAssignSection from "./Auth/RoleAssignSection";
 import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
 import RoomBookingPage from "./RoomBooking/Room&ResourcePanel";
 import TaskSchedulePage from "./TasksSchedules/TasksSchedulesPanel";
+import PerformanceTrainingPage from "./PerformanceTraining/PerformaceTrainingPanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -107,6 +108,8 @@ const Dashboard: React.FC = () => {
         return <RoomBookingPage />;
       case "tasksSchedules":
         return <TaskSchedulePage />;
+      case "performanceTraining":
+        return <PerformanceTrainingPage />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -197,6 +200,17 @@ const Dashboard: React.FC = () => {
                   onClick={() => setSelectedPage("tasksSchedules")}
                 >
                   <ListItemText primary="Task & Schedules" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Performance & Training */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-performanceTraining"
+                  selected={selectedPage === "performanceTraining"}
+                  onClick={() => setSelectedPage("performanceTraining")}
+                >
+                  <ListItemText primary="Performance & Training" />
                 </ListItemButton>
               </ListItem>
             </>
