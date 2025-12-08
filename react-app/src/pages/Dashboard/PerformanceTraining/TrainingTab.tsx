@@ -1,4 +1,3 @@
-// src/pages/TrainingTab.tsx
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -7,6 +6,17 @@ import {
   CircularProgress,
   TextField,
   Button,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Grid,
 } from "@mui/material";
 import axiosNet from "../../../axiosConfig/axiosNet";
 
@@ -20,12 +30,27 @@ interface Course {
   createdAt: string;
 }
 
+interface User {
+  id: number;
+  displayName: string;
+}
+
 const TrainingTab: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState(""); // search query
+  const [query, setQuery] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | "">("");
+  const [dueDate, setDueDate] = useState("");
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
+  // Fetch courses
   const fetchCourses = async (searchQuery = "") => {
     setLoading(true);
     setError("");
@@ -41,13 +66,55 @@ const TrainingTab: React.FC = () => {
     }
   };
 
+  // Fetch users
+  const fetchUsers = async () => {
+    try {
+      const response = await axiosNet.get("/v1/users");
+      setUsers(response.data);
+    } catch (err: any) {
+      console.error("Failed to fetch users", err);
+    }
+  };
+
   useEffect(() => {
-    // load all courses initially
     fetchCourses();
+    fetchUsers();
   }, []);
 
   const handleSearch = () => {
     fetchCourses(query);
+  };
+
+  const handleAssign = async () => {
+    if (!selectedCourse || !selectedUserId || !dueDate) {
+      setSnackbar({ open: true, message: "Please select a user and due date", severity: "error" });
+      return;
+    }
+
+    try {
+      await axiosNet.post("/v1/training/assign", {
+        courseId: selectedCourse.courseId,
+        userId: selectedUserId,
+        dueDate,
+      });
+
+      setSnackbar({
+        open: true,
+        message: `"${selectedCourse.title}" assigned to "${users.find(u => u.id === selectedUserId)?.displayName}"`,
+        severity: "success",
+      });
+
+      // Reset form
+      setSelectedCourse(null);
+      setSelectedUserId("");
+      setDueDate("");
+    } catch (err: any) {
+      setSnackbar({
+        open: true,
+        message: err?.response?.data?.message || "Failed to assign course",
+        severity: "error",
+      });
+    }
   };
 
   return (
@@ -61,19 +128,16 @@ const TrainingTab: React.FC = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          data-testid="training-search-input"
         />
-        <Button variant="contained" onClick={handleSearch} data-testid="training-search-btn">
+        <Button variant="contained" onClick={handleSearch}>
           Search
         </Button>
       </Box>
 
       {/* Loading / Error / Empty States */}
-      {loading && <CircularProgress data-testid="loading-spinner" />}
+      {loading && <CircularProgress />}
       {error && <Typography color="error">{error}</Typography>}
-      {!loading && !error && courses.length === 0 && (
-        <Typography>No courses found.</Typography>
-      )}
+      {!loading && !error && courses.length === 0 && <Typography>No courses found.</Typography>}
 
       {/* Course List */}
       {!loading && courses.length > 0 && (
@@ -86,8 +150,11 @@ const TrainingTab: React.FC = () => {
                 border: "1px solid #ccc",
                 borderRadius: 2,
                 backgroundColor: "#f9f9f9",
+                cursor: "pointer",
+                transition: "all 0.2s",
+                "&:hover": { transform: "scale(1.02)", boxShadow: 3 },
               }}
-              data-testid={`course-${course.courseId}`}
+              onClick={() => setSelectedCourse(course)}
             >
               <Typography variant="h6">{course.title}</Typography>
               <Typography variant="body2" color="textSecondary">
@@ -96,18 +163,89 @@ const TrainingTab: React.FC = () => {
               <Typography variant="body1" sx={{ mt: 1 }}>
                 {course.description}
               </Typography>
-              <Link
-                href={course.link}
-                target="_blank"
-                rel="noopener"
-                sx={{ mt: 1, display: "inline-block" }}
-              >
-                Go to course
-              </Link>
             </Box>
           ))}
         </Box>
       )}
+
+      {/* Assign Modal */}
+        <Dialog open={!!selectedCourse} onClose={() => setSelectedCourse(null)} maxWidth="md" fullWidth>
+        <DialogTitle>Assign Course</DialogTitle>
+        <DialogContent>
+            <Box
+            display="flex"
+            flexDirection={{ xs: "column", md: "row" }}
+            gap={4}
+            >
+            {/* Left: Course Details */}
+            <Box flex={1}>
+                <Typography variant="h6">{selectedCourse?.title}</Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+                {selectedCourse?.category} — {selectedCourse?.durationHours} hours
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                {selectedCourse?.description}
+                </Typography>
+                <Link href={selectedCourse?.link} target="_blank" rel="noopener">
+                Go to course
+                </Link>
+            </Box>
+
+            {/* Right: Assign Form */}
+            <Box flex={1} display="flex" flexDirection="column" gap={2}>
+                <FormControl fullWidth>
+                <InputLabel id="user-select-label">Select User</InputLabel>
+                <Select
+                    labelId="user-select-label"
+                    value={selectedUserId}
+                    label="Select User"
+                    onChange={(e) => setSelectedUserId(Number(e.target.value))}
+                >
+                    {users.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                        {user.displayName}
+                    </MenuItem>
+                    ))}
+                </Select>
+                </FormControl>
+
+                <TextField
+                label="Due Date"
+                type="date"
+                fullWidth
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                />
+
+                <Box display="flex" gap={2}>
+                <Button variant="contained" onClick={handleAssign}>
+                    Assign Course
+                </Button>
+                <Button variant="outlined" onClick={() => setSelectedCourse(null)}>
+                    Cancel
+                </Button>
+                </Box>
+            </Box>
+            </Box>
+        </DialogContent>
+        </Dialog>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
