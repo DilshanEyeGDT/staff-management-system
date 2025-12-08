@@ -4,6 +4,7 @@ import { Train } from "@mui/icons-material";
 import TrainingCoursesTab from "./TrainingCoursesTab";
 import AssignKPIsTab from "./AssignKPIsTab";
 import KpiSnapshotsTab from "./KPISnapshotsTab";
+import KpiActualsImport from "./ImportActualKPIsTab";
 
 const PerformanceTrainingPage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -64,7 +65,7 @@ const PerformanceTrainingPage: React.FC = () => {
 
       {tab === 3 && (
         <Box id="tab-content-import">
-          <div>Import</div>
+          <KpiActualsImport />
         </Box>
       )}
     </Box>
