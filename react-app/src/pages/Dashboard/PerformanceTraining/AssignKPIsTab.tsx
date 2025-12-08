@@ -107,7 +107,7 @@ export default function AssignKPIsTab() {
 
   return (
     <Box id="tab-content-performance" p={3}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
+      <Typography id="tab-assign-kpi-subtitle" variant="h6" sx={{ mb: 2 }}>
         Available KPIs
       </Typography>
 

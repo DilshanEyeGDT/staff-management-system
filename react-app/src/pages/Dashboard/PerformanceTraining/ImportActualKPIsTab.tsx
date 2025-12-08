@@ -88,7 +88,7 @@ export default function KpiActualsImport() {
 
       <input type="file" accept=".csv" onChange={handleFileChange} />
       <Box mt={2} display="flex" gap={2}>
-        <Button variant="contained" onClick={handleUpload} disabled={loading}>
+        <Button id="upload-csv-button" variant="contained" onClick={handleUpload} disabled={loading}>
           Upload
         </Button>
         {loading && <CircularProgress size={24} />}
