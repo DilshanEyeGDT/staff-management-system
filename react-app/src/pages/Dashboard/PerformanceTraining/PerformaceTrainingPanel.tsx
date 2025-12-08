@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { Train } from "@mui/icons-material";
 import TrainingTab from "./TrainingTab";
+import PerformanceTab from "./KPITab";
 
 const PerformanceTrainingPage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -20,12 +21,12 @@ const PerformanceTrainingPage: React.FC = () => {
       id="performance-training-tabs"
     >
       <Tab
-        label="Training"
+        label="Training Courses"
         id="tab-training"
         data-testid="tab-training"
       />
       <Tab
-        label="Performance"
+        label="Assign Targets"
         id="tab-performance"
         data-testid="tab-performance"
       />
@@ -45,7 +46,7 @@ const PerformanceTrainingPage: React.FC = () => {
 
       {tab === 1 && (
         <Box id="tab-content-performance">
-          <div>Performance</div>
+          <PerformanceTab />
         </Box>
       )}
 
