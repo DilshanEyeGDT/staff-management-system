@@ -29,7 +29,7 @@ interface User {
   displayName: string;
 }
 
-export default function PerformanceTab() {
+export default function AssignKPIsTab() {
   const [kpis, setKpis] = useState<KPI[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedKpi, setSelectedKpi] = useState<KPI | null>(null);

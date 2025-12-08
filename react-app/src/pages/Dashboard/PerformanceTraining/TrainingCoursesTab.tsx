@@ -35,7 +35,7 @@ interface User {
   displayName: string;
 }
 
-const TrainingTab: React.FC = () => {
+const TrainingCoursesTab: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -250,4 +250,4 @@ const TrainingTab: React.FC = () => {
   );
 };
 
-export default TrainingTab;
+export default TrainingCoursesTab;

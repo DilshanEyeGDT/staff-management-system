@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { Train } from "@mui/icons-material";
-import TrainingTab from "./TrainingTab";
-import PerformanceTab from "./KPITab";
+import TrainingCoursesTab from "./TrainingCoursesTab";
+import AssignKPIsTab from "./AssignKPIsTab";
+import KpiSnapshotsTab from "./KPISnapshotsTab";
 
 const PerformanceTrainingPage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -26,12 +27,17 @@ const PerformanceTrainingPage: React.FC = () => {
         data-testid="tab-training"
       />
       <Tab
-        label="Assign Targets"
-        id="tab-performance"
-        data-testid="tab-performance"
+        label="Assign Target KPIs"
+        id="tab-target-kpis"
+        data-testid="tab-target-kpis"
       />
       <Tab
-        label="Import"
+        label="KPI Snapshots"
+        id="tab-kpi-snapshots"
+        data-testid="tab-kpi-snapshots"
+      />
+      <Tab
+        label="Import Actual KPIs"
         id="tab-import"
         data-testid="tab-import"
       />
@@ -40,17 +46,23 @@ const PerformanceTrainingPage: React.FC = () => {
     <Box id="peformance-training-content">
       {tab === 0 && (
         <Box id="tab-content-training">
-          <TrainingTab />
+          <TrainingCoursesTab />
         </Box>
       )}
 
       {tab === 1 && (
-        <Box id="tab-content-performance">
-          <PerformanceTab />
+        <Box id="tab-content-assign-targets">
+          <AssignKPIsTab />
         </Box>
       )}
 
       {tab === 2 && (
+        <Box id="tab-content-kpi-snapshots">
+            <KpiSnapshotsTab />
+        </Box>
+      )}
+
+      {tab === 3 && (
         <Box id="tab-content-import">
           <div>Import</div>
         </Box>
