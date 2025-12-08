@@ -50,5 +50,20 @@ namespace StaffManagement.Controllers
             }
         }
 
+        // GET api/v1/training/user/{userId}/assignments
+        [HttpGet("user/{userId}/assignments")]
+        public async Task<IActionResult> GetUserAssignments(int userId)
+        {
+            try
+            {
+                var assignments = await _service.GetAssignmentsByUserAsync(userId);
+                return Ok(new { status = "ok", assignments });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { status = "error", message = e.Message });
+            }
+        }
+
     }
 }

@@ -140,4 +140,30 @@ class DotNetSyncService {
 
     return response.statusCode == 200 || response.statusCode == 201;
   }
+
+  // --------------------------------------------------
+  // GET TRAINING ASSIGNMENTS FOR CURRENT USER
+  // --------------------------------------------------
+  Future<List<dynamic>> getTrainingAssignmentsForUser(String idToken) async {
+    final currentUserId = await getCurrentUserId(idToken);
+    if (currentUserId == null) {
+      throw Exception("Failed to fetch current user ID");
+    }
+
+    final url = Uri.parse("$baseUrl/training/user/$currentUserId/assignments");
+
+    final response = await http.get(
+      url,
+      headers: {"Authorization": "Bearer $idToken"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Failed to load assignments: ${response.statusCode} ${response.body}",
+      );
+    }
+
+    final decoded = jsonDecode(response.body);
+    return decoded["assignments"] ?? [];
+  }
 }

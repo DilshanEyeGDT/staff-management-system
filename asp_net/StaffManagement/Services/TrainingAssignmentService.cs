@@ -108,5 +108,31 @@ namespace StaffManagement.Services
             };
         }
 
+        public async Task<List<TrainingAssignmentDto>> GetAssignmentsByUserAsync(int userId)
+        {
+            var assignments = await _db.TrainingAssignments
+                .Where(a => a.UserId == userId)
+                .Include(a => a.Course)
+                .Include(a => a.User)
+                .OrderBy(a => a.AssignedOn)
+                .ToListAsync();
+
+            return assignments.Select(a => new TrainingAssignmentDto
+            {
+                TrainingAssignmentId = a.TrainingAssignmentId,
+                CourseId = a.CourseId,
+                UserId = a.UserId,
+                AssignedOn = a.AssignedOn,
+                DueDate = a.DueDate,
+                Progress = a.Progress,
+                Status = a.Status,
+                CreatedAt = a.CreatedAt,
+                UpdatedAt = a.UpdatedAt,
+                UserDisplayName = a.User.DisplayName,
+                CourseTitle = a.Course.Title
+            }).ToList();
+        }
+
+
     }
 }
