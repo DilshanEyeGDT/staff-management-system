@@ -155,7 +155,7 @@ export default function KpiSnapshotsTab() {
         />
 
         <Button variant="contained" onClick={fetchSnapshots}>
-          Fetch Snapshots
+          Fetch
         </Button>
       </Box>
 
