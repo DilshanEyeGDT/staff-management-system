@@ -152,7 +152,7 @@ const TrainingTab: React.FC = () => {
                 backgroundColor: "#f9f9f9",
                 cursor: "pointer",
                 transition: "all 0.2s",
-                "&:hover": { transform: "scale(1.02)", boxShadow: 3 },
+                "&:hover": { transform: "scale(1.01)"},
               }}
               onClick={() => setSelectedCourse(course)}
             >
