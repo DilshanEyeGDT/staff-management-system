@@ -2,6 +2,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/task_schedule/models/date_time_utils.dart';
+import 'package:flutter_app/screens/training/training_notifications_screen.dart';
 import 'package:flutter_app/services/dotnet_sync_service.dart';
 
 class TrainingCoursesScreen extends StatefulWidget {
@@ -17,10 +18,38 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
   bool _loading = false;
   List<dynamic> _assignments = [];
 
+  int _notificationCount = 0;
+  bool _loadingNotifications = false;
+
   @override
   void initState() {
     super.initState();
     _fetchAssignments();
+    _loadNotificationCount();
+  }
+
+  //load notification count
+  Future<void> _loadNotificationCount() async {
+    try {
+      setState(() => _loadingNotifications = true);
+
+      final session =
+          await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+
+      final idToken = session.userPoolTokensResult.value.idToken.raw;
+
+      final data = await _syncService.getTrainingNotifications(idToken);
+
+      if (!mounted) return;
+
+      setState(() {
+        _notificationCount = data.length;
+        _loadingNotifications = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loadingNotifications = false);
+    }
   }
 
   Future<void> _fetchAssignments() async {
@@ -207,7 +236,60 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Training Courses")),
+      appBar: AppBar(
+        title: const Text("Training Courses"),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () async {
+                  // Open bottom sheet
+                  await showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    builder: (context) => const TrainingNotificationsSheet(),
+                  );
+
+                  // Reset notification count after reading
+                  if (!mounted) return;
+                  setState(() {
+                    _notificationCount = 0;
+                  });
+                },
+              ),
+
+              // ----------- RED BADGE -----------
+              if (_notificationCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      _notificationCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _assignments.isEmpty

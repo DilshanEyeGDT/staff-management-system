@@ -188,4 +188,36 @@ class DotNetSyncService {
 
     return response.statusCode == 200;
   }
+
+  // --------------------------------------------------
+  // GET TRAINING NOTIFICATIONS FOR CURRENT USER
+  // --------------------------------------------------
+  Future<List<dynamic>> getTrainingNotifications(String idToken) async {
+    final currentUserId = await getCurrentUserId(idToken);
+
+    if (currentUserId == null) {
+      throw Exception("Failed to fetch current user ID");
+    }
+
+    final url = Uri.parse("$baseUrl/notify/staff");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $idToken",
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Failed to load notifications: ${response.statusCode} ${response.body}",
+      );
+    }
+
+    final List<dynamic> allItems = jsonDecode(response.body);
+
+    // Filter by userId
+    return allItems.where((item) => item["userId"] == currentUserId).toList();
+  }
 }
