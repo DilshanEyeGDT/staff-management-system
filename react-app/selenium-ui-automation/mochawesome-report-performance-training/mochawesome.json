@@ -1,0 +1,214 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 5,
+    "passes": 5,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-08T10:38:46.107Z",
+    "end": "2025-12-08T10:39:31.982Z",
+    "duration": 45875,
+    "testsRegistered": 5,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "77eb7da1-5ebc-4ad7-ba39-03043b75cf28",
+      "title": "",
+      "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\performance_training\\performance_training.test.js",
+      "file": "\\tests\\performance_training\\performance_training.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+          "title": "Performance & Training Page Test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\performance_training\\performance_training.test.js",
+          "file": "\\tests\\performance_training\\performance_training.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Performance & Training Page Test\"",
+              "fullTitle": "Performance & Training Page Test \"before all\" hook in \"Performance & Training Page Test\"",
+              "timedOut": false,
+              "duration": 41941,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "driver = await new Builder().forBrowser(\"chrome\").build();\n// Step 1: Go to Login page\nawait driver.get(BASE_URL);\n// Step 2: Click \"Sign in with Cognito\"\nconst loginButton = await driver.findElement(By.css(\"button\"));\nawait loginButton.click();\nconsole.log(\"Please manually enter your Cognito credentials in the browser...\");\n// Step 3: Wait for Performance & Training option to appear in sidebar\nconst perfTrainingOption = await driver.wait(\n  until.elementLocated(By.id(\"nav-performanceTraining\")),\n  60000\n);\nassert.ok(await perfTrainingOption.isDisplayed(), \"Performance & Training option is visible in sidebar\");\nconsole.log(\"Login successful, dashboard loaded!\");",
+              "err": {},
+              "uuid": "3354078f-665d-40f7-810c-94f4c14fe344",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Performance & Training Page Test\"",
+              "fullTitle": "Performance & Training Page Test \"after all\" hook in \"Performance & Training Page Test\"",
+              "timedOut": false,
+              "duration": 1373,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "ed8823e0-c0f8-46c9-8852-12823676784f",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should display Performance & Training side panel option",
+              "fullTitle": "Performance & Training Page Test should display Performance & Training side panel option",
+              "timedOut": false,
+              "duration": 46,
+              "state": "passed",
+              "speed": "medium",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const perfTrainingOption = await driver.findElement(By.id(\"nav-performanceTraining\"));\nassert.ok(await perfTrainingOption.isDisplayed(), \"Performance & Training option is visible\");",
+              "err": {},
+              "uuid": "8eb623e2-bf55-45c1-b535-855a5555277a",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Performance & Training page and default tab",
+              "fullTitle": "Performance & Training Page Test should load Performance & Training page and default tab",
+              "timedOut": false,
+              "duration": 766,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const perfTrainingOption = await driver.findElement(By.id(\"nav-performanceTraining\"));\nawait perfTrainingOption.click();\nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"performance-training-title\")),\n  5000\n);\nassert.strictEqual(await pageTitle.getText(), \"Performace & Training\");\nconst tabs = await driver.findElement(By.id(\"performance-training-tabs\"));\nassert.ok(await tabs.isDisplayed(), \"Tabs are visible\");\n// Check default tab - Training Courses\nconst trainingContent = await driver.findElement(By.id(\"tab-content-training\"));\nassert.ok(await trainingContent.isDisplayed(), \"Training Courses tab content is visible\");\nconst searchBar = await driver.findElement(By.id(\"training-search-bar\"));\nassert.ok(await searchBar.isDisplayed(), \"Search bar is visible in Training Courses tab\");\nconsole.log(\"Default Training Courses tab loaded successfully.\");",
+              "err": {},
+              "uuid": "7874c784-ad67-4d2c-9d79-72ee1344fb41",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Assign Target KPIs tab correctly",
+              "fullTitle": "Performance & Training Page Test should load Assign Target KPIs tab correctly",
+              "timedOut": false,
+              "duration": 657,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const targetTab = await driver.findElement(By.id(\"tab-target-kpis\"));\nawait targetTab.click();\nconst subtitle = await driver.wait(\n  until.elementLocated(By.id(\"tab-assign-kpi-subtitle\")),\n  5000\n);\nassert.ok(await subtitle.isDisplayed(), \"Assign Target KPIs subtitle is visible\");\nconsole.log(\"Assign Target KPIs tab loaded successfully.\");",
+              "err": {},
+              "uuid": "357ba71a-c2bc-47bc-a3f0-2990500c061c",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load KPI Snapshots tab correctly",
+              "fullTitle": "Performance & Training Page Test should load KPI Snapshots tab correctly",
+              "timedOut": false,
+              "duration": 672,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const kpiTab = await driver.findElement(By.id(\"tab-kpi-snapshots\"));\nawait kpiTab.click();\nconst userSelect = await driver.wait(\n  until.elementLocated(By.id(\"user-select-label\")),\n  5000\n);\nassert.ok(await userSelect.isDisplayed(), \"User select dropdown is visible in KPI Snapshots tab\");\nconsole.log(\"KPI Snapshots tab loaded successfully.\");",
+              "err": {},
+              "uuid": "ef5da8a8-e8a4-437a-b60a-13ed0629acf0",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Import Actual KPIs tab correctly",
+              "fullTitle": "Performance & Training Page Test should load Import Actual KPIs tab correctly",
+              "timedOut": false,
+              "duration": 398,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const importTab = await driver.findElement(By.id(\"tab-import\"));\nawait importTab.click();\nconst uploadBtn = await driver.wait(\n  until.elementLocated(By.id(\"upload-csv-button\")),\n  5000\n);\nassert.ok(await uploadBtn.isDisplayed(), \"Upload button is visible in Import Actual KPIs tab\");\nconsole.log(\"Import Actual KPIs tab loaded successfully.\");",
+              "err": {},
+              "uuid": "ed268b7b-c204-495e-a793-cbd88f96ac48",
+              "parentUUID": "90332dd6-1807-4ea2-aec8-54774527b6d4",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "8eb623e2-bf55-45c1-b535-855a5555277a",
+            "7874c784-ad67-4d2c-9d79-72ee1344fb41",
+            "357ba71a-c2bc-47bc-a3f0-2990500c061c",
+            "ef5da8a8-e8a4-437a-b60a-13ed0629acf0",
+            "ed268b7b-c204-495e-a793-cbd88f96ac48"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 2539,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 180000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}

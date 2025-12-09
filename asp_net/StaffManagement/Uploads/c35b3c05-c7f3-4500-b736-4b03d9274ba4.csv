@@ -1,0 +1,2 @@
+user_id,kpi_id,period_date,actual_value,source
+1,2,2025-12-05,20,csv_import

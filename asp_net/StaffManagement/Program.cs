@@ -10,6 +10,13 @@ builder.Services.AddScoped<TaskService>();          // register TaskService
 builder.Services.AddScoped<ImportService>();        // register ImportJobsService
 builder.Services.AddScoped<UserService>();          // register userServices
 
+builder.Services.AddScoped<TrainingCourseService>();    // register TrainingCourses
+builder.Services.AddScoped<TrainingAssignmentService>(); // register TrainingAssignmentService
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<KpiTargetService>();
+builder.Services.AddScoped<KpiMetricsService>();
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
+
 // Database connection
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

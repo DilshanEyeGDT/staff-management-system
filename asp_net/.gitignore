@@ -1,0 +1,13 @@
+# Visual Studio cache
+.vs/
+
+# Build outputs
+**/bin/
+**/obj/
+
+# User files
+*.user
+*.suo
+
+# Rider / Resharper
+.idea/

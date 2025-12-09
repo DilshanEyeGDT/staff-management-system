@@ -4,6 +4,7 @@ import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dar
 import 'package:flutter_app/screens/login/login_screen.dart';
 import 'package:flutter_app/screens/room_resources/room_resources_screen.dart';
 import 'package:flutter_app/screens/task_schedule/task_schedules_screen.dart';
+import 'package:flutter_app/screens/training/training_courses_screen.dart';
 import 'package:flutter_app/services/backend_sync_service.dart';
 import '../services/auth_service.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -375,6 +376,47 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               "Task & Schedules",
                               key: Key('task-schedules-text'),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 24),
+                  Card(
+                    key: const Key('training-courses-card'),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: InkWell(
+                      key: const Key('training-courses-card-inkwell'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TrainingCoursesScreen(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.school,
+                              size: 32,
+                              key: Key('training-courses-icon'),
+                            ),
+                            SizedBox(width: 16),
+                            Text(
+                              "Training Courses",
+                              key: Key('training-courses-text'),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
