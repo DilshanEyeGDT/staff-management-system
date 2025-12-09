@@ -15,10 +15,6 @@ func GetEventByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "GET event by ID", "id": id})
 }
 
-func CreateEvent(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "POST create event"})
-}
-
 func UpdateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "PATCH update event"})
 }

@@ -10,7 +10,7 @@ func SetupRoutes(r *gin.Engine) {
 
 	api.GET("/events", handlers.GetEvents)
 	api.GET("/events/:id", handlers.GetEventByID)
-	api.POST("/events", handlers.CreateEvent)
+	api.POST("/events", handlers.CreateEvent) // done
 	api.PATCH("/events/:id", handlers.UpdateEvent)
 	api.POST("/events/:id/moderate", handlers.ModerateEvent)
 	api.POST("/events/:id/broadcast", handlers.BroadcastEvent)
