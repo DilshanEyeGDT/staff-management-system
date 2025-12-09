@@ -255,3 +255,96 @@ func (r *EventRepository) GetEventDetails(eventID int) (map[string]interface{}, 
 
 	return resp, nil
 }
+
+func (r *EventRepository) UpdateEvent(
+	eventID int,
+	title *string,
+	summary *string,
+	content *string,
+	tags *[]string,
+	scheduledAt *string,
+) error {
+	ctx := context.Background()
+	tx, err := database.DB.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(ctx)
+
+	// 1️⃣ Update main event fields if provided
+	updateFields := []string{}
+	args := []interface{}{}
+	argPos := 1
+
+	if title != nil {
+		updateFields = append(updateFields, fmt.Sprintf("title=$%d", argPos))
+		args = append(args, *title)
+		argPos++
+	}
+	if summary != nil {
+		updateFields = append(updateFields, fmt.Sprintf("summary=$%d", argPos))
+		args = append(args, *summary)
+		argPos++
+	}
+	if scheduledAt != nil {
+		updateFields = append(updateFields, fmt.Sprintf("scheduled_at=$%d", argPos))
+		args = append(args, *scheduledAt)
+		argPos++
+	}
+
+	if len(updateFields) > 0 {
+		query := fmt.Sprintf("UPDATE events SET %s, updated_at=CURRENT_TIMESTAMP WHERE events_id=$%d",
+			strJoin(updateFields, ", "), argPos)
+		args = append(args, eventID)
+
+		if _, err := tx.Exec(ctx, query, args...); err != nil {
+			return err
+		}
+	}
+
+	// 2️⃣ Update announcement body if content provided
+	if content != nil {
+		var bodyID int
+		err := tx.QueryRow(ctx, "SELECT body_id FROM events WHERE events_id=$1", eventID).Scan(&bodyID)
+		if err != nil {
+			return fmt.Errorf("failed to get body_id: %w", err)
+		}
+
+		if _, err := tx.Exec(ctx, "UPDATE announcement_bodies SET content=$1 WHERE announcement_bodies_id=$2", *content, bodyID); err != nil {
+			return fmt.Errorf("failed to update announcement content: %w", err)
+		}
+	}
+
+	// 3️⃣ Update tags if provided
+	if tags != nil {
+		// Delete old tags
+		if _, err := tx.Exec(ctx, "DELETE FROM event_tags WHERE event_id=$1", eventID); err != nil {
+			return err
+		}
+		// Insert new tags
+		for _, t := range *tags {
+			if _, err := tx.Exec(ctx, "INSERT INTO event_tags (event_id, tag) VALUES ($1, $2)", eventID, t); err != nil {
+				return err
+			}
+		}
+	}
+
+	// 4️⃣ Commit transaction
+	if err := tx.Commit(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Helper function to join strings with separator
+func strJoin(arr []string, sep string) string {
+	res := ""
+	for i, s := range arr {
+		if i > 0 {
+			res += sep
+		}
+		res += s
+	}
+	return res
+}

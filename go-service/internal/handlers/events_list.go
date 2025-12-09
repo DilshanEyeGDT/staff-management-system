@@ -66,3 +66,39 @@ func GetEventByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, eventDetails)
 }
+
+func UpdateEvent(c *gin.Context) {
+	idStr := c.Param("event_id")
+	eventID, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid event id"})
+		return
+	}
+
+	var payload struct {
+		Title       *string   `json:"title"`
+		Summary     *string   `json:"summary"`
+		Content     *string   `json:"content"`
+		Tags        *[]string `json:"tags"`
+		ScheduledAt *string   `json:"scheduled_at"` // RFC3339 string
+	}
+
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body", "detail": err.Error()})
+		return
+	}
+
+	if err := eventRepo.UpdateEvent(eventID, payload.Title, payload.Summary, payload.Content, payload.Tags, payload.ScheduledAt); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update event", "detail": err.Error()})
+		return
+	}
+
+	// Return updated event
+	eventDetails, err := eventRepo.GetEventDetails(eventID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch updated event", "detail": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, eventDetails)
+}
