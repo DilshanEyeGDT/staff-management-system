@@ -166,4 +166,26 @@ class DotNetSyncService {
     final decoded = jsonDecode(response.body);
     return decoded["assignments"] ?? [];
   }
+
+  // --------------------------------------------------
+  // UPDATE TRAINING ASSIGNMENT
+  // --------------------------------------------------
+  Future<bool> updateTrainingAssignment(
+    String idToken,
+    int assignmentId,
+    Map<String, dynamic> body,
+  ) async {
+    final url = Uri.parse("$baseUrl/training/assignments/$assignmentId");
+
+    final response = await http.patch(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $idToken",
+      },
+      body: jsonEncode(body),
+    );
+
+    return response.statusCode == 200;
+  }
 }
