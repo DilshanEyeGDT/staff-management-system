@@ -3,12 +3,20 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"time"
 
 	"github.com/DilshanEyeGDT/staff_management_system/go-service/internal/database"
 	"github.com/DilshanEyeGDT/staff_management_system/go-service/internal/models"
 )
 
 type EventRepository struct{}
+
+// Pagination defaults
+const (
+	DefaultPage = 1
+	DefaultSize = 10
+)
 
 func NewEventRepository() *EventRepository {
 	return &EventRepository{}
@@ -106,4 +114,144 @@ func (r *EventRepository) CreateEvent(
 	}
 
 	return &event, nil
+}
+
+// GetPagedEvents returns a paged list of events with summary info
+func (r *EventRepository) GetPagedEvents(channel string, since *time.Time, page int, size int) ([]models.Event, error) {
+	ctx := context.Background()
+	if page <= 0 {
+		page = DefaultPage
+	}
+	if size <= 0 {
+		size = DefaultSize
+	}
+	offset := (page - 1) * size
+
+	// Base query
+	query := `
+	SELECT e.events_id, e.title, e.summary, e.scheduled_at, e.status
+	FROM events e
+	LEFT JOIN publish_audit p ON e.events_id = p.event_id
+	WHERE ($1 = '' OR p.channel = $1 OR p.channel IS NULL)
+	`
+	args := []interface{}{channel} // $1
+
+	// Add "since" filter only if provided
+	if since != nil {
+		query += " AND e.scheduled_at >= $2"
+		args = append(args, *since)
+	}
+
+	// Add LIMIT and OFFSET
+	// Need to compute parameter position dynamically
+	if since != nil {
+		query += " ORDER BY e.scheduled_at DESC LIMIT $3 OFFSET $4"
+		args = append(args, size, offset)
+	} else {
+		query += " ORDER BY e.scheduled_at DESC LIMIT $2 OFFSET $3"
+		args = append(args, size, offset)
+	}
+
+	rows, err := database.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var events []models.Event
+	for rows.Next() {
+		var e models.Event
+		if err := rows.Scan(&e.EventsID, &e.Title, &e.Summary, &e.ScheduledAt, &e.Status); err != nil {
+			return nil, err
+		}
+		events = append(events, e)
+	}
+
+	return events, nil
+}
+
+// GetEventDetails fetches full event details by ID including body, tags, and publish_audit
+func (r *EventRepository) GetEventDetails(eventID int) (map[string]interface{}, error) {
+	ctx := context.Background()
+
+	// Fetch main event
+	var event models.Event
+	err := database.DB.QueryRow(ctx,
+		`SELECT events_id, title, summary, body_id, created_by, status, scheduled_at, created_at, updated_at
+		 FROM events WHERE events_id=$1`, eventID,
+	).Scan(
+		&event.EventsID,
+		&event.Title,
+		&event.Summary,
+		&event.BodyID,
+		&event.CreatedBy,
+		&event.Status,
+		&event.ScheduledAt,
+		&event.CreatedAt,
+		&event.UpdatedAt,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("event not found: %w", err)
+	}
+
+	// Fetch announcement body
+	var body models.AnnouncementBody
+	if event.BodyID != nil {
+		err := database.DB.QueryRow(ctx,
+			`SELECT announcement_bodies_id, content, attachments, created_at FROM announcement_bodies WHERE announcement_bodies_id=$1`,
+			*event.BodyID,
+		).Scan(&body.ID, &body.Content, &body.Attachments, &body.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch body: %w", err)
+		}
+	}
+
+	// Fetch tags
+	tags := []models.EventTag{}
+	tagRows, err := database.DB.Query(ctx, `SELECT event_tags_id, event_id, tag, created_at FROM event_tags WHERE event_id=$1`, eventID)
+	if err == nil {
+		defer tagRows.Close()
+		for tagRows.Next() {
+			var t models.EventTag
+			if err := tagRows.Scan(&t.ID, &t.EventID, &t.Tag, &t.CreatedAt); err == nil {
+				tags = append(tags, t)
+			}
+		}
+	}
+
+	// Fetch publish_audit
+	audits := []map[string]interface{}{}
+	auditRows, err := database.DB.Query(ctx,
+		`SELECT publish_audit_id, action, performed_by, performed_at, channel FROM publish_audit WHERE event_id=$1`,
+		eventID,
+	)
+	if err == nil {
+		defer auditRows.Close()
+		for auditRows.Next() {
+			var paID int
+			var action string
+			var performedBy int
+			var performedAt time.Time
+			var channel string
+			if err := auditRows.Scan(&paID, &action, &performedBy, &performedAt, &channel); err == nil {
+				audits = append(audits, map[string]interface{}{
+					"id":           paID,
+					"action":       action,
+					"performed_by": performedBy,
+					"performed_at": performedAt,
+					"channel":      channel,
+				})
+			}
+		}
+	}
+
+	// Combine into response
+	resp := map[string]interface{}{
+		"event":         event,
+		"announcement":  body,
+		"tags":          tags,
+		"publish_audit": audits,
+	}
+
+	return resp, nil
 }
