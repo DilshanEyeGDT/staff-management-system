@@ -140,4 +140,84 @@ class DotNetSyncService {
 
     return response.statusCode == 200 || response.statusCode == 201;
   }
+
+  // --------------------------------------------------
+  // GET TRAINING ASSIGNMENTS FOR CURRENT USER
+  // --------------------------------------------------
+  Future<List<dynamic>> getTrainingAssignmentsForUser(String idToken) async {
+    final currentUserId = await getCurrentUserId(idToken);
+    if (currentUserId == null) {
+      throw Exception("Failed to fetch current user ID");
+    }
+
+    final url = Uri.parse("$baseUrl/training/user/$currentUserId/assignments");
+
+    final response = await http.get(
+      url,
+      headers: {"Authorization": "Bearer $idToken"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Failed to load assignments: ${response.statusCode} ${response.body}",
+      );
+    }
+
+    final decoded = jsonDecode(response.body);
+    return decoded["assignments"] ?? [];
+  }
+
+  // --------------------------------------------------
+  // UPDATE TRAINING ASSIGNMENT
+  // --------------------------------------------------
+  Future<bool> updateTrainingAssignment(
+    String idToken,
+    int assignmentId,
+    Map<String, dynamic> body,
+  ) async {
+    final url = Uri.parse("$baseUrl/training/assignments/$assignmentId");
+
+    final response = await http.patch(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $idToken",
+      },
+      body: jsonEncode(body),
+    );
+
+    return response.statusCode == 200;
+  }
+
+  // --------------------------------------------------
+  // GET TRAINING NOTIFICATIONS FOR CURRENT USER
+  // --------------------------------------------------
+  Future<List<dynamic>> getTrainingNotifications(String idToken) async {
+    final currentUserId = await getCurrentUserId(idToken);
+
+    if (currentUserId == null) {
+      throw Exception("Failed to fetch current user ID");
+    }
+
+    final url = Uri.parse("$baseUrl/notify/staff");
+
+    final response = await http.post(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $idToken",
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        "Failed to load notifications: ${response.statusCode} ${response.body}",
+      );
+    }
+
+    final List<dynamic> allItems = jsonDecode(response.body);
+
+    // Filter by userId
+    return allItems.where((item) => item["userId"] == currentUserId).toList();
+  }
 }
