@@ -18,6 +18,9 @@ func SetupRoutes(r *gin.Engine) {
 
 	api.GET("/tags", handlers.GetTags)
 
+	// New User Endpoint
+	api.GET("/users", handlers.GetUsers)
+
 	// Health check
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
