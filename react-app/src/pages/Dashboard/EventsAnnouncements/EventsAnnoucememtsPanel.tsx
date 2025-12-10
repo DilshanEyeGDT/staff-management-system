@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { Train } from "@mui/icons-material";
+import EventsTab from "./EventsTab";
 
 const EventsAnnouncementsPage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -33,7 +34,7 @@ const EventsAnnouncementsPage: React.FC = () => {
     <Box id="events-content">
       {tab === 0 && (
         <Box id="tab-content-events">
-          <div>Events tab</div>
+          <EventsTab />
         </Box>
       )}
 
