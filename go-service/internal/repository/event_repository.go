@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/DilshanEyeGDT/staff_management_system/go-service/internal/database"
@@ -127,30 +128,39 @@ func (r *EventRepository) GetPagedEvents(channel string, since *time.Time, page 
 	}
 	offset := (page - 1) * size
 
-	// Base query
+	// Base query: select events with necessary fields
 	query := `
-	SELECT e.events_id, e.title, e.summary, e.scheduled_at, e.status
-	FROM events e
-	LEFT JOIN publish_audit p ON e.events_id = p.event_id
-	WHERE ($1 = '' OR p.channel = $1 OR p.channel IS NULL)
-	`
-	args := []interface{}{channel} // $1
+		SELECT e.events_id, e.title, e.summary, e.body_id, e.created_by, u.display_name, e.status, e.scheduled_at, e.created_at, e.updated_at
+		FROM events e
+		LEFT JOIN users u ON e.created_by = u.id
+		WHERE 1=1
+		`
 
-	// Add "since" filter only if provided
+	args := []interface{}{}
+	argIdx := 1
+
+	// since filter
 	if since != nil {
-		query += " AND e.scheduled_at >= $2"
+		query += " AND e.scheduled_at >= $" + strconv.Itoa(argIdx)
 		args = append(args, *since)
+		argIdx++
 	}
 
-	// Add LIMIT and OFFSET
-	// Need to compute parameter position dynamically
-	if since != nil {
-		query += " ORDER BY e.scheduled_at DESC LIMIT $3 OFFSET $4"
-		args = append(args, size, offset)
-	} else {
-		query += " ORDER BY e.scheduled_at DESC LIMIT $2 OFFSET $3"
-		args = append(args, size, offset)
+	// Optional channel filter via publish_audit
+	if channel != "" {
+		query += `
+		AND EXISTS (
+			SELECT 1 FROM publish_audit p
+			WHERE p.event_id = e.events_id AND p.channel = $` + strconv.Itoa(argIdx) + `
+		)
+		`
+		args = append(args, channel)
+		argIdx++
 	}
+
+	// Order, limit, offset
+	query += " ORDER BY e.scheduled_at DESC LIMIT $" + strconv.Itoa(argIdx) + " OFFSET $" + strconv.Itoa(argIdx+1)
+	args = append(args, size, offset)
 
 	rows, err := database.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -161,7 +171,7 @@ func (r *EventRepository) GetPagedEvents(channel string, since *time.Time, page 
 	var events []models.Event
 	for rows.Next() {
 		var e models.Event
-		if err := rows.Scan(&e.EventsID, &e.Title, &e.Summary, &e.ScheduledAt, &e.Status); err != nil {
+		if err := rows.Scan(&e.EventsID, &e.Title, &e.Summary, &e.BodyID, &e.CreatedBy, &e.CreatedByName, &e.Status, &e.ScheduledAt, &e.CreatedAt, &e.UpdatedAt); err != nil {
 			return nil, err
 		}
 		events = append(events, e)
