@@ -3,18 +3,18 @@ import { Box, Typography, CircularProgress, Alert } from "@mui/material";
 import axios from "../../../axiosConfig/axiosConfig";
 import axiosLambda from "../../../axiosConfig/axiosLambda";
 import axiosNet from "../../../axiosConfig/axiosNet";
+import axiosGo from "../../../axiosConfig/axiosGo"; // <-- import Go axios
 
 const HealthCheck: React.FC = () => {
   const [authHealth, setAuthHealth] = useState<"ok" | "not_ok" | "loading">("loading");
   const [lambdaHealth, setLambdaHealth] = useState<"ok" | "not_ok" | "loading">("loading");
   const [netHealth, setNetHealth] = useState<"ok" | "not_ok" | "loading">("loading");
+  const [goHealth, setGoHealth] = useState<"ok" | "not_ok" | "loading">("loading"); // <-- Go health state
 
   const [authError, setAuthError] = useState<string | null>(null);
   const [lambdaError, setLambdaError] = useState<string | null>(null);
   const [netError, setNetError] = useState<string | null>(null);
-
-  const [lambdaData, setLambdaData] = useState<any>(null);
-  const [netData, setNetData] = useState<any>(null);
+  const [goError, setGoError] = useState<string | null>(null); // <-- Go error
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -31,7 +31,6 @@ const HealthCheck: React.FC = () => {
       try {
         const res = await axiosLambda.get("/healthz");
         setLambdaHealth("ok");
-        setLambdaData(res.data);
       } catch (err: any) {
         setLambdaHealth("not_ok");
         setLambdaError(err?.response?.data?.message || "Lambda not reachable");
@@ -41,10 +40,18 @@ const HealthCheck: React.FC = () => {
       try {
         const res = await axiosNet.get("/health/db");
         setNetHealth(res.data?.status === "ok" ? "ok" : "not_ok");
-        setNetData(res.data);
       } catch (err: any) {
         setNetHealth("not_ok");
         setNetError(err?.response?.data?.message || "NET backend not reachable");
+      }
+
+      // ---------- Check Go Backend ----------
+      try {
+        const res = await axiosGo.get("http://localhost:8088/healthz"); // <-- Go health endpoint
+        setGoHealth(res.data?.status === "ok" ? "ok" : "not_ok");
+      } catch (err: any) {
+        setGoHealth("not_ok");
+        setGoError(err?.response?.data?.message || "Go backend not reachable");
       }
     };
 
@@ -92,9 +99,6 @@ const HealthCheck: React.FC = () => {
       {lambdaHealth === "ok" && (
         <Alert severity="success" sx={{ mt: 1 }}>
           Lambda is Healthy - RDS Connected
-          {/* <pre style={{ marginTop: "8px", fontSize: "0.9rem" }}>
-{JSON.stringify(lambdaData, null, 2)}
-          </pre> */}
         </Alert>
       )}
       {lambdaHealth === "not_ok" && (
@@ -117,13 +121,34 @@ const HealthCheck: React.FC = () => {
       {netHealth === "ok" && (
         <Alert severity="success" sx={{ mt: 1 }}>
           ASP.NET Backend is Healthy - DB Connected
-          {/* {netData && <Typography variant="body2">{netData.message}</Typography>} */}
         </Alert>
       )}
       {netHealth === "not_ok" && (
         <Alert severity="error" sx={{ mt: 1 }}>
           .NET Backend Unavailable
           {netError && <Typography variant="body2">{netError}</Typography>}
+        </Alert>
+      )}
+
+      {/* ---------- GO BACKEND HEALTH ---------- */}
+      <Typography variant="h6" sx={{ mt: 4 }}>
+        🟢 Go Backend System
+      </Typography>
+      {goHealth === "loading" && (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <CircularProgress size={20} />
+          <Typography>Checking Go Backend...</Typography>
+        </Box>
+      )}
+      {goHealth === "ok" && (
+        <Alert severity="success" sx={{ mt: 1 }}>
+          Go Backend is Healthy
+        </Alert>
+      )}
+      {goHealth === "not_ok" && (
+        <Alert severity="error" sx={{ mt: 1 }}>
+          Go Backend Unavailable
+          {goError && <Typography variant="body2">{goError}</Typography>}
         </Alert>
       )}
     </Box>
