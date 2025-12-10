@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { Train } from "@mui/icons-material";
 import EventsTab from "./EventsTab";
+import DraftEventsList from "./ConfirmEvents";
+import App from "../../../App";
+import ApprovedEvents from "./BroadcastEvents";
 
 const EventsAnnouncementsPage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -29,6 +32,11 @@ const EventsAnnouncementsPage: React.FC = () => {
         id="tab-confirm-events"
         data-testid="tab-confirm-events"
       />
+      <Tab
+        label="Broadcast Events"
+        id="tab-broadcast-events"
+        data-testid="tab-broadcast-events"
+      />
     </Tabs>
 
     <Box id="events-content">
@@ -40,7 +48,13 @@ const EventsAnnouncementsPage: React.FC = () => {
 
       {tab === 1 && (
         <Box id="tab-content-confirm-events">
-          <div>Create events tab</div>
+          <DraftEventsList />
+        </Box>
+      )}
+
+      {tab === 2 && (
+        <Box id="tab-content-broadcast-events">
+          <ApprovedEvents />
         </Box>
       )}
     </Box>

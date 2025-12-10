@@ -511,6 +511,15 @@ func (r *EventRepository) BroadcastEvent(eventID string, performedBy int) (*mode
 		}
 	}
 
+	// 5️⃣ Update event status to "broadcasted"
+	_, err = tx.Exec(ctx,
+		`UPDATE events SET status=$1, updated_at=NOW() WHERE events_id=$2`,
+		"broadcasted", eventID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	// 5️⃣ Commit transaction
 	if err := tx.Commit(ctx); err != nil {
 		return nil, err
