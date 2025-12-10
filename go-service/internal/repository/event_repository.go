@@ -436,3 +436,99 @@ func (r *EventRepository) ModerateEvent(eventID string, action string, performed
 
 	return &event, nil
 }
+
+// BroadcastEvent enqueues push/email delivery based on publish_audit channel
+func (r *EventRepository) BroadcastEvent(eventID string, performedBy int) (*models.Event, error) {
+	ctx := context.Background()
+	tx, err := database.DB.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback(ctx)
+
+	// 1️⃣ Check if event.status = approved
+	var status string
+	err = tx.QueryRow(ctx, `SELECT status FROM events WHERE events_id=$1`, eventID).Scan(&status)
+	if err != nil {
+		return nil, err
+	}
+	if status != "approved" {
+		return nil, fmt.Errorf("only approved events can be broadcast")
+	}
+
+	// 2️⃣ Get all previous publish_audit channels
+	rows, err := tx.Query(ctx, `SELECT DISTINCT channel FROM publish_audit WHERE event_id=$1`, eventID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	channels := []string{}
+	for rows.Next() {
+		var ch string
+		if err := rows.Scan(&ch); err != nil {
+			return nil, err
+		}
+		channels = append(channels, ch)
+	}
+
+	// 3️⃣ Send notifications
+	for _, ch := range channels {
+		switch ch {
+		case "push":
+			// call your push notification function
+			err = SendPushNotification(eventID)
+			if err != nil {
+				return nil, err
+			}
+		case "email":
+			// call your email function
+			err = SendEmailNotification(eventID)
+			if err != nil {
+				return nil, err
+			}
+		default:
+			// skip unknown channels (Teams for now)
+		}
+
+		// 4️⃣ Insert publish_audit for successful broadcast
+		_, err := tx.Exec(ctx,
+			`INSERT INTO publish_audit (event_id, action, performed_by, channel)
+             VALUES ($1, $2, $3, $4)`,
+			eventID, "broadcast successful", performedBy, ch)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 5️⃣ Commit transaction
+	if err := tx.Commit(ctx); err != nil {
+		return nil, err
+	}
+
+	// 6️⃣ Return updated event
+	var event models.Event
+	err = database.DB.QueryRow(ctx,
+		`SELECT events_id, title, summary, body_id, created_by, status, scheduled_at, created_at, updated_at
+         FROM events WHERE events_id=$1`, eventID).
+		Scan(&event.EventsID, &event.Title, &event.Summary, &event.BodyID,
+			&event.CreatedBy, &event.Status, &event.ScheduledAt,
+			&event.CreatedAt, &event.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
+
+func SendPushNotification(eventID string) error {
+	// TODO: integrate with FCM or your push service
+	fmt.Println("Push notification sent for event:", eventID)
+	return nil
+}
+
+func SendEmailNotification(eventID string) error {
+	// TODO: integrate with SMTP or email service
+	fmt.Println("Email sent for event:", eventID)
+	return nil
+}
