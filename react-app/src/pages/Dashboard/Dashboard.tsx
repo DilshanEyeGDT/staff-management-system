@@ -11,6 +11,7 @@ import LeaveAttendance from "./LeaveAttendance/LeaveAttendancePanel";
 import RoomBookingPage from "./RoomBooking/Room&ResourcePanel";
 import TaskSchedulePage from "./TasksSchedules/TasksSchedulesPanel";
 import PerformanceTrainingPage from "./PerformanceTraining/PerformaceTrainingPanel";
+import EventsAnnouncementsPage from "./EventsAnnouncements/EventsAnnoucememtsPanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -110,6 +111,8 @@ const Dashboard: React.FC = () => {
         return <TaskSchedulePage />;
       case "performanceTraining":
         return <PerformanceTrainingPage />;
+      case "eventsAnnouncements":
+        return <EventsAnnouncementsPage />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -211,6 +214,17 @@ const Dashboard: React.FC = () => {
                   onClick={() => setSelectedPage("performanceTraining")}
                 >
                   <ListItemText primary="Performance & Training" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Events & Announcments */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-eventsAnnouncements"
+                  selected={selectedPage === "eventsAnnouncements"}
+                  onClick={() => setSelectedPage("eventsAnnouncements")}
+                >
+                  <ListItemText primary="Events & Announcements" />
                 </ListItemButton>
               </ListItem>
             </>
