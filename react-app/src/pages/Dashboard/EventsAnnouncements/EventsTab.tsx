@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import axiosGo from "../../../axiosConfig/axiosGo";
 import dayjs from "dayjs";
+import EventDetailsDialog from "./EventDetailsDialog";
 
 interface Event {
   id: number;
@@ -32,6 +33,9 @@ const EventsTab: React.FC = () => {
   const [sinceDate, setSinceDate] = useState<string>("");
   const [page, setPage] = useState(1);
   const [size] = useState(5);
+
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -100,7 +104,19 @@ const EventsTab: React.FC = () => {
         <Typography>No events found.</Typography>
       ) : (
         events.map((event) => (
-          <Paper key={event.id} sx={{ p: 2 }}>
+          <Paper
+            key={event.id}
+            sx={{ p: 2,
+    cursor: "pointer",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    "&:hover": {
+      transform: "scale(1.01)",
+    }, }}
+            onClick={() => {
+              setSelectedEventId(event.id);
+              setDialogOpen(true);
+            }}
+          >
             <Typography variant="h6">{event.title}</Typography>
             <Typography variant="body2">{event.summary}</Typography>
             <Typography variant="caption" color="text.secondary">
@@ -110,6 +126,12 @@ const EventsTab: React.FC = () => {
           </Paper>
         ))
       )}
+      <EventDetailsDialog
+        open={dialogOpen}
+        eventId={selectedEventId}
+        onClose={() => setDialogOpen(false)}
+      />
+
     </Box>
   );
 };
