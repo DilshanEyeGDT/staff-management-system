@@ -6,10 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ModerateEvent(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "POST moderate event"})
-}
-
 func BroadcastEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "POST broadcast event"})
 }

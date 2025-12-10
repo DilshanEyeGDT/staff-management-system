@@ -348,3 +348,91 @@ func strJoin(arr []string, sep string) string {
 	}
 	return res
 }
+
+// ModerateEvent updates an event status and writes into publish_audit
+func (r *EventRepository) ModerateEvent(eventID string, action string, performedBy int, channel *string) (*models.Event, error) {
+
+	ctx := context.Background()
+	tx, err := database.DB.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback(ctx)
+
+	var newStatus string
+	var auditAction string
+	var auditChannel string
+
+	// APPROVED
+	if action == "approved" {
+		newStatus = "approved"
+		auditAction = "broadcast"
+
+		// channel must come from request
+		if channel != nil {
+			auditChannel = *channel
+		} else {
+			return nil, fmt.Errorf("channel is required when approving")
+		}
+
+	} else if action == "rejected" {
+		// REJECTED
+		newStatus = "rejected"
+		auditAction = "rejected"
+		auditChannel = "not sending"
+
+	} else {
+		return nil, fmt.Errorf("invalid action: must be 'approved' or 'rejected'")
+	}
+
+	// 1️⃣ Update event status
+	_, err = tx.Exec(
+		ctx,
+		`UPDATE events SET status=$1, updated_at=NOW() WHERE events_id=$2`,
+		newStatus, eventID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// 2️⃣ Insert into publish_audit
+	_, err = tx.Exec(
+		ctx,
+		`INSERT INTO publish_audit (event_id, action, performed_by, channel)
+         VALUES ($1, $2, $3, $4)`,
+		eventID, auditAction, performedBy, auditChannel,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3️⃣ Commit
+	if err := tx.Commit(ctx); err != nil {
+		return nil, err
+	}
+
+	// 4️⃣ Fetch updated event
+	var event models.Event
+	err = database.DB.QueryRow(
+		ctx,
+		`SELECT events_id, title, summary, body_id, created_by, status, scheduled_at, created_at, updated_at
+         FROM events WHERE events_id=$1`,
+		eventID,
+	).Scan(
+		&event.EventsID,
+		&event.Title,
+		&event.Summary,
+		&event.BodyID,
+		&event.CreatedBy,
+		&event.Status,
+		&event.ScheduledAt,
+		&event.CreatedAt,
+		&event.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
