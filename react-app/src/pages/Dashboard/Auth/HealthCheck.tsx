@@ -142,7 +142,7 @@ const HealthCheck: React.FC = () => {
       )}
       {goHealth === "ok" && (
         <Alert severity="success" sx={{ mt: 1 }}>
-          Go Backend is Healthy
+          Go Backend is Healthy - DB Connected
         </Alert>
       )}
       {goHealth === "not_ok" && (
