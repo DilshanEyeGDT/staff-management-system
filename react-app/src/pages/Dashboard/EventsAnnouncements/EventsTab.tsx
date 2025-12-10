@@ -130,8 +130,8 @@ const EventsTab: React.FC = () => {
         open={dialogOpen}
         eventId={selectedEventId}
         onClose={() => setDialogOpen(false)}
+        onUpdated={fetchEvents}
       />
-
     </Box>
   );
 };
