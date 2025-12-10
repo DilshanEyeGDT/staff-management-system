@@ -15,6 +15,7 @@ import {
 import axiosGo from "../../../axiosConfig/axiosGo";
 import dayjs from "dayjs";
 import EventDetailsDialog from "./EventDetailsDialog";
+import CreateEventDialog from "./CreateEventDialog";
 
 interface Event {
   id: number;
@@ -36,6 +37,9 @@ const EventsTab: React.FC = () => {
 
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  //floating buton
+  const [openCreate, setOpenCreate] = useState(false);
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -107,11 +111,11 @@ const EventsTab: React.FC = () => {
           <Paper
             key={event.id}
             sx={{ p: 2,
-    cursor: "pointer",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-    "&:hover": {
-      transform: "scale(1.01)",
-    }, }}
+              cursor: "pointer",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              "&:hover": {
+                transform: "scale(1.01)",
+              }, }}
             onClick={() => {
               setSelectedEventId(event.id);
               setDialogOpen(true);
@@ -126,6 +130,31 @@ const EventsTab: React.FC = () => {
           </Paper>
         ))
       )}
+      {/* Floating Add Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setOpenCreate(true)}
+        sx={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          width: 60,
+          height: 60,
+          borderRadius: "50%",
+          fontSize: 32,
+          minWidth: 0,
+        }}
+      >
+        +
+      </Button>
+
+      {/* Create Dialog */}
+      <CreateEventDialog
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSuccess={fetchEvents}
+      />
       <EventDetailsDialog
         open={dialogOpen}
         eventId={selectedEventId}
