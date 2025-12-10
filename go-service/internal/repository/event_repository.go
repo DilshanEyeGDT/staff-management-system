@@ -532,3 +532,33 @@ func SendEmailNotification(eventID string) error {
 	fmt.Println("Email sent for event:", eventID)
 	return nil
 }
+
+// GetTagSuggestions returns unique tags matching the query (case-insensitive) with limit
+func (r *EventRepository) GetTagSuggestions(query string, limit int) ([]string, error) {
+	ctx := context.Background()
+
+	rows, err := database.DB.Query(
+		ctx,
+		`SELECT DISTINCT tag
+         FROM event_tags
+         WHERE LOWER(tag) LIKE LOWER($1)
+         ORDER BY tag
+         LIMIT $2`,
+		"%"+query+"%", limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tags []string
+	for rows.Next() {
+		var t string
+		if err := rows.Scan(&t); err != nil {
+			return nil, err
+		}
+		tags = append(tags, t)
+	}
+
+	return tags, nil
+}

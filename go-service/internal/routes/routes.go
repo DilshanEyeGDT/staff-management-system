@@ -14,9 +14,9 @@ func SetupRoutes(r *gin.Engine) {
 	api.PATCH("/events/:event_id", handlers.UpdateEvent)       // done
 	api.POST("/events/:id/moderate", handlers.ModerateEvent)   // done
 	api.POST("/events/:id/broadcast", handlers.BroadcastEvent) // done
-	api.POST("/events/tag-suggest", handlers.TagSuggest)
+	api.POST("/events/tag-suggest", handlers.TagSuggest)       // not needed
 
-	api.GET("/tags", handlers.GetTags)
+	api.GET("/tags", handlers.GetTags) // done
 
 	// New User Endpoint								 		// done
 	api.GET("/users", handlers.GetUsers)
