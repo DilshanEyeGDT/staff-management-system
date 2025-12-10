@@ -31,6 +31,7 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
   const [tagInput, setTagInput] = useState("");
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
 
+  const [attachments, setAttachments] = useState<File[]>([]); // store selected files
   const [userId, setUserId] = useState<number | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -86,6 +87,13 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
     setTagInput("");
   };
 
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setAttachments(Array.from(e.target.files)); // store files
+    }
+  };
+
   // Create event
   const handleCreate = async () => {
     if (!userId) {
@@ -113,11 +121,11 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
         title,
         summary,
         content,
-        attachments: [],
+        attachments: attachments.map((file) => file.name), // only filenames
         created_by: userId,
         status: "draft",
         scheduled_at: new Date(scheduledAt).toISOString(),
-        tags: [...tags], // Send correctly as array
+        tags: [...tags],
       };
 
       await axiosGo.post("/events", body);
@@ -127,6 +135,15 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
         message: "Event created successfully!",
         severity: "success",
       });
+
+      // Reset form
+      setTitle("");
+      setSummary("");
+      setContent("");
+      setScheduledAt("");
+      setTags([]);
+      setTagInput("");
+      setAttachments([]);
 
       onSuccess();
       onClose();
@@ -178,6 +195,23 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
             InputLabelProps={{ shrink: true }}
             fullWidth
           />
+
+          {/* Attachments */}
+          <Box>
+            <Button variant="outlined" component="label">
+              Upload Files
+              <input type="file" multiple hidden onChange={handleFileChange} />
+            </Button>
+
+            {/* Show selected file names */}
+            {attachments.length > 0 && (
+              <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 0.5 }}>
+                {attachments.map((file) => (
+                  <Chip key={file.name} label={file.name} />
+                ))}
+              </Box>
+            )}
+          </Box>
 
           {/* TAG INPUT */}
           <Box>

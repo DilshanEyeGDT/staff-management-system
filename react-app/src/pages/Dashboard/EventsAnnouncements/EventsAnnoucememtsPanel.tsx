@@ -20,14 +20,14 @@ const EventsAnnouncementsPage: React.FC = () => {
       id="events-announcements-tabs"
     >
       <Tab
-        label="Events"
+        label="Create & Upadate Events"
         id="tab-events"
         data-testid="tab-events"
       />
       <Tab
-        label="Create Events"
-        id="tab-create-events"
-        data-testid="tab-create-events"
+        label="Event Confirmations"
+        id="tab-confirm-events"
+        data-testid="tab-confirm-events"
       />
     </Tabs>
 
@@ -39,7 +39,7 @@ const EventsAnnouncementsPage: React.FC = () => {
       )}
 
       {tab === 1 && (
-        <Box id="tab-content-create-events">
+        <Box id="tab-content-confirm-events">
           <div>Create events tab</div>
         </Box>
       )}
