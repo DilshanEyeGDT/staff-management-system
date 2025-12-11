@@ -30,10 +30,10 @@ describe("Login Flow Test", function () {
 
     // // 4. Enter Cognito credentials
     // const emailField = await driver.wait(until.elementLocated(By.id("signInFormUsername")), 5000);
-    // await emailField.sendKeys(ADMIN_EMAIL);
+    // await emailField.sendKeys("tharakadilshan506@gmail.com");
 
     // const passwordField = await driver.findElement(By.id("signInFormPassword"));
-    // await passwordField.sendKeys(ADMIN_PASSWORD);
+    // await passwordField.sendKeys("Tharaka@1234");
 
     // // 5. Click Sign in (using name attribute)
     // const signInBtn = await driver.findElement(By.name("signInSubmitButton"));
