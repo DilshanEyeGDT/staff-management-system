@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/events_announcement/event_fetch_service.dart';
 import 'package:flutter_app/screens/task_schedule/models/date_time_utils.dart';
 import 'package:flutter_app/services/go_sync_service.dart';
+import 'package:http/http.dart' as http;
 
 class EventAnnouncementScreen extends StatefulWidget {
   const EventAnnouncementScreen({Key? key}) : super(key: key);
@@ -156,10 +158,10 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
                 Text(
                   "Scheduled At: ${DateTimeUtils.formatDateTime(event['scheduled_at'] ?? '')}",
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  "Created At: ${DateTimeUtils.formatDateTime(announcement['created_at'] ?? '')}",
-                ),
+                // const SizedBox(height: 8),
+                // Text(
+                //   "Created At: ${DateTimeUtils.formatDateTime(announcement['created_at'] ?? '')}",
+                // ),
                 const SizedBox(height: 8),
                 if (tags.isNotEmpty)
                   Wrap(
@@ -186,6 +188,100 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
               child: const Text("Close"),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Future<void> openEditEventDialog(int eventId) async {
+    // Fetch existing event details
+    final url = Uri.parse("${goService.baseUrl}/events/$eventId");
+    final response = await http.get(url);
+    if (response.statusCode != 200) return;
+
+    final data = jsonDecode(response.body);
+    final event = data["event"] ?? {};
+    final announcement = data["announcement"] ?? {};
+
+    // Pre-fill controllers
+    titleController.text = event["title"] ?? "";
+    summaryController.text = event["summary"] ?? "";
+    contentController.text = announcement["content"] ?? "";
+    scheduledAtController.text = event["scheduled_at"] ?? "";
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text("Edit Event"),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(labelText: "Title"),
+                    ),
+                    TextField(
+                      controller: summaryController,
+                      decoration: const InputDecoration(labelText: "Summary"),
+                    ),
+                    TextField(
+                      controller: contentController,
+                      decoration: const InputDecoration(labelText: "Content"),
+                    ),
+                    TextField(
+                      controller: scheduledAtController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: "Scheduled At",
+                      ),
+                      onTap: () async {
+                        await pickDateTime();
+                        setStateDialog(() {});
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text("Cancel"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final success = await goService.updateEvent(
+                      eventId: eventId,
+                      title: titleController.text.trim(),
+                      summary: summaryController.text.trim(),
+                      content: contentController.text.trim(),
+                      scheduledAt: scheduledAtController.text.trim(),
+                    );
+
+                    if (success) {
+                      if (!mounted) return;
+                      Navigator.pop(dialogContext);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Event updated successfully"),
+                        ),
+                      );
+                      loadMyEvents(); // refresh the list
+                    } else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Failed to update event")),
+                      );
+                    }
+                  },
+                  child: const Text("Update"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -340,6 +436,7 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
                 itemCount: myEvents.length,
                 itemBuilder: (context, index) {
                   final e = myEvents[index];
+                  final isDraft = (e["status"] == "draft"); // check status
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -360,6 +457,16 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
                             "Scheduled: ${DateTimeUtils.formatDateTime(e["scheduled_at"] ?? "")}",
                           ),
                         ],
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.edit),
+                        color: isDraft ? Colors.blue : Colors.grey,
+                        onPressed: isDraft
+                            ? () {
+                                // Call your edit function here
+                                openEditEventDialog(e["id"]);
+                              }
+                            : null, // disabled if not draft
                       ),
                       onTap: () {
                         // Open event details popup

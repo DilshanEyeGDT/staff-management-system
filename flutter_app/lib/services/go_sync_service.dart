@@ -97,4 +97,30 @@ class GoSyncService {
 
     return null;
   }
+
+  // go_sync_service.dart
+  Future<bool> updateEvent({
+    required int eventId,
+    required String title,
+    required String summary,
+    required String content,
+    required String scheduledAt,
+  }) async {
+    final url = Uri.parse("$baseUrl/events/$eventId");
+
+    final body = {
+      "title": title,
+      "summary": summary,
+      "content": content,
+      "scheduled_at": scheduledAt,
+    };
+
+    final response = await http.patch(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    );
+
+    return response.statusCode == 200;
+  }
 }
