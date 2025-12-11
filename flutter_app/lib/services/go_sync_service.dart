@@ -65,4 +65,21 @@ class GoSyncService {
 
     return response.statusCode == 201 || response.statusCode == 200;
   }
+
+  // --------------------------------------------------
+  // GET ALL EVENTS (Go backend)
+  // GET /events
+  // --------------------------------------------------
+  Future<List<Map<String, dynamic>>> fetchAllEvents() async {
+    final url = Uri.parse("$baseUrl/events");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    }
+
+    return [];
+  }
 }

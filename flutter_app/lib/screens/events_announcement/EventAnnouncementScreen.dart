@@ -4,6 +4,8 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/events_announcement/event_fetch_service.dart';
+import 'package:flutter_app/screens/task_schedule/models/date_time_utils.dart';
 import 'package:flutter_app/services/go_sync_service.dart';
 
 class EventAnnouncementScreen extends StatefulWidget {
@@ -15,6 +17,23 @@ class EventAnnouncementScreen extends StatefulWidget {
 }
 
 class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
+  List<Map<String, dynamic>> myEvents = [];
+
+  final EventFetchService eventFetchService = EventFetchService();
+
+  @override
+  void initState() {
+    super.initState();
+    loadMyEvents();
+  }
+
+  Future<void> loadMyEvents() async {
+    final events = await eventFetchService.fetchMyEvents();
+    setState(() {
+      myEvents = events;
+    });
+  }
+
   final GoSyncService goService = GoSyncService();
 
   final titleController = TextEditingController();
@@ -245,11 +264,40 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
         onPressed: openCreateEventDialog,
         child: const Icon(Icons.add),
       ),
-      body: const Center(
-        child: Text(
-          'This is the Events & Announcements screen',
-          style: TextStyle(fontSize: 18),
-        ),
+      body: RefreshIndicator(
+        onRefresh: loadMyEvents,
+        child: myEvents.isEmpty
+            ? const Center(child: Text("No events found"))
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: myEvents.length,
+                itemBuilder: (context, index) {
+                  final e = myEvents[index];
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        e["title"],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Status: ${e["status"]}"),
+                          Text(
+                            "Scheduled: ${DateTimeUtils.formatDateTime(e["scheduled_at"] ?? "")}",
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }
