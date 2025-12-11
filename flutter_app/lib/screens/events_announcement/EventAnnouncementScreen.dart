@@ -124,6 +124,73 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
     }
   }
 
+  Future<void> openEventDetailsDialog(int eventId) async {
+    final eventData = await goService.getEventDetails(eventId);
+
+    if (eventData == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to fetch event details")),
+      );
+      return;
+    }
+
+    final event = eventData['event'];
+    final announcement = eventData['announcement'];
+    final tags = eventData['tags'] as List<dynamic>;
+    final attachments = announcement['attachments'] as List<dynamic>;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(event['title'] ?? ''),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Summary: ${event['summary'] ?? ''}"),
+                const SizedBox(height: 8),
+                Text("Content: ${announcement['content'] ?? ''}"),
+                const SizedBox(height: 8),
+                Text(
+                  "Scheduled At: ${DateTimeUtils.formatDateTime(event['scheduled_at'] ?? '')}",
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Created At: ${DateTimeUtils.formatDateTime(announcement['created_at'] ?? '')}",
+                ),
+                const SizedBox(height: 8),
+                if (tags.isNotEmpty)
+                  Wrap(
+                    spacing: 8,
+                    children: tags
+                        .map((tag) => Chip(label: Text(tag['tag'])))
+                        .toList(),
+                  ),
+                if (attachments.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      const Text("Attachments:"),
+                      ...attachments.map((file) => Text(file)).toList(),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void openCreateEventDialog() {
     showDialog(
       context: context,
@@ -294,6 +361,10 @@ class _EventAnnouncementScreenState extends State<EventAnnouncementScreen> {
                           ),
                         ],
                       ),
+                      onTap: () {
+                        // Open event details popup
+                        openEventDetailsDialog(e["id"]);
+                      },
                     ),
                   );
                 },

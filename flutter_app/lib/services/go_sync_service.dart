@@ -82,4 +82,19 @@ class GoSyncService {
 
     return [];
   }
+
+  // --------------------------------------------------
+  // GET EVENT DETAILS BY ID
+  // --------------------------------------------------
+  Future<Map<String, dynamic>?> getEventDetails(int eventId) async {
+    final url = Uri.parse("$baseUrl/events/$eventId");
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+
+    return null;
+  }
 }
