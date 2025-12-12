@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Feedback;
 use App\Models\FeedbackAttachment;
+use App\Models\FeedbackAudit; 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -161,5 +162,71 @@ class FeedbackController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        // Validate input
+        $request->validate([
+            'status' => 'nullable|string|max:20',
+            'assignee_id' => 'nullable|integer|exists:users,id',
+            'priority' => 'nullable|string|max:20'
+        ]);
+
+        $feedback = Feedback::find($id);
+        if (!$feedback) {
+            return response()->json([
+                'message' => 'Feedback not found'
+            ], 404);
+        }
+
+        $changes = [];
+
+        // Track changes
+        if ($request->has('status') && $request->status !== $feedback->status) {
+            $changes[] = [
+                'change_type' => 'status',
+                'old_value' => $feedback->status,
+                'new_value' => $request->status
+            ];
+            $feedback->status = $request->status;
+        }
+
+        if ($request->has('assignee_id') && $request->assignee_id !== $feedback->assignee_id) {
+            $changes[] = [
+                'change_type' => 'assignee_id',
+                'old_value' => $feedback->assignee_id,
+                'new_value' => $request->assignee_id
+            ];
+            $feedback->assignee_id = $request->assignee_id;
+        }
+
+        if ($request->has('priority') && $request->priority !== $feedback->priority) {
+            $changes[] = [
+                'change_type' => 'priority',
+                'old_value' => $feedback->priority,
+                'new_value' => $request->priority
+            ];
+            $feedback->priority = $request->priority;
+        }
+
+        // Save feedback
+        $feedback->save();
+
+        // Save audit logs
+        foreach ($changes as $change) {
+            FeedbackAudit::create([
+                'feedback_id' => $feedback->feedback_id,
+                'changed_by' => auth()->id() ?? $request->user_id ?? 1, // default to 1 if no auth
+                'change_type' => $change['change_type'],
+                'old_value' => $change['old_value'],
+                'new_value' => $change['new_value'],
+                'created_at' => now() // ✅ important!
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Feedback updated successfully',
+            'feedback' => $feedback
+        ]);
+    }
 
 }
