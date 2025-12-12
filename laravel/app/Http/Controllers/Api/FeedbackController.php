@@ -85,35 +85,49 @@ class FeedbackController extends Controller
     }
 
     public function index(Request $request)
-{
-    // Validation for query parameters
-    $request->validate([
-        'status' => 'nullable|string|max:20',
-        'assignee' => 'nullable|integer|exists:users,id',
-        'page' => 'nullable|integer|min:1',
-        'size' => 'nullable|integer|min:1|max:100',
-    ]);
+    {
+        // Validation for query parameters
+        $request->validate([
+            'status' => 'nullable|string|max:20',
+            'assignee' => 'nullable|integer|exists:users,id',
+            'page' => 'nullable|integer|min:1',
+            'size' => 'nullable|integer|min:1|max:100',
+        ]);
 
-    $query = Feedback::query();
+        $query = Feedback::query();
 
-    // Apply filters if provided
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
+        // Apply filters if provided
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('assignee')) {
+            $query->where('assignee_id', $request->assignee);
+        }
+
+        // Pagination
+        $page = $request->input('page', 1);
+        $size = $request->input('size', 10);
+
+        $feedbacks = $query->with('attachments')
+            ->orderBy('created_at', 'desc')
+            ->paginate($size, ['*'], 'page', $page);
+
+        return response()->json($feedbacks);
     }
 
-    if ($request->filled('assignee')) {
-        $query->where('assignee_id', $request->assignee);
+    public function show($id)
+    {
+        // Find feedback with attachments and message thread
+        $feedback = Feedback::with(['attachments', 'messages'])->find($id);
+
+        if (!$feedback) {
+            return response()->json([
+                'message' => 'Feedback not found'
+            ], 404);
+        }
+
+        return response()->json($feedback);
     }
-
-    // Pagination
-    $page = $request->input('page', 1);
-    $size = $request->input('size', 10);
-
-    $feedbacks = $query->with('attachments')
-        ->orderBy('created_at', 'desc')
-        ->paginate($size, ['*'], 'page', $page);
-
-    return response()->json($feedbacks);
-}
 
 }

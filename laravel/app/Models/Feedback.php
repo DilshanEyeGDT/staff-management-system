@@ -25,4 +25,11 @@ class Feedback extends Model
     {
         return $this->hasMany(FeedbackAttachment::class, 'feedback_id', 'feedback_id');
     }
+
+    public function messages()
+    {
+        return $this->hasMany(FeedbackMessage::class, 'feedback_id', 'feedback_id')
+                    ->orderBy('created_at', 'asc'); // optional: oldest first
+    }
+
 }
