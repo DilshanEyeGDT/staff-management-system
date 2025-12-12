@@ -130,4 +130,36 @@ class FeedbackController extends Controller
         return response()->json($feedback);
     }
 
+    public function storeMessage(Request $request, $id)
+    {
+        // Validate request
+        $request->validate([
+            'sender_id' => 'required|integer|exists:users,id',
+            'message' => 'required|string|max:5000'
+        ]);
+
+        // Find the feedback
+        $feedback = Feedback::find($id);
+        if (!$feedback) {
+            return response()->json([
+                'message' => 'Feedback not found'
+            ], 404);
+        }
+
+        // Create new feedback message
+        $feedbackMessage = $feedback->messages()->create([
+            'sender_id' => $request->sender_id,
+            'message' => $request->message
+        ]);
+
+        return response()->json([
+            'feedback_message_id' => $feedbackMessage->feedback_message_id,
+            'feedback_id' => $feedbackMessage->feedback_id,
+            'sender_id' => $feedbackMessage->sender_id,
+            'message' => $feedbackMessage->message,
+            'created_at' => $feedbackMessage->created_at
+        ], 201);
+    }
+
+
 }
