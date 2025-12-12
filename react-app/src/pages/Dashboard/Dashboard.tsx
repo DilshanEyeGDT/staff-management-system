@@ -12,6 +12,8 @@ import RoomBookingPage from "./RoomBooking/Room&ResourcePanel";
 import TaskSchedulePage from "./TasksSchedules/TasksSchedulesPanel";
 import PerformanceTrainingPage from "./PerformanceTraining/PerformaceTrainingPanel";
 import EventsAnnouncementsPage from "./EventsAnnouncements/EventsAnnoucememtsPanel";
+import { Feed } from "@mui/icons-material";
+import FeedbackReportPage from "./feedbacks/FeedbackReportPanel";
 
 const Dashboard: React.FC = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -113,6 +115,8 @@ const Dashboard: React.FC = () => {
         return <PerformanceTrainingPage />;
       case "eventsAnnouncements":
         return <EventsAnnouncementsPage />;
+      case "feedbacks":
+        return <FeedbackReportPage />;
       case "health":
         return (
           <Box sx={{ mt: 4 }}>
@@ -225,6 +229,17 @@ const Dashboard: React.FC = () => {
                   onClick={() => setSelectedPage("eventsAnnouncements")}
                 >
                   <ListItemText primary="Events & Announcements" />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Feedbackes */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  id="nav-feedbacks"
+                  selected={selectedPage === "feedbacks"}
+                  onClick={() => setSelectedPage("feedbacks")}
+                >
+                  <ListItemText primary="Feedbacks & Reporting" />
                 </ListItemButton>
               </ListItem>
             </>

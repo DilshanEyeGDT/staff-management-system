@@ -4,17 +4,20 @@ import axios from "../../../axiosConfig/axiosConfig";
 import axiosLambda from "../../../axiosConfig/axiosLambda";
 import axiosNet from "../../../axiosConfig/axiosNet";
 import axiosGo from "../../../axiosConfig/axiosGo"; // <-- import Go axios
+import axiosLaravel from "../../../axiosConfig/axiosLaravel"; // <-- import Laravel axios
 
 const HealthCheck: React.FC = () => {
   const [authHealth, setAuthHealth] = useState<"ok" | "not_ok" | "loading">("loading");
   const [lambdaHealth, setLambdaHealth] = useState<"ok" | "not_ok" | "loading">("loading");
   const [netHealth, setNetHealth] = useState<"ok" | "not_ok" | "loading">("loading");
   const [goHealth, setGoHealth] = useState<"ok" | "not_ok" | "loading">("loading"); // <-- Go health state
+  const [laravelHealth, setLaravelHealth] = useState<"ok" | "not_ok" | "loading">("loading"); // <-- Laravel health state
 
   const [authError, setAuthError] = useState<string | null>(null);
   const [lambdaError, setLambdaError] = useState<string | null>(null);
   const [netError, setNetError] = useState<string | null>(null);
   const [goError, setGoError] = useState<string | null>(null); // <-- Go error
+  const [laravelError, setLaravelError] = useState<string | null>(null); // <-- Laravel error
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -52,6 +55,15 @@ const HealthCheck: React.FC = () => {
       } catch (err: any) {
         setGoHealth("not_ok");
         setGoError(err?.response?.data?.message || "Go backend not reachable");
+      }
+
+      // ---------- Laravel Backend ----------
+      try {
+        const res = await axiosLaravel.get("/healthz");
+        setLaravelHealth(res.data?.status === "ok" ? "ok" : "not_ok");
+      } catch (err: any) {
+        setLaravelHealth("not_ok");
+        setLaravelError(err?.response?.data?.message || "Laravel backend not reachable");
       }
     };
 
@@ -149,6 +161,28 @@ const HealthCheck: React.FC = () => {
         <Alert severity="error" sx={{ mt: 1 }}>
           Go Backend Unavailable
           {goError && <Typography variant="body2">{goError}</Typography>}
+        </Alert>
+      )}
+
+      {/* ---------- LARAVEL BACKEND HEALTH ---------- */}
+      <Typography variant="h6" sx={{ mt: 4 }}>
+        🟣 Laravel Backend System
+      </Typography>
+      {laravelHealth === "loading" && (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <CircularProgress size={20} />
+          <Typography>Checking Laravel Backend...</Typography>
+        </Box>
+      )}
+      {laravelHealth === "ok" && (
+        <Alert severity="success" sx={{ mt: 1 }}>
+          Laravel Backend is Healthy - DB Connected
+        </Alert>
+      )}
+      {laravelHealth === "not_ok" && (
+        <Alert severity="error" sx={{ mt: 1 }}>
+          Laravel Backend Unavailable
+          {laravelError && <Typography variant="body2">{laravelError}</Typography>}
         </Alert>
       )}
     </Box>
