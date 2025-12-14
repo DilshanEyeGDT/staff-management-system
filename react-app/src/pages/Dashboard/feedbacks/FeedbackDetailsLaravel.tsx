@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Chip,
 } from "@mui/material";
+import dayjs from "dayjs";
 
 /* ---------- Interfaces ---------- */
 
@@ -164,7 +165,8 @@ const FeedbackDetailsDialog: React.FC<Props> = ({
                     variant="caption"
                     color="text.secondary"
                   >
-                    {msg.created_at}
+                    {/* {msg.created_at} */}
+                    {dayjs(msg.created_at).format("DD MMM YYYY, hh:mm A")}
                   </Typography>
                 </Box>
               ))
