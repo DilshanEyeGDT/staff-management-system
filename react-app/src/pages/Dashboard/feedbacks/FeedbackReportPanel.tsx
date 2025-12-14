@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
-import { Train } from "@mui/icons-material";
+import { Feed, Train } from "@mui/icons-material";
 import App from "../../../App";
+import FeedbackListLaravel from "./FeedbackListLaravel";
 
 const FeedbackReportPage: React.FC = () => {
   const [tab, setTab] = useState(0);
@@ -20,9 +21,9 @@ const FeedbackReportPage: React.FC = () => {
       id="feedback-report-tabs"
     >
       <Tab
-        label="Create & Upadate Events"
-        id="tab-events"
-        data-testid="tab-events"
+        label="Feedbacks"
+        id="tab-feedbacks"
+        data-testid="tab-feedbacks"
       />
       <Tab
         label="Event Confirmations"
@@ -36,21 +37,21 @@ const FeedbackReportPage: React.FC = () => {
       />
     </Tabs>
 
-    <Box id="events-content">
+    <Box id="feedback-content">
       {tab === 0 && (
-        <Box id="tab-content-events">
-          <div>Event Creation Form Component Goes Here</div>
+        <Box id="tab-content-feedback">
+          <FeedbackListLaravel />
         </Box>
       )}
 
       {tab === 1 && (
-        <Box id="tab-content-confirm-events">
+        <Box id="tab-content-confirm-feedback">
           <div>Event Creation Form Component Goes Here</div>
         </Box>
       )}
 
       {tab === 2 && (
-        <Box id="tab-content-broadcast-events">
+        <Box id="tab-content-broadcast-feedback">
           <div>Event Creation Form Component Goes Here</div>
         </Box>
       )}
