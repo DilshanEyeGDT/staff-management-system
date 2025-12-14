@@ -18,6 +18,7 @@ import {
 import FeedbackDetailsDialog from "./FeedbackDetailsLaravel";
 import AddCommentDialog from "./AddCommentDialog";
 import AddFeedbackDialog from "./AddFeedbackDialog";
+import EditFeedbackDialog from "./EditFeedbackDialog";
 
 interface FeedbackItem {
   feedback_id: number;
@@ -54,6 +55,10 @@ const FeedbackListLaravel: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
+
+  // Edit dialog state
+const [editOpen, setEditOpen] = useState(false);
+const [editFeedback, setEditFeedback] = useState<FeedbackItem | null>(null);
 
   const handleShowSnackbar = (msg: string, severity: "success" | "error") => {
     setSnackbarMsg(msg);
@@ -184,7 +189,7 @@ const FeedbackListLaravel: React.FC = () => {
                 {/* Actions */}
                 <Box sx={{ display: "flex", gap: 1, mt: 2, justifyContent: "flex-end" }}>
                   <Box
-                    onClick={(e) => { e.stopPropagation(); console.log("Edit feedback", fb.feedback_id); }}
+                    onClick={(e) => { e.stopPropagation(); setEditFeedback(fb); setEditOpen(true); }}
                     sx={{ px: 2, py: 0.6, borderRadius: 1, fontSize: 13, fontWeight: 600, color: "#1565c0", border: "1px solid #1565c0",
                       "&:hover": { backgroundColor: "#e3f2fd" },
                     }}>
@@ -213,6 +218,21 @@ const FeedbackListLaravel: React.FC = () => {
             open={commentOpen}
             feedbackId={commentFeedbackId}
             onClose={() => setCommentOpen(false)}
+            onSuccess={fetchFeedbacks}
+            onShowSnackbar={handleShowSnackbar}
+          />
+
+          <EditFeedbackDialog
+            open={editOpen}
+            feedbackId={editFeedback?.feedback_id ?? null}
+            currentStatus={editFeedback?.status ?? "open"}
+            currentPriority={editFeedback?.priority ?? "low"}
+            currentAssigneeId={editFeedback?.assignee_id ?? 0}
+            users={users}
+            onClose={() => {
+              setEditOpen(false);
+              setEditFeedback(null);
+            }}
             onSuccess={fetchFeedbacks}
             onShowSnackbar={handleShowSnackbar}
           />
