@@ -1,64 +1,91 @@
 import React, { useState } from "react";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
-import { Feed, Train } from "@mui/icons-material";
-import App from "../../../App";
+import {
+  Box,
+  Tabs,
+  Tab,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import FeedbackListLaravel from "./FeedbackListLaravel";
+import ExportFeedbackCsv from "./ExportFeedbackCsv";
 
 const FeedbackReportPage: React.FC = () => {
   const [tab, setTab] = useState(0);
-  const handleChange = (_e: React.SyntheticEvent, newValue: number) => setTab(newValue);
+
+  // 🔔 Snackbar state (GLOBAL for both tabs)
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] =
+    useState<"success" | "error">("success");
+
+  const handleChange = (_e: React.SyntheticEvent, newValue: number) =>
+    setTab(newValue);
+
+  const handleShowSnackbar = (
+    msg: string,
+    severity: "success" | "error"
+  ) => {
+    setSnackbarMsg(msg);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
 
   return (
-  <Box id="feedback-report-page">
-    <Typography variant="h5" sx={{ mb: 3 }} id="feedback-report-title">
-      Feedback & Reports
-    </Typography>
+    <Box id="feedback-report-page">
+      <Typography variant="h5" sx={{ mb: 3 }} id="feedback-report-title">
+        Feedback & Reports
+      </Typography>
 
-    <Tabs
-      value={tab}
-      onChange={handleChange}
-      sx={{ mb: 3 }}
-      id="feedback-report-tabs"
-    >
-      <Tab
-        label="Feedbacks"
-        id="tab-feedbacks"
-        data-testid="tab-feedbacks"
-      />
-      <Tab
-        label="Event Confirmations"
-        id="tab-confirm-events"
-        data-testid="tab-confirm-events"
-      />
-      <Tab
-        label="Broadcast Events"
-        id="tab-broadcast-events"
-        data-testid="tab-broadcast-events"
-      />
-    </Tabs>
+      <Tabs
+        value={tab}
+        onChange={handleChange}
+        sx={{ mb: 3 }}
+        id="feedback-report-tabs"
+      >
+        <Tab
+          label="Feedbacks"
+          id="tab-feedbacks"
+          data-testid="tab-feedbacks"
+        />
+        <Tab
+          label="Export Feedbacks"
+          id="tab-export-feedbacks"
+          data-testid="tab-export-feedbacks"
+        />
+      </Tabs>
 
-    <Box id="feedback-content">
-      {tab === 0 && (
-        <Box id="tab-content-feedback">
-          <FeedbackListLaravel />
-        </Box>
-      )}
+      <Box id="feedback-content">
+        {tab === 0 && (
+          <Box id="tab-content-feedback">
+            <FeedbackListLaravel />
+          </Box>
+        )}
 
-      {tab === 1 && (
-        <Box id="tab-content-confirm-feedback">
-          <div>Event Creation Form Component Goes Here</div>
-        </Box>
-      )}
+        {tab === 1 && (
+          <Box id="tab-content-export-feedbacks">
+            <ExportFeedbackCsv onShowSnackbar={handleShowSnackbar} />
+          </Box>
+        )}
+      </Box>
 
-      {tab === 2 && (
-        <Box id="tab-content-broadcast-feedback">
-          <div>Event Creation Form Component Goes Here</div>
-        </Box>
-      )}
+      {/* 🔔 GLOBAL SNACKBAR */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMsg}
+        </Alert>
+      </Snackbar>
     </Box>
-  </Box>
-);
-
+  );
 };
 
 export default FeedbackReportPage;
