@@ -12,9 +12,12 @@ import {
   InputLabel,
   Snackbar,
   Alert,
+  Fab,
+  Button,
 } from "@mui/material";
 import FeedbackDetailsDialog from "./FeedbackDetailsLaravel";
 import AddCommentDialog from "./AddCommentDialog";
+import AddFeedbackDialog from "./AddFeedbackDialog";
 
 interface FeedbackItem {
   feedback_id: number;
@@ -57,6 +60,9 @@ const FeedbackListLaravel: React.FC = () => {
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
+
+  //floating button
+  const [addOpen, setAddOpen] = useState(false);
 
   const getUserName = (id: number) => {
     const user = users.find((u) => u.id === id);
@@ -222,6 +228,32 @@ const FeedbackListLaravel: React.FC = () => {
               {snackbarMsg}
             </Alert>
           </Snackbar>
+
+            {/* Floating Add Button */}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setAddOpen(true)}
+                sx={{
+                position: "fixed",
+                bottom: 32,
+                right: 32,
+                width: 60,
+                height: 60,
+                borderRadius: "50%",
+                fontSize: 32,
+                minWidth: 0,
+                }}
+            >
+                +
+            </Button>
+
+            <AddFeedbackDialog
+                open={addOpen}
+                onClose={() => setAddOpen(false)}
+                onSuccess={fetchFeedbacks}
+                onShowSnackbar={handleShowSnackbar}
+                />
         </Box>
       )}
     </Box>
