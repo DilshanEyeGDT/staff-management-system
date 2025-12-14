@@ -1,6 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/events_announcement/EventAnnouncementScreen.dart';
+import 'package:flutter_app/screens/feedback/feedback_screen.dart';
 import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dart';
 import 'package:flutter_app/screens/login/login_screen.dart';
 import 'package:flutter_app/screens/room_resources/room_resources_screen.dart';
@@ -389,6 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
+                    // training courses card
                     SizedBox(height: 24),
                     Card(
                       key: const Key('training-courses-card'),
@@ -461,6 +463,48 @@ class _HomeScreenState extends State<HomeScreen> {
                               Text(
                                 "Events & Announcements",
                                 key: Key('events-announcements-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // feedback card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('feedback-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('feedback-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const FeedbackScreen(),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.feedback_outlined,
+                                size: 32,
+                                key: Key('feedback-icon'),
+                              ),
+                              SizedBox(width: 16),
+                              Text(
+                                "Feedback",
+                                key: Key('feedback-text'),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
