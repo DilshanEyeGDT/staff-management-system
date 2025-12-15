@@ -1,5 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/events_announcement/EventAnnouncementScreen.dart';
+import 'package:flutter_app/screens/feedback/feedback_screen.dart';
 import 'package:flutter_app/screens/leave_attendance/leave_attendance_screen.dart';
 import 'package:flutter_app/screens/login/login_screen.dart';
 import 'package:flutter_app/screens/room_resources/room_resources_screen.dart';
@@ -194,249 +196,336 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Center(
               child: CircularProgressIndicator(key: Key('loading_indicator')),
             )
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // profile card
-                  Card(
-                    key: const Key('profile_card'),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Profile',
-                            key: Key('profile_title'),
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // profile card
+                    Card(
+                      key: const Key('profile_card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Profile',
+                              key: Key('profile_title'),
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              const Text(
-                                'My Email: ',
-                                key: Key('label_email'),
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                const Text(
+                                  'My Email: ',
+                                  key: Key('label_email'),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(email, key: const Key('value_email')),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Text(
+                                  'Username: ',
+                                  key: Key('label_username'),
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    preferredUsername,
+                                    key: const Key('value_username'),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                ElevatedButton(
+                                  key: const Key('edit_button'),
+                                  onPressed:
+                                      _showEditDisplayNameDialog, // <-- ADDED
+                                  child: const Text('Edit'),
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(80, 36),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // leave & attendance card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('leave-attendance-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('leave-attendance-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LeaveAttendanceScreen(),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.calendar_month,
+                                size: 32,
+                                key: Key('leave-attendance-icon'),
                               ),
-                              Text(email, key: const Key('value_email')),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Text(
-                                'Username: ',
-                                key: Key('label_username'),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  preferredUsername,
-                                  key: const Key('value_username'),
+                              SizedBox(width: 16),
+                              Text(
+                                "Leave & Attendance",
+                                key: Key('leave-attendance-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              ElevatedButton(
-                                key: const Key('edit_button'),
-                                onPressed:
-                                    _showEditDisplayNameDialog, // <-- ADDED
-                                child: const Text('Edit'),
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(80, 36),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // room & resources card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('room-resources-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('room-resources-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const RoomResourcesScreen(),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.meeting_room,
+                                size: 32,
+                                key: Key('room-resources-icon'),
+                              ),
+                              SizedBox(width: 16),
+                              Text(
+                                "Room & Resources",
+                                key: Key('room-resources-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // leave & attendance card
-                  SizedBox(height: 24),
-                  Card(
-                    key: const Key('leave-attendance-card'),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      key: const Key('leave-attendance-card-inkwell'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LeaveAttendanceScreen(),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.calendar_month,
-                              size: 32,
-                              key: Key('leave-attendance-icon'),
-                            ),
-                            SizedBox(width: 16),
-                            Text(
-                              "Leave & Attendance",
-                              key: Key('leave-attendance-text'),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ),
-                  ),
 
-                  // room & resources card
-                  SizedBox(height: 24),
-                  Card(
-                    key: const Key('room-resources-card'),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      key: const Key('room-resources-card-inkwell'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RoomResourcesScreen(),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.meeting_room,
-                              size: 32,
-                              key: Key('room-resources-icon'),
+                    // task & schedules card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('task-schedules-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('task-schedules-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TaskSchedulesScreen(),
                             ),
-                            SizedBox(width: 16),
-                            Text(
-                              "Room & Resources",
-                              key: Key('room-resources-text'),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.schedule,
+                                size: 32,
+                                key: Key('task-schedules-icon'),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 16),
+                              Text(
+                                "Task & Schedules",
+                                key: Key('task-schedules-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // task & schedules card
-                  SizedBox(height: 24),
-                  Card(
-                    key: const Key('task-schedules-card'),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      key: const Key('task-schedules-card-inkwell'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const TaskSchedulesScreen(),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.schedule,
-                              size: 32,
-                              key: Key('task-schedules-icon'),
+                    // training courses card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('training-courses-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('training-courses-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TrainingCoursesScreen(),
                             ),
-                            SizedBox(width: 16),
-                            Text(
-                              "Task & Schedules",
-                              key: Key('task-schedules-text'),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.school,
+                                size: 32,
+                                key: Key('training-courses-icon'),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 16),
+                              Text(
+                                "Training Courses",
+                                key: Key('training-courses-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  SizedBox(height: 24),
-                  Card(
-                    key: const Key('training-courses-card'),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: InkWell(
-                      key: const Key('training-courses-card-inkwell'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const TrainingCoursesScreen(),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.school,
-                              size: 32,
-                              key: Key('training-courses-icon'),
+                    // events & announcements card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('events-announcements-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('events-announcements-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const EventAnnouncementScreen(),
                             ),
-                            SizedBox(width: 16),
-                            Text(
-                              "Training Courses",
-                              key: Key('training-courses-text'),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.announcement,
+                                size: 32,
+                                key: Key('events-announcements-icon'),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 16),
+                              Text(
+                                "Events & Announcements",
+                                key: Key('events-announcements-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    key: const Key('logout_button'),
-                    onPressed: () async {
-                      await _logout(context);
-                    },
-                    child: const Text('Logout'),
-                  ),
-                ],
+                    // feedback card
+                    SizedBox(height: 24),
+                    Card(
+                      key: const Key('feedback-card'),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: InkWell(
+                        key: const Key('feedback-card-inkwell'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const FeedbackScreen(),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.feedback_outlined,
+                                size: 32,
+                                key: Key('feedback-icon'),
+                              ),
+                              SizedBox(width: 16),
+                              Text(
+                                "Feedback",
+                                key: Key('feedback-text'),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      key: const Key('logout_button'),
+                      onPressed: () async {
+                        await _logout(context);
+                      },
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
               ),
             ),
     );

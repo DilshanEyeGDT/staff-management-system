@@ -33,7 +33,7 @@ describe("Login Flow Test", function () {
     // await emailField.sendKeys(ADMIN_EMAIL);
 
     // const passwordField = await driver.findElement(By.id("signInFormPassword"));
-    // await passwordField.sendKeys(AdMIN_PASSWORD);
+    // await passwordField.sendKeys(ADMIN_PASSWORD);
 
     // // 5. Click Sign in (using name attribute)
     // const signInBtn = await driver.findElement(By.name("signInSubmitButton"));
