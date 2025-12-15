@@ -146,4 +146,34 @@ class LaravelService {
       throw Exception('Failed to add comment');
     }
   }
+
+  // --------------------------------------------------
+  // UPDATE FEEDBACK
+  // --------------------------------------------------
+  Future<void> updateFeedback({
+    required String idToken,
+    required int feedbackId,
+    required String status,
+    required int assigneeId,
+    required String priority,
+  }) async {
+    final url = Uri.parse('$baseUrl/feedback/$feedbackId');
+
+    final response = await http.patch(
+      url,
+      headers: {
+        'Authorization': 'Bearer $idToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'status': status,
+        'assignee_id': assigneeId,
+        'priority': priority,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update feedback');
+    }
+  }
 }

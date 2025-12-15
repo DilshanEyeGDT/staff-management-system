@@ -229,6 +229,157 @@ class _FeedbackTabState extends State<FeedbackTab> {
     );
   }
 
+  // edit a feedback
+  Future<void> _showEditFeedbackDialog(Map<String, dynamic> feedback) async {
+    final session = await Amplify.Auth.fetchAuthSession() as CognitoAuthSession;
+    final idToken = session.userPoolTokensResult.value.idToken.raw;
+
+    // Dropdown values
+    String status = feedback['status'];
+    String priority = feedback['priority'];
+
+    int? assigneeId = _userMap.entries
+        .firstWhere(
+          (e) => e.value == feedback['assignee_name'],
+          orElse: () => const MapEntry(-1, ''),
+        )
+        .key;
+
+    bool submitting = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Edit Feedback'),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    /// STATUS
+                    DropdownButtonFormField<String>(
+                      value: status,
+                      decoration: const InputDecoration(labelText: 'Status'),
+                      items: const [
+                        DropdownMenuItem(value: 'open', child: Text('Open')),
+                        DropdownMenuItem(
+                          value: 'in_progress',
+                          child: Text('In Progress'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'closed',
+                          child: Text('Closed'),
+                        ),
+                      ],
+                      onChanged: (v) => setDialogState(() => status = v!),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    /// PRIORITY
+                    DropdownButtonFormField<String>(
+                      value: priority,
+                      decoration: const InputDecoration(labelText: 'Priority'),
+                      items: const [
+                        DropdownMenuItem(value: 'low', child: Text('Low')),
+                        DropdownMenuItem(
+                          value: 'medium',
+                          child: Text('Medium'),
+                        ),
+                        DropdownMenuItem(value: 'high', child: Text('High')),
+                      ],
+                      onChanged: (v) => setDialogState(() => priority = v!),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    /// ASSIGNEE
+                    DropdownButtonFormField<int>(
+                      value: assigneeId,
+                      decoration: const InputDecoration(labelText: 'Assignee'),
+                      items: _userMap.entries
+                          .map(
+                            (e) => DropdownMenuItem(
+                              value: e.key,
+                              child: Text(e.value),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (v) => setDialogState(() => assigneeId = v),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: submitting ? null : () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: submitting
+                      ? null
+                      : () async {
+                          if (assigneeId == null || assigneeId == -1) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please select an assignee'),
+                              ),
+                            );
+                            return;
+                          }
+
+                          setDialogState(() => submitting = true);
+
+                          try {
+                            await _laravelService.updateFeedback(
+                              idToken: idToken,
+                              feedbackId: feedback['feedback_id'],
+                              status: status,
+                              assigneeId: assigneeId!,
+                              priority: priority,
+                            );
+
+                            if (!mounted) return;
+
+                            Navigator.pop(context);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Feedback updated successfully'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+
+                            _fetchFeedback();
+                          } catch (e) {
+                            setDialogState(() => submitting = false);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Update failed: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                  child: submitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Update'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -271,13 +422,10 @@ class _FeedbackTabState extends State<FeedbackTab> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          safePrint(
-                            "Edit clicked for ${feedback['feedback_id']}",
-                          );
-                        },
+                        onPressed: () => _showEditFeedbackDialog(feedback),
                         child: const Text('Edit'),
                       ),
+
                       const SizedBox(width: 8),
                       TextButton(
                         onPressed: () =>
