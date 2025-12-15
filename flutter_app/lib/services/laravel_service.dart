@@ -127,4 +127,23 @@ class LaravelService {
 
     return null;
   }
+
+  // add feedback message
+  Future<void> addFeedbackMessage({
+    required int feedbackId,
+    required int senderId,
+    required String message,
+  }) async {
+    final url = Uri.parse('$baseUrl/feedback/$feedbackId/messages');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'sender_id': senderId, 'message': message}),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to add comment');
+    }
+  }
 }

@@ -116,6 +116,119 @@ class _FeedbackTabState extends State<FeedbackTab> {
     }
   }
 
+  //add a message to a feedback
+  Future<void> _showAddCommentDialog(int feedbackId) async {
+    final TextEditingController _commentController = TextEditingController();
+    bool submitting = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Add Comment'),
+              content: TextField(
+                controller: _commentController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your comment...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: submitting ? null : () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: submitting
+                      ? null
+                      : () async {
+                          final message = _commentController.text.trim();
+
+                          if (message.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Comment cannot be empty'),
+                              ),
+                            );
+                            return;
+                          }
+
+                          setDialogState(() => submitting = true);
+
+                          try {
+                            final session =
+                                await Amplify.Auth.fetchAuthSession()
+                                    as CognitoAuthSession;
+                            final idToken =
+                                session.userPoolTokensResult.value.idToken.raw;
+
+                            final senderId = await _laravelService
+                                .getCurrentUserId(idToken);
+
+                            if (senderId == null) {
+                              setDialogState(() => submitting = false);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Unable to identify current user',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return;
+                            }
+
+                            await _laravelService.addFeedbackMessage(
+                              feedbackId: feedbackId,
+                              senderId: senderId, // ✅ now int (not int?)
+                              message: message,
+                            );
+
+                            if (!mounted) return;
+
+                            Navigator.pop(context);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Comment added successfully'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+
+                            // Refresh feedback list
+                            _fetchFeedback();
+                          } catch (e) {
+                            setDialogState(() => submitting = false);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to add comment: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                  child: submitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Submit'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -167,11 +280,8 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       ),
                       const SizedBox(width: 8),
                       TextButton(
-                        onPressed: () {
-                          safePrint(
-                            "Add Comment clicked for ${feedback['feedback_id']}",
-                          );
-                        },
+                        onPressed: () =>
+                            _showAddCommentDialog(feedback['feedback_id']),
                         child: const Text('Add Comment'),
                       ),
                     ],
