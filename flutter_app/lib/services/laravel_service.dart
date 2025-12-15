@@ -176,4 +176,39 @@ class LaravelService {
       throw Exception('Failed to update feedback');
     }
   }
+
+  // --------------------------------------------------
+  // CREATE FEEDBACK
+  // --------------------------------------------------
+  Future<void> createFeedback({
+    required String idToken,
+    required int userId,
+    required int assigneeId,
+    required String title,
+    required String category,
+    required String priority,
+    required List<Map<String, String>> attachments,
+  }) async {
+    final url = Uri.parse('$baseUrl/feedback');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $idToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'user_id': userId,
+        'assignee_id': assigneeId,
+        'title': title,
+        'category': category,
+        'priority': priority,
+        'attachments': attachments,
+      }),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to create feedback');
+    }
+  }
 }
