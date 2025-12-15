@@ -37,7 +37,9 @@
     "test:room-booking": "mocha tests/room_booking --timeout 60000 --reporter mochawesome",
     "test:tasks": "mocha tests/task_schedule --timeout 60000 --reporter mochawesome",
     "test:performance": "mocha tests/performance_training --timeout 60000 --reporter mochawesome",
-    "test:ui-again": "mocha tests/ui_again --timeout 60000 --reporter mochawesome"
+    "test:ui-again": "mocha tests/ui_again --timeout 60000 --reporter mochawesome",
+    "test:phase1": "mocha tests/phase1 --timeout 60000 --reporter mochawesome"
+
   },
   "eslintConfig": {
     "extends": [

@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
       window.location.href = "http://localhost:8080/logout";
   };
 
-  // ✅ Step 1: Grab token from URL
+  // Step 1: Grab token from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tokenFromUrl = params.get("id_token");
@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
     }
   }, []);
 
-  // ✅ Step 2: Fetch profile
+  // Step 2: Fetch profile
   useEffect(() => {
     let hasRedirected = false;
 
@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
     };
   }, []);
 
-  // ✅ Step 3: Fetch users list when needed
+  // Step 3: Fetch users list when needed
   useEffect(() => {
     if (selectedPage === "users" || selectedPage === "roleAssign") {
       axios
@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
   if (error) return <div className="text-red-500">{error}</div>;
   if (!authorized) return null;
 
-  // ✅ Page renderer
+  // Page renderer
   const renderContent = () => {
     switch (selectedPage) {
       case "profile":
@@ -270,20 +270,40 @@ const Dashboard: React.FC = () => {
           </Button>
         </Box>
 
-        <Dialog open={logoutDialogOpen} onClose={handleCancel}>
-        <DialogTitle>Confirm Logout</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to log out?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleConfirmLogout} color="error" variant="contained">
-            Logout
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={logoutDialogOpen}
+          onClose={handleCancel}
+          data-testid="logout-confirm-dialog"
+        >
+          <DialogTitle data-testid="logout-dialog-title">
+            Confirm Logout
+          </DialogTitle>
+
+          <DialogContent data-testid="logout-dialog-content">
+            <Typography data-testid="logout-dialog-message">
+              Are you sure you want to log out?
+            </Typography>
+          </DialogContent>
+
+          <DialogActions data-testid="logout-dialog-actions">
+            <Button
+              onClick={handleCancel}
+              color="primary"
+              data-testid="logout-cancel-button"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              onClick={handleConfirmLogout}
+              color="error"
+              variant="contained"
+              data-testid="logout-confirm-button"
+            >
+              Logout
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
 
       {/* Main Content */}
