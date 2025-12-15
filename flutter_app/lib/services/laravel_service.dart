@@ -88,4 +88,43 @@ class LaravelService {
 
     return [];
   }
+
+  // --------------------------------------------------
+  // FETCH SINGLE FEEDBACK BY ID
+  // --------------------------------------------------
+  Future<Map<String, dynamic>?> getFeedbackById(
+    String idToken,
+    int feedbackId,
+  ) async {
+    final url = Uri.parse("$baseUrl/feedback/$feedbackId");
+    final response = await http.get(
+      url,
+      headers: {"Authorization": "Bearer $idToken"},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+
+      // Get user mapping for display names
+      final Map<int, String> userMap = await getAllUsers();
+
+      return {
+        "feedback_id": data["feedback_id"],
+        "title": data["title"],
+        "category": data["category"],
+        "priority": data["priority"],
+        "status": data["status"],
+        "user_id": data["user_id"],
+        "assignee_id": data["assignee_id"],
+        "user_name": userMap[data["user_id"]] ?? "Unknown",
+        "assignee_name": userMap[data["assignee_id"]] ?? "Unassigned",
+        "created_at": data["created_at"],
+        "updated_at": data["updated_at"],
+        "attachments": data["attachments"] ?? [],
+        "messages": data["messages"] ?? [],
+      };
+    }
+
+    return null;
+  }
 }

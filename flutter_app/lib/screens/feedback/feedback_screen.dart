@@ -1,6 +1,7 @@
 // lib/screens/feedback/feedback_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/screens/feedback/assigned_tab.dart';
 import 'package:flutter_app/screens/feedback/feedback_tab.dart';
 
 class FeedbackScreen extends StatelessWidget {
@@ -22,21 +23,6 @@ class FeedbackScreen extends StatelessWidget {
         ),
         body: const TabBarView(children: [FeedbackTab(), AssignedTab()]),
       ),
-    );
-  }
-}
-
-// ----------------------
-// Individual Tab Widgets
-// ----------------------
-
-class AssignedTab extends StatelessWidget {
-  const AssignedTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('This is the Assigned tab', style: TextStyle(fontSize: 18)),
     );
   }
 }
