@@ -1,7 +1,6 @@
 // lib/screens/feedback/feedback_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/screens/feedback/assigned_tab.dart';
 import 'package:flutter_app/screens/feedback/feedback_tab.dart';
 
 class FeedbackScreen extends StatelessWidget {
@@ -9,20 +8,9 @@ class FeedbackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // number of tabs
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Feedback'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Feedback'),
-              Tab(text: 'Assigned'),
-            ],
-          ),
-        ),
-        body: const TabBarView(children: [FeedbackTab(), AssignedTab()]),
-      ),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Feedback')),
+      body: const FeedbackTab(),
     );
   }
 }

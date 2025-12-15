@@ -20,10 +20,24 @@ class _FeedbackTabState extends State<FeedbackTab> {
   List<Map<String, dynamic>> _feedbacks = [];
   Map<int, String> _userMap = {}; // Store user id -> display_name mapping
 
+  int? _selectedAssigneeId;
+
   @override
   void initState() {
     super.initState();
     _fetchFeedback();
+  }
+
+  List<Map<String, dynamic>> get _filteredFeedbacks {
+    if (_selectedAssigneeId == null) {
+      return _feedbacks; // no filter
+    }
+
+    final selectedUserName = _userMap[_selectedAssigneeId];
+
+    return _feedbacks.where((f) {
+      return f['assignee_name'] == selectedUserName;
+    }).toList();
   }
 
   Future<void> _fetchFeedback() async {
@@ -610,70 +624,102 @@ class _FeedbackTabState extends State<FeedbackTab> {
       return const Center(child: Text('No feedback available.'));
     }
 
+    // 🔍 DEBUG: inspect feedback structure (ADD THIS)
+    safePrint(_feedbacks.first);
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateFeedbackDialog,
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        itemCount: _feedbacks.length,
-        itemBuilder: (context, index) {
-          final feedback = _feedbacks[index];
-
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: InkWell(
-              onTap: () => _showFeedbackDetails(feedback['feedback_id']),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    /// TITLE
-                    Text(
-                      feedback['title'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 4),
-                    Text('Category: ${feedback['category']}'),
-                    Text('Priority: ${feedback['priority']}'),
-                    Text('Status: ${feedback['status']}'),
-                    Text('Created by: ${feedback['user_name']}'),
-                    Text('Assignee: ${feedback['assignee_name']}'),
-
-                    const SizedBox(height: 8),
-
-                    /// ACTION BUTTONS
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            // prevent card tap conflict
-                            _showEditFeedbackDialog(feedback);
-                          },
-                          child: const Text('Edit'),
-                        ),
-                        const SizedBox(width: 8),
-                        TextButton(
-                          onPressed: () {
-                            // prevent card tap conflict
-                            _showAddCommentDialog(feedback['feedback_id']);
-                          },
-                          child: const Text('Add Comment'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+      body: Column(
+        children: [
+          /// ASSIGNEE FILTER
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: DropdownButtonFormField<int>(
+              value: _selectedAssigneeId,
+              decoration: const InputDecoration(
+                labelText: 'Filter by Assignee',
+                border: OutlineInputBorder(),
               ),
+              items: [
+                const DropdownMenuItem<int>(value: null, child: Text('All')),
+                ..._userMap.entries.map(
+                  (e) =>
+                      DropdownMenuItem<int>(value: e.key, child: Text(e.value)),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedAssigneeId = value;
+                });
+              },
             ),
-          );
-        },
+          ),
+
+          /// FEEDBACK LIST
+          Expanded(
+            child: _filteredFeedbacks.isEmpty
+                ? const Center(child: Text('No feedback for selected assignee'))
+                : ListView.builder(
+                    itemCount: _filteredFeedbacks.length,
+                    itemBuilder: (context, index) {
+                      final feedback = _filteredFeedbacks[index];
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: InkWell(
+                          onTap: () =>
+                              _showFeedbackDetails(feedback['feedback_id']),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  feedback['title'] ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text('Category: ${feedback['category']}'),
+                                Text('Priority: ${feedback['priority']}'),
+                                Text('Status: ${feedback['status']}'),
+                                Text('Created by: ${feedback['user_name']}'),
+                                Text('Assignee: ${feedback['assignee_name']}'),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          _showEditFeedbackDialog(feedback),
+                                      child: const Text('Edit'),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    TextButton(
+                                      onPressed: () => _showAddCommentDialog(
+                                        feedback['feedback_id'],
+                                      ),
+                                      child: const Text('Add Comment'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
