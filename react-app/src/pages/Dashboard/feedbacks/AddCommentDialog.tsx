@@ -67,8 +67,14 @@ const AddCommentDialog: React.FC<Props> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Add Comment</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      data-testid="add-comment-dialog"
+    >
+      <DialogTitle data-testid="add-comment-dialog-title">Add Comment</DialogTitle>
 
       <DialogContent>
         <TextField
@@ -80,21 +86,26 @@ const AddCommentDialog: React.FC<Props> = ({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           sx={{ mt: 1 }}
+          data-testid="add-comment-textfield"
         />
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose} data-testid="add-comment-cancel-button">
+          Cancel
+        </Button>
         <Button
           variant="contained"
           onClick={handleSubmit}
           disabled={loading || !message.trim()}
+          data-testid="add-comment-submit-button"
         >
-          {loading ? <CircularProgress size={20} /> : "Submit"}
+          {loading ? <CircularProgress size={20} data-testid="add-comment-loading-indicator" /> : "Submit"}
         </Button>
       </DialogActions>
     </Dialog>
   );
+
 };
 
 export default AddCommentDialog;
