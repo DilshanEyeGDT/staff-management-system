@@ -31,11 +31,11 @@ const RoomBookingPage: React.FC = () => {
         id="tab-room-reservations"
         data-testid="tab-room-reservations"
       />
-      <Tab
+      {/* <Tab
         label="My Bookings"
         id="tab-my-bookings"
         data-testid="tab-my-bookings"
-      />
+      /> */}
       <Tab
         label="Rooms KPI"
         id="tab-kpi"
@@ -56,13 +56,13 @@ const RoomBookingPage: React.FC = () => {
         </Box>
       )}
 
-      {tab === 2 && (
+      {/* {tab === 2 && (
         <Box id="tab-content-my-bookings">
           <MyBookings />
         </Box>
-      )}
+      )} */}
 
-      {tab === 3 && (
+      {tab === 2 && (
         <Box id="tab-content-kpi">
           <RoomUtilization />
         </Box>

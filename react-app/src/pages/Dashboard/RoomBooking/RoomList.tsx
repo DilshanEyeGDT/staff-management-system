@@ -107,19 +107,40 @@ const RoomsList: React.FC = () => {
   };
 
   return (
-    <Box id="rooms-list-container" sx={{ position: "relative", pb: 8 }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
+    <Box
+      id="rooms-list-container"
+      data-testid="rooms-list-container"
+      sx={{ position: "relative", pb: 8 }}
+    >
+      <Typography
+        variant="h6"
+        sx={{ mb: 2 }}
+        id="rooms-list-title"
+        data-testid="rooms-list-title"
+      >
         Available Rooms
       </Typography>
 
       {loading && (
-        <Box sx={{ textAlign: "center", mt: 3 }}>
-          <CircularProgress />
+        <Box
+          sx={{ textAlign: "center", mt: 3 }}
+          id="rooms-loading"
+          data-testid="rooms-loading"
+        >
+          <CircularProgress
+            id="rooms-loading-spinner"
+            data-testid="rooms-loading-spinner"
+          />
         </Box>
       )}
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert
+          severity="error"
+          sx={{ mb: 2 }}
+          id="rooms-error"
+          data-testid="rooms-error"
+        >
           {error}
         </Alert>
       )}
@@ -127,26 +148,38 @@ const RoomsList: React.FC = () => {
       {/* Rooms List */}
       {!loading && !error && rooms.length > 0 &&
         rooms.map((room) => (
-          <RoomCard
+          <Box
             key={room.room_id}
-            room_id={room.room_id}
-            room_name={room.room_name}
-            description={room.description}
-            capacity={room.capacity}
-            location={room.location}
-            equipments={room.equipments}
-            is_active={room.is_active}
-            created_at={room.created_at}
-            onClick={() => navigate(`/rooms/${room.room_id}`)}
-          />
+            id={`room-card-wrapper-${room.room_id}`}
+            data-testid={`room-card-wrapper-${room.room_id}`}
+          >
+            <RoomCard
+              room_id={room.room_id}
+              room_name={room.room_name}
+              description={room.description}
+              capacity={room.capacity}
+              location={room.location}
+              equipments={room.equipments}
+              is_active={room.is_active}
+              created_at={room.created_at}
+              onClick={() => navigate(`/rooms/${room.room_id}`)}
+            />
+          </Box>
         ))}
 
       {!loading && !error && rooms.length === 0 && (
-        <Typography>No rooms found.</Typography>
+        <Typography
+          id="rooms-empty"
+          data-testid="rooms-empty"
+        >
+          No rooms found.
+        </Typography>
       )}
 
       {/* Floating Add Button */}
-      <Fab id="room-add-floating-button"
+      <Fab
+        id="room-add-floating-button"
+        data-testid="room-add-floating-button"
         color="primary"
         aria-label="add"
         sx={{ position: "fixed", bottom: 24, right: 24 }}
@@ -156,16 +189,34 @@ const RoomsList: React.FC = () => {
       </Fab>
 
       {/* Add Room Dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Add New Room</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        id="add-room-dialog"
+        data-testid="add-room-dialog"
+      >
+        <DialogTitle
+          id="add-room-dialog-title"
+          data-testid="add-room-dialog-title"
+        >
+          Add New Room
+        </DialogTitle>
+
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+          id="add-room-dialog-content"
+          data-testid="add-room-dialog-content"
+        >
           <TextField
             label="Room Name"
             name="room_name"
             value={newRoom.room_name}
             onChange={handleInputChange}
             fullWidth
+            id="add-room-name"
+            data-testid="add-room-name"
           />
+
           <TextField
             label="Description"
             name="description"
@@ -174,7 +225,10 @@ const RoomsList: React.FC = () => {
             fullWidth
             multiline
             rows={3}
+            id="add-room-description"
+            data-testid="add-room-description"
           />
+
           <TextField
             label="Capacity"
             name="capacity"
@@ -182,25 +236,48 @@ const RoomsList: React.FC = () => {
             value={newRoom.capacity}
             onChange={handleInputChange}
             fullWidth
+            id="add-room-capacity"
+            data-testid="add-room-capacity"
           />
+
           <TextField
             label="Location (e.g. G, 1, 2)"
             name="location"
             value={newRoom.location}
             onChange={handleInputChange}
             fullWidth
+            id="add-room-location"
+            data-testid="add-room-location"
           />
+
           <TextField
             label="Equipments (comma separated)"
             name="equipments"
             value={newRoom.equipments}
             onChange={handleInputChange}
             fullWidth
+            id="add-room-equipments"
+            data-testid="add-room-equipments"
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddRoom} variant="contained">
+
+        <DialogActions
+          id="add-room-dialog-actions"
+          data-testid="add-room-dialog-actions"
+        >
+          <Button
+            onClick={() => setDialogOpen(false)}
+            id="add-room-cancel"
+            data-testid="add-room-cancel"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleAddRoom}
+            variant="contained"
+            id="add-room-confirm"
+            data-testid="add-room-confirm"
+          >
             Add Room
           </Button>
         </DialogActions>
@@ -213,9 +290,12 @@ const RoomsList: React.FC = () => {
         onClose={handleSnackbarClose}
         message={snackbarMsg}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        id="rooms-snackbar"
+        data-testid="rooms-snackbar"
       />
     </Box>
   );
+
 };
 
 export default RoomsList;

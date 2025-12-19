@@ -91,106 +91,185 @@ const RoomBookingsList: React.FC = () => {
   });
 
   return (
-  <Box id="all-room-bookings-page">
-    <Typography id="all-room-bookings-title" variant="h6" sx={{ mb: 2 }}>
+  <Box
+    id="all-room-bookings-page"
+    data-testid="all-room-bookings-page"
+  >
+    <Typography
+      id="all-room-bookings-title"
+      data-testid="all-room-bookings-title"
+      variant="h6"
+      sx={{ mb: 2 }}
+    >
       Room Bookings
     </Typography>
 
     {/* Filters */}
-    <Box id="bookings-filters" sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+    <Box
+      id="bookings-filters"
+      data-testid="bookings-filters"
+      sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}
+    >
       <TextField
         id="filter-start-date"
+        data-testid="filter-start-date"
         label="Start Date"
         type="date"
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
         InputLabelProps={{ shrink: true }}
       />
+
       <TextField
         id="filter-end-date"
+        data-testid="filter-end-date"
         label="End Date"
         type="date"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
         InputLabelProps={{ shrink: true }}
       />
+
       <TextField
         id="filter-start-time"
+        data-testid="filter-start-time"
         label="Start Time"
         type="time"
         value={startTime}
         onChange={(e) => setStartTime(e.target.value)}
         InputLabelProps={{ shrink: true }}
       />
+
       <TextField
         id="filter-end-time"
+        data-testid="filter-end-time"
         label="End Time"
         type="time"
         value={endTime}
         onChange={(e) => setEndTime(e.target.value)}
         InputLabelProps={{ shrink: true }}
       />
+
       <TextField
         id="filter-user-name"
+        data-testid="filter-user-name"
         label="User Name"
         type="text"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
       />
+
       <TextField
         id="filter-room-name"
+        data-testid="filter-room-name"
         label="Room Name"
         type="text"
         value={roomName}
         onChange={(e) => setRoomName(e.target.value)}
       />
-      <Button id="filter-refresh-btn" variant="contained" onClick={fetchBookings}>
+
+      <Button
+        id="filter-refresh-btn"
+        data-testid="filter-refresh-btn"
+        variant="contained"
+        onClick={fetchBookings}
+      >
         Refresh
       </Button>
     </Box>
 
     {/* Loading */}
     {loading && (
-      <Box id="all-bookings-loading" sx={{ textAlign: "center", mt: 3 }}>
-        <CircularProgress />
+      <Box
+        id="all-bookings-loading"
+        data-testid="all-bookings-loading"
+        sx={{ textAlign: "center", mt: 3 }}
+      >
+        <CircularProgress
+          id="all-bookings-loading-spinner"
+          data-testid="all-bookings-loading-spinner"
+        />
       </Box>
     )}
 
     {/* Error */}
     {error && (
-      <Alert id="all-bookings-error" severity="error" sx={{ mb: 2 }}>
+      <Alert
+        id="all-bookings-error"
+        data-testid="all-bookings-error"
+        severity="error"
+        sx={{ mb: 2 }}
+      >
         {error}
       </Alert>
     )}
 
     {/* Booking List */}
     {!loading && !error && filteredBookings.length > 0 ? (
-      <Box id="bookings-list" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box
+        id="bookings-list"
+        data-testid="bookings-list"
+        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+      >
         {filteredBookings.map((b) => (
-          <Paper id={`booking-card-${b.booking_id}`} key={b.booking_id} sx={{ p: 2 }}>
-            <Typography id={`booking-room-${b.booking_id}`}>
+          <Paper
+            id={`booking-card-${b.booking_id}`}
+            data-testid={`booking-card-${b.booking_id}`}
+            key={b.booking_id}
+            sx={{ p: 2 }}
+          >
+            <Typography
+              id={`booking-room-${b.booking_id}`}
+              data-testid={`booking-room-${b.booking_id}`}
+            >
               <strong>Room:</strong> {b.room_name}
             </Typography>
-            <Typography id={`booking-user-${b.booking_id}`}>
+
+            <Typography
+              id={`booking-user-${b.booking_id}`}
+              data-testid={`booking-user-${b.booking_id}`}
+            >
               <strong>User:</strong> {b.user_name}
             </Typography>
-            <Typography id={`booking-start-${b.booking_id}`}>
-              <strong>Start:</strong> {new Date(b.start_time).toLocaleString()}
+
+            <Typography
+              id={`booking-start-${b.booking_id}`}
+              data-testid={`booking-start-${b.booking_id}`}
+            >
+              <strong>Start:</strong>{" "}
+              {new Date(b.start_time).toLocaleString()}
             </Typography>
-            <Typography id={`booking-end-${b.booking_id}`}>
-              <strong>End:</strong> {new Date(b.end_time).toLocaleString()}
+
+            <Typography
+              id={`booking-end-${b.booking_id}`}
+              data-testid={`booking-end-${b.booking_id}`}
+            >
+              <strong>End:</strong>{" "}
+              {new Date(b.end_time).toLocaleString()}
             </Typography>
-            <Typography id={`booking-status-${b.booking_id}`}>
+
+            <Typography
+              id={`booking-status-${b.booking_id}`}
+              data-testid={`booking-status-${b.booking_id}`}
+            >
               <strong>Status:</strong> {b.status}
             </Typography>
           </Paper>
         ))}
       </Box>
     ) : (
-      !loading && <Typography id="bookings-empty">No bookings found.</Typography>
+      !loading && (
+        <Typography
+          id="bookings-empty"
+          data-testid="bookings-empty"
+        >
+          No bookings found.
+        </Typography>
+      )
     )}
   </Box>
 );
+
 
 };
 
