@@ -41,8 +41,8 @@
     "test:phase1": "mocha tests/phase1 --timeout 60000 --reporter mochawesome",
     "test:phase7": "mocha tests/phase7 --timeout 60000 --reporter mochawesome",
     "test:phase6": "mocha tests/phase6 --timeout 60000 --reporter mochawesome",
-    "test:phase2": "mocha tests/phase2 --timeout 60000 --reporter mochawesome"
-
+    "test:phase2": "mocha tests/phase2 --timeout 60000 --reporter mochawesome",
+    "test:phase3": "mocha tests/phase3 --timeout 60000 --reporter mochawesome"
   },
   "eslintConfig": {
     "extends": [
