@@ -52,166 +52,166 @@ describe("Room & Resource Booking UI test", function () {
     console.log("✅ Room & Resource Booking page loaded");
   });
 
-  //   it("should load first tab (Add Rooms & Reservations) and fetch rooms", async function () {
-  //   /* =======================
-  //      CONFIRM FIRST TAB ACTIVE
-  //   ======================= */
+    it("should load first tab (Add Rooms & Reservations) and fetch rooms", async function () {
+    /* =======================
+       CONFIRM FIRST TAB ACTIVE
+    ======================= */
 
-  //   const roomTab = await driver.wait(
-  //     until.elementLocated(By.id("tab-room-booking")),
-  //     10000
-  //   );
+    const roomTab = await driver.wait(
+      until.elementLocated(By.id("tab-room-booking")),
+      10000
+    );
 
-  //   // MUI active tab usually has aria-selected="true"
-  //   const isSelected = await roomTab.getAttribute("aria-selected");
-  //   assert.strictEqual(isSelected, "true", "First tab is not active");
+    // MUI active tab usually has aria-selected="true"
+    const isSelected = await roomTab.getAttribute("aria-selected");
+    assert.strictEqual(isSelected, "true", "First tab is not active");
 
-  //   console.log("✅ First tab (Add Rooms & Reservations) is active");
+    console.log("✅ First tab (Add Rooms & Reservations) is active");
 
-  //   /* =======================
-  //      CONFIRM TAB CONTENT
-  //   ======================= */
+    /* =======================
+       CONFIRM TAB CONTENT
+    ======================= */
 
-  //   const tabContent = await driver.wait(
-  //     until.elementLocated(By.id("tab-content-room-booking")),
-  //     10000
-  //   );
+    const tabContent = await driver.wait(
+      until.elementLocated(By.id("tab-content-room-booking")),
+      10000
+    );
 
-  //   assert.ok(tabContent, "Tab content container not found");
-  //   console.log("✅ Room booking tab content rendered");
+    assert.ok(tabContent, "Tab content container not found");
+    console.log("✅ Room booking tab content rendered");
 
-  //   /* =======================
-  //      WAIT FOR ROOMS FETCH
-  //   ======================= */
+    /* =======================
+       WAIT FOR ROOMS FETCH
+    ======================= */
 
-  //   // Either:
-  //   // 1. Loader disappears
-  //   // 2. Rooms list appears
-  //   // 3. Empty state appears
+    // Either:
+    // 1. Loader disappears
+    // 2. Rooms list appears
+    // 3. Empty state appears
 
-  //   await driver.wait(async () => {
-  //     const loaders = await driver.findElements(By.id("rooms-loading-spinner"));
-  //     const roomCards = await driver.findElements(
-  //       By.css('[data-testid^="room-card-wrapper-"]')
-  //     );
-  //     const emptyText = await driver.findElements(By.id("rooms-empty"));
+    await driver.wait(async () => {
+      const loaders = await driver.findElements(By.id("rooms-loading-spinner"));
+      const roomCards = await driver.findElements(
+        By.css('[data-testid^="room-card-wrapper-"]')
+      );
+      const emptyText = await driver.findElements(By.id("rooms-empty"));
 
-  //     return (
-  //       loaders.length === 0 &&
-  //       (roomCards.length > 0 || emptyText.length > 0)
-  //     );
-  //   }, 20000);
+      return (
+        loaders.length === 0 &&
+        (roomCards.length > 0 || emptyText.length > 0)
+      );
+    }, 20000);
 
-  //   console.log("✅ Room fetch completed");
+    console.log("✅ Room fetch completed");
 
-  //   /* =======================
-  //      ASSERT ROOMS RENDERED
-  //   ======================= */
+    /* =======================
+       ASSERT ROOMS RENDERED
+    ======================= */
 
-  //   const roomCards = await driver.findElements(
-  //     By.css('[data-testid^="room-card-wrapper-"]')
-  //   );
+    const roomCards = await driver.findElements(
+      By.css('[data-testid^="room-card-wrapper-"]')
+    );
 
-  //   if (roomCards.length > 0) {
-  //     console.log(`✅ ${roomCards.length} room(s) displayed`);
-  //     assert.ok(roomCards.length > 0, "Rooms not rendered");
-  //   } else {
-  //     const emptyState = await driver.findElement(By.id("rooms-empty"));
-  //     assert.strictEqual(
-  //       await emptyState.getText(),
-  //       "No rooms found.",
-  //       "Unexpected empty rooms message"
-  //     );
-  //     console.log("⚠️ No rooms found (empty state shown)");
-  //   }
-  // });
+    if (roomCards.length > 0) {
+      console.log(`✅ ${roomCards.length} room(s) displayed`);
+      assert.ok(roomCards.length > 0, "Rooms not rendered");
+    } else {
+      const emptyState = await driver.findElement(By.id("rooms-empty"));
+      assert.strictEqual(
+        await emptyState.getText(),
+        "No rooms found.",
+        "Unexpected empty rooms message"
+      );
+      console.log("⚠️ No rooms found (empty state shown)");
+    }
+  });
 
-  //   it("should add a new room using the floating add button", async function () {
-  //   /* =======================
-  //      OPEN ADD ROOM DIALOG
-  //   ======================= */
+    it("should add a new room using the floating add button", async function () {
+    /* =======================
+       OPEN ADD ROOM DIALOG
+    ======================= */
 
-  //   const addButton = await driver.wait(
-  //     until.elementLocated(By.id("room-add-floating-button")),
-  //     10000
-  //   );
+    const addButton = await driver.wait(
+      until.elementLocated(By.id("room-add-floating-button")),
+      10000
+    );
 
-  //   await driver.executeScript("arguments[0].click();", addButton);
-  //   console.log("➕ Floating add button clicked");
+    await driver.executeScript("arguments[0].click();", addButton);
+    console.log("➕ Floating add button clicked");
 
-  //   /* =======================
-  //      WAIT FOR DIALOG
-  //   ======================= */
+    /* =======================
+       WAIT FOR DIALOG
+    ======================= */
 
-  //   const dialog = await driver.wait(
-  //     until.elementLocated(By.id("add-room-dialog")),
-  //     10000
-  //   );
-  //   await driver.wait(until.elementIsVisible(dialog), 5000);
+    const dialog = await driver.wait(
+      until.elementLocated(By.id("add-room-dialog")),
+      10000
+    );
+    await driver.wait(until.elementIsVisible(dialog), 5000);
 
-  //   console.log("🪟 Add Room dialog opened");
+    console.log("🪟 Add Room dialog opened");
 
-  //   /* =======================
-  //      FILL FORM FIELDS
-  //   ======================= */
+    /* =======================
+       FILL FORM FIELDS
+    ======================= */
 
-  //   const timestamp = Date.now(); // to avoid duplicate room names
+    const timestamp = Date.now(); // to avoid duplicate room names
 
-  //   const roomNameInput = await driver.findElement(By.id("add-room-name"));
-  //   const descInput = await driver.findElement(By.id("add-room-description"));
-  //   const capacityInput = await driver.findElement(By.id("add-room-capacity"));
-  //   const locationInput = await driver.findElement(By.id("add-room-location"));
-  //   const equipmentsInput = await driver.findElement(By.id("add-room-equipments"));
+    const roomNameInput = await driver.findElement(By.id("add-room-name"));
+    const descInput = await driver.findElement(By.id("add-room-description"));
+    const capacityInput = await driver.findElement(By.id("add-room-capacity"));
+    const locationInput = await driver.findElement(By.id("add-room-location"));
+    const equipmentsInput = await driver.findElement(By.id("add-room-equipments"));
 
-  //   await roomNameInput.sendKeys(`Selenium Test Room ${timestamp}`);
-  //   await descInput.sendKeys("Room created via Selenium automation");
-  //   await capacityInput.sendKeys("25");
-  //   await locationInput.sendKeys("G");
-  //   await equipmentsInput.sendKeys("Projector, AC, Whiteboard");
+    await roomNameInput.sendKeys(`Selenium Test Room ${timestamp}`);
+    await descInput.sendKeys("Room created via Selenium automation");
+    await capacityInput.sendKeys("25");
+    await locationInput.sendKeys("G");
+    await equipmentsInput.sendKeys("Projector, AC, Whiteboard");
 
-  //   console.log("✍️ Room details entered");
+    console.log("✍️ Room details entered");
 
-  //   /* =======================
-  //      SUBMIT FORM
-  //   ======================= */
+    /* =======================
+       SUBMIT FORM
+    ======================= */
 
-  //   const confirmBtn = await driver.findElement(By.id("add-room-confirm"));
-  //   await driver.wait(until.elementIsEnabled(confirmBtn), 5000);
-  //   await driver.executeScript("arguments[0].click();", confirmBtn);
+    const confirmBtn = await driver.findElement(By.id("add-room-confirm"));
+    await driver.wait(until.elementIsEnabled(confirmBtn), 5000);
+    await driver.executeScript("arguments[0].click();", confirmBtn);
 
-  //   console.log("🚀 Add Room button clicked");
+    console.log("🚀 Add Room button clicked");
 
-  //   /* =======================
-  //      SUCCESS SNACKBAR
-  //   ======================= */
+    /* =======================
+       SUCCESS SNACKBAR
+    ======================= */
 
-  //   const snackbar = await driver.wait(
-  //     until.elementLocated(By.id("rooms-snackbar")),
-  //     10000
-  //   );
-  //   await driver.wait(until.elementIsVisible(snackbar), 5000);
+    const snackbar = await driver.wait(
+      until.elementLocated(By.id("rooms-snackbar")),
+      10000
+    );
+    await driver.wait(until.elementIsVisible(snackbar), 5000);
 
-  //   const snackbarText = await snackbar.getText();
-  //   assert.ok(
-  //     snackbarText.toLowerCase().includes("room added"),
-  //     "Room added success snackbar not shown"
-  //   );
+    const snackbarText = await snackbar.getText();
+    assert.ok(
+      snackbarText.toLowerCase().includes("room added"),
+      "Room added success snackbar not shown"
+    );
 
-  //   console.log("🎉 Room added successfully (snackbar shown)");
+    console.log("🎉 Room added successfully (snackbar shown)");
 
-  //   /* =======================
-  //      OPTIONAL: VERIFY ROOM LIST UPDATED
-  //   ======================= */
+    /* =======================
+       OPTIONAL: VERIFY ROOM LIST UPDATED
+    ======================= */
 
-  //   await driver.wait(async () => {
-  //     const cards = await driver.findElements(
-  //       By.css('[data-testid^="room-card-wrapper-"]')
-  //     );
-  //     return cards.length > 0;
-  //   }, 10000);
+    await driver.wait(async () => {
+      const cards = await driver.findElements(
+        By.css('[data-testid^="room-card-wrapper-"]')
+      );
+      return cards.length > 0;
+    }, 10000);
 
-  //   console.log("📦 Room list refreshed");
-  // });
+    console.log("📦 Room list refreshed");
+  });
 
     it("should filter room reservations by user name and room name", async function () {
     /* =======================
