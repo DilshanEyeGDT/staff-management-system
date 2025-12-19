@@ -80,61 +80,89 @@ const EditEventDialog: React.FC<Props> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>Edit Event</DialogTitle>
+  <Dialog
+    open={open}
+    onClose={onClose}
+    fullWidth
+    maxWidth="md"
+    data-testid="edit-event-dialog"
+  >
+    <DialogTitle data-testid="edit-event-title">Edit Event</DialogTitle>
 
-      <DialogContent dividers sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <DialogContent
+      dividers
+      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+      data-testid="edit-event-content"
+    >
+      <TextField
+        label="Title"
+        name="title"
+        value={form.title}
+        onChange={handleChange}
+        fullWidth
+        data-testid="edit-event-title-input"
+      />
 
-        <TextField
-          label="Title"
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          fullWidth
-        />
+      <TextField
+        label="Summary"
+        name="summary"
+        value={form.summary}
+        onChange={handleChange}
+        fullWidth
+        data-testid="edit-event-summary-input"
+      />
 
-        <TextField
-          label="Summary"
-          name="summary"
-          value={form.summary}
-          onChange={handleChange}
-          fullWidth
-        />
+      <TextField
+        label="Content"
+        name="content"
+        value={form.content}
+        onChange={handleChange}
+        multiline
+        rows={4}
+        fullWidth
+        data-testid="edit-event-content-input"
+      />
 
-        <TextField
-          label="Content"
-          name="content"
-          value={form.content}
-          onChange={handleChange}
-          multiline
-          rows={4}
-          fullWidth
-        />
+      <TextField
+        label="Scheduled At"
+        type="datetime-local"
+        name="scheduled_at"
+        value={form.scheduled_at}
+        onChange={handleChange}
+        InputLabelProps={{ shrink: true }}
+        fullWidth
+        data-testid="edit-event-scheduled-at-input"
+      />
+    </DialogContent>
 
-        <TextField
-          label="Scheduled At"
-          type="datetime-local"
-          name="scheduled_at"
-          value={form.scheduled_at}
-          onChange={handleChange}
-          InputLabelProps={{ shrink: true }}
-          fullWidth
-        />
+    <DialogActions data-testid="edit-event-actions">
+      <Button
+        onClick={onClose}
+        disabled={loading}
+        data-testid="edit-event-cancel-button"
+      >
+        Cancel
+      </Button>
 
-      </DialogContent>
+      <Button
+        variant="contained"
+        onClick={handleSubmit}
+        disabled={loading}
+        data-testid="edit-event-submit-button"
+      >
+        {loading ? (
+          <CircularProgress
+            size={20}
+            data-testid="edit-event-submit-loading"
+          />
+        ) : (
+          "Update"
+        )}
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
 
-      <DialogActions>
-        <Button onClick={onClose} disabled={loading}>Cancel</Button>
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={20} /> : "Update"}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
 };
 
 export default EditEventDialog;

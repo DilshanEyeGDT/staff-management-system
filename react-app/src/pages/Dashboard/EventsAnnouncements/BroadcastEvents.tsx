@@ -107,49 +107,79 @@ const ApprovedEvents: React.FC = () => {
     );
 
   return (
-    <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-      {events.map((event) => (
-        <Paper key={event.id} sx={{ p: 2 }}>
-          <List>
-            <ListItem
-              secondaryAction={
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={event.sent}
-                  onClick={() => handleSend(event.id)}
-                >
-                  {event.sent ? "Sent" : "Send"}
-                </Button>
-              }
-            >
-              <ListItemText
-                primary={event.title}
-                secondary={
-                  <>
-                    <Typography variant="body2">{event.summary}</Typography>
-                    <Typography variant="caption">
-                      Scheduled: {new Date(event.scheduled_at).toLocaleString()} | Created by:{" "}
-                      {event.created_by_name}
-                    </Typography>
-                  </>
-                }
-              />
-            </ListItem>
-          </List>
-        </Paper>
-      ))}
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
+  <Box
+    sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}
+    data-testid="send-events-container"
+  >
+    {events.map((event) => (
+      <Paper
+        key={event.id}
+        sx={{ p: 2 }}
+        data-testid={`send-event-card-${event.id}`}
       >
-        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
-      </Snackbar>
-    </Box>
-  );
+        <List>
+          <ListItem
+            data-testid={`send-event-list-item-${event.id}`}
+            secondaryAction={
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={event.sent}
+                onClick={() => handleSend(event.id)}
+                data-testid={`send-event-button-${event.id}`}
+              >
+                {event.sent ? "Sent" : "Send"}
+              </Button>
+            }
+          >
+            <ListItemText
+              primary={
+                <Typography
+                  data-testid={`send-event-title-${event.id}`}
+                >
+                  {event.title}
+                </Typography>
+              }
+              secondary={
+                <>
+                  <Typography
+                    variant="body2"
+                    data-testid={`send-event-summary-${event.id}`}
+                  >
+                    {event.summary}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    data-testid={`send-event-meta-${event.id}`}
+                  >
+                    Scheduled: {new Date(event.scheduled_at).toLocaleString()} | Created by:{" "}
+                    {event.created_by_name}
+                  </Typography>
+                </>
+              }
+            />
+          </ListItem>
+        </List>
+      </Paper>
+    ))}
+
+    {/* Snackbar */}
+    <Snackbar
+      open={snackbar.open}
+      autoHideDuration={3000}
+      onClose={() => setSnackbar({ ...snackbar, open: false })}
+      data-testid="send-events-snackbar"
+    >
+      <Alert
+        severity={snackbar.severity}
+        data-testid="send-events-snackbar-alert"
+      >
+        {snackbar.message}
+      </Alert>
+    </Snackbar>
+  </Box>
+);
+
 };
 
 export default ApprovedEvents;

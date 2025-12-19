@@ -114,21 +114,33 @@ const ConfirmEvents: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box
+      sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 2 }}
+      data-testid="draft-events-container"
+    >
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", mt: 4 }}
+          data-testid="draft-events-loading"
+        >
           <CircularProgress />
         </Box>
       )}
 
       {error && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", mt: 4 }}
+          data-testid="draft-events-error"
+        >
           <Typography color="error">{error}</Typography>
         </Box>
       )}
 
       {!loading && !error && events.length === 0 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", mt: 4 }}
+          data-testid="draft-events-empty"
+        >
           <Typography>No draft events found.</Typography>
         </Box>
       )}
@@ -136,15 +148,16 @@ const ConfirmEvents: React.FC = () => {
       {!loading &&
         !error &&
         events.map((event) => (
-          <Paper key={event.id} sx={{ p: 2 }}>
+          <Paper key={event.id} sx={{ p: 2 }} data-testid={`draft-event-${event.id}`}>
             <List>
               <ListItem
                 secondaryAction={
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                  <Box sx={{ display: "flex", gap: 1 }} data-testid={`draft-event-actions-${event.id}`}>
                     <Button
                       variant="contained"
                       color="success"
                       onClick={() => openChannelDialog(event.id)}
+                      data-testid={`draft-event-approve-${event.id}`}
                     >
                       Approve
                     </Button>
@@ -152,6 +165,7 @@ const ConfirmEvents: React.FC = () => {
                       variant="contained"
                       color="error"
                       onClick={() => handleReject(event.id)}
+                      data-testid={`draft-event-reject-${event.id}`}
                     >
                       Reject
                     </Button>
@@ -162,10 +176,11 @@ const ConfirmEvents: React.FC = () => {
                   primary={event.title}
                   secondary={
                     <>
-                      <Typography variant="body2">{event.summary}</Typography>
-                      <Typography variant="caption">
-                        Scheduled: {new Date(event.scheduled_at).toLocaleString()} | Created
-                        by: {event.created_by_name}
+                      <Typography variant="body2" data-testid={`draft-event-summary-${event.id}`}>
+                        {event.summary}
+                      </Typography>
+                      <Typography variant="caption" data-testid={`draft-event-meta-${event.id}`}>
+                        Scheduled: {new Date(event.scheduled_at).toLocaleString()} | Created by: {event.created_by_name}
                       </Typography>
                     </>
                   }
@@ -181,31 +196,59 @@ const ConfirmEvents: React.FC = () => {
         autoHideDuration={3000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        data-testid="draft-events-snackbar"
       >
-        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+        <Alert severity={snackbar.severity} data-testid="draft-events-snackbar-alert">
+          {snackbar.message}
+        </Alert>
       </Snackbar>
 
       {/* Channel selection dialog */}
-      <Dialog open={channelDialogOpen} onClose={() => setChannelDialogOpen(false)}>
-        <DialogTitle>Select Channel</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={channelDialogOpen}
+        onClose={() => setChannelDialogOpen(false)}
+        data-testid="draft-event-channel-dialog"
+      >
+        <DialogTitle data-testid="draft-event-channel-dialog-title">Select Channel</DialogTitle>
+        <DialogContent data-testid="draft-event-channel-dialog-content">
           <RadioGroup
             value={selectedChannel}
             onChange={(e) => setSelectedChannel(e.target.value as "push" | "email")}
+            data-testid="draft-event-channel-radio-group"
           >
-            <FormControlLabel value="push" control={<Radio />} label="Push" />
-            <FormControlLabel value="email" control={<Radio />} label="Email" />
+            <FormControlLabel
+              value="push"
+              control={<Radio />}
+              label="Push"
+              data-testid="draft-event-channel-push"
+            />
+            <FormControlLabel
+              value="email"
+              control={<Radio />}
+              label="Email"
+              data-testid="draft-event-channel-email"
+            />
           </RadioGroup>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setChannelDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleChannelConfirm}>
+        <DialogActions data-testid="draft-event-channel-dialog-actions">
+          <Button
+            onClick={() => setChannelDialogOpen(false)}
+            data-testid="draft-event-channel-cancel-button"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleChannelConfirm}
+            data-testid="draft-event-channel-confirm-button"
+          >
             Confirm
           </Button>
         </DialogActions>
       </Dialog>
     </Box>
   );
+
 };
 
 export default ConfirmEvents;

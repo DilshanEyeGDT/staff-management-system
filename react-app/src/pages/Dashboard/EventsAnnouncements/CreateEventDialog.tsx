@@ -160,15 +160,27 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Create New Event</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="sm"
+        fullWidth
+        data-testid="create-event-dialog"
+      >
+        <DialogTitle data-testid="create-event-title">
+          Create New Event
+        </DialogTitle>
 
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          data-testid="create-event-content"
+        >
           <TextField
             label="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             fullWidth
+            data-testid="create-event-title-input"
           />
 
           <TextField
@@ -177,6 +189,7 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
             onChange={(e) => setSummary(e.target.value)}
             multiline
             fullWidth
+            data-testid="create-event-summary-input"
           />
 
           <TextField
@@ -185,6 +198,7 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
             onChange={(e) => setContent(e.target.value)}
             multiline
             fullWidth
+            data-testid="create-event-content-input"
           />
 
           <TextField
@@ -194,32 +208,51 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
             onChange={(e) => setScheduledAt(e.target.value)}
             InputLabelProps={{ shrink: true }}
             fullWidth
+            data-testid="create-event-scheduled-at-input"
           />
 
           {/* Attachments */}
-          <Box>
-            <Button variant="outlined" component="label">
+          <Box data-testid="create-event-attachments-section">
+            <Button
+              variant="outlined"
+              component="label"
+              data-testid="create-event-upload-button"
+            >
               Upload Files
-              <input type="file" multiple hidden onChange={handleFileChange} />
+              <input
+                type="file"
+                multiple
+                hidden
+                onChange={handleFileChange}
+                data-testid="create-event-file-input"
+              />
             </Button>
 
             {/* Show selected file names */}
             {attachments.length > 0 && (
-              <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 0.5 }}>
-                {attachments.map((file) => (
-                  <Chip key={file.name} label={file.name} />
+              <Box
+                sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 0.5 }}
+                data-testid="create-event-attachments-list"
+              >
+                {attachments.map((file, index) => (
+                  <Chip
+                    key={file.name}
+                    label={file.name}
+                    data-testid={`create-event-attachment-${index}`}
+                  />
                 ))}
               </Box>
             )}
           </Box>
 
           {/* TAG INPUT */}
-          <Box>
+          <Box data-testid="create-event-tags-section">
             <TextField
               label="Add Tag"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               fullWidth
+              data-testid="create-event-tag-input"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && tagInput.trim() !== "") {
                   e.preventDefault();
@@ -230,36 +263,62 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
 
             {/* Suggestions */}
             {tagSuggestions.length > 0 && (
-              <Box sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
-                {tagSuggestions.map((tag) => (
+              <Box
+                sx={{ mt: 1, display: "flex", gap: 1, flexWrap: "wrap" }}
+                data-testid="create-event-tag-suggestions"
+              >
+                {tagSuggestions.map((tag, index) => (
                   <Chip
                     key={tag}
                     label={tag}
                     onClick={() => addTag(tag)}
                     variant="outlined"
                     sx={{ cursor: "pointer" }}
+                    data-testid={`create-event-tag-suggestion-${index}`}
                   />
                 ))}
               </Box>
             )}
 
             {/* Selected Tags */}
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 2 }}>
-              {tags.map((t) => (
+            <Box
+              sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 2 }}
+              data-testid="create-event-selected-tags"
+            >
+              {tags.map((t, index) => (
                 <Chip
                   key={t}
                   label={t}
                   onDelete={() => setTags(tags.filter((x) => x !== t))}
+                  data-testid={`create-event-selected-tag-${index}`}
                 />
               ))}
             </Box>
           </Box>
         </DialogContent>
 
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={handleCreate} disabled={loading} variant="contained">
-            {loading ? <CircularProgress size={22} /> : "Create"}
+        <DialogActions data-testid="create-event-actions">
+          <Button
+            onClick={onClose}
+            data-testid="create-event-cancel-button"
+          >
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleCreate}
+            disabled={loading}
+            variant="contained"
+            data-testid="create-event-submit-button"
+          >
+            {loading ? (
+              <CircularProgress
+                size={22}
+                data-testid="create-event-submit-loading"
+              />
+            ) : (
+              "Create"
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -269,11 +328,18 @@ const CreateEventDialog: React.FC<Props> = ({ open, onClose, onSuccess }) => {
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
+        data-testid="create-event-snackbar"
       >
-        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
+        <Alert
+          severity={snackbar.severity}
+          data-testid="create-event-snackbar-alert"
+        >
+          {snackbar.message}
+        </Alert>
       </Snackbar>
     </>
   );
+
 };
 
 export default CreateEventDialog;

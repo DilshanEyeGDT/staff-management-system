@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
-import { Train } from "@mui/icons-material";
 import EventsTab from "./EventsTab";
 import DraftEventsList from "./ConfirmEvents";
-import App from "../../../App";
 import ApprovedEvents from "./BroadcastEvents";
 
 const EventsAnnouncementsPage: React.FC = () => {
