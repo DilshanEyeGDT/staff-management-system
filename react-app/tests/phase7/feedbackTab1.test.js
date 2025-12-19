@@ -2,7 +2,7 @@ const { Builder, By, until, Key } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const assert = require("assert");
 require("chromedriver");
-const { ACCESS_TOKEN, DASHBOARD_URL } = require("./config");
+const { ACCESS_TOKEN, DASHBOARD_URL } = require("..config");
 
 describe("Feedback Tab UI test", function () {
   this.timeout(90000);
