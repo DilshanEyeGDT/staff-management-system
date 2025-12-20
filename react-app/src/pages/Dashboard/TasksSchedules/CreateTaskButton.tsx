@@ -122,117 +122,177 @@ const CreateTaskButton: React.FC<Props> = ({ onTaskCreated }) => {
   };
 
   return (
-    <>
-      {/* Floating + Button */}
-      <Fab
-        color="primary"
-        aria-label="add"
-        sx={{ position: "fixed", bottom: 32, right: 32 }}
-        onClick={() => setOpen(true)}
+  <>
+    {/* Floating + Button */}
+    <Fab
+      color="primary"
+      aria-label="add"
+      sx={{ position: "fixed", bottom: 32, right: 32 }}
+      onClick={() => setOpen(true)}
+      data-testid="create-task-fab"
+    >
+      <AddIcon data-testid="create-task-fab-icon" />
+    </Fab>
+
+    {/* Dialog */}
+    <Dialog
+      open={open}
+      onClose={() => setOpen(false)}
+      maxWidth="sm"
+      fullWidth
+      data-testid="create-task-dialog"
+    >
+      <DialogTitle data-testid="create-task-title">
+        Create New Task
+      </DialogTitle>
+
+      <DialogContent
+        sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+        data-testid="create-task-content"
       >
-        <AddIcon />
-      </Fab>
+        <TextField
+          label="Title"
+          fullWidth
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          data-testid="task-title-input"
+        />
 
-      {/* Dialog */}
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Create New Task</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-          <TextField
-            label="Title"
-            fullWidth
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
+        <TextField
+          label="Description"
+          fullWidth
+          multiline
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          data-testid="task-description-input"
+        />
 
-          <TextField
-            label="Description"
-            fullWidth
-            multiline
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
+        {/* Assignee */}
+        <FormControl fullWidth data-testid="task-assignee-control">
+          <InputLabel data-testid="task-assignee-label">
+            Assign To
+          </InputLabel>
+          <Select
+            value={assigneeUserId}
+            label="Assign To"
+            onChange={(e) => setAssigneeUserId(e.target.value as any)}
+            data-testid="task-assignee-select"
+          >
+            {users.map((u) => (
+              <MenuItem
+                key={u.id}
+                value={u.id}
+                data-testid={`task-assignee-${u.id}`}
+              >
+                {u.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {/* Assignee */}
-          <FormControl fullWidth>
-            <InputLabel>Assign To</InputLabel>
-            <Select
-              value={assigneeUserId}
-              label="Assign To"
-              onChange={(e) => setAssigneeUserId(e.target.value as any)}
-            >
-              {users.map((u) => (
-                <MenuItem key={u.id} value={u.id}>
-                  {u.displayName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {/* Priority */}
+        <FormControl fullWidth data-testid="task-priority-control">
+          <InputLabel data-testid="task-priority-label">
+            Priority (1–3)
+          </InputLabel>
+          <Select
+            value={priority}
+            label="Priority"
+            onChange={(e) => setPriority(Number(e.target.value))}
+            data-testid="task-priority-select"
+          >
+            {[1, 2, 3].map((p) => (
+              <MenuItem
+                key={p}
+                value={p}
+                data-testid={`task-priority-${p}`}
+              >
+                {p}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          {/* Priority */}
-          <FormControl fullWidth>
-            <InputLabel>Priority (1–3)</InputLabel>
-            <Select
-              value={priority}
-              label="Priority"
-              onChange={(e) => setPriority(Number(e.target.value))}
-            >
-              {[1, 2, 3].map((p) => (
-                <MenuItem key={p} value={p}>
-                  {p}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        {/* Status */}
+        <FormControl fullWidth data-testid="task-status-control">
+          <InputLabel data-testid="task-status-label">
+            Status
+          </InputLabel>
+          <Select
+            value={status}
+            label="Status"
+            onChange={(e) => setStatus(e.target.value)}
+            data-testid="task-status-select"
+          >
+            <MenuItem value="open" data-testid="task-status-open">
+              Open
+            </MenuItem>
+            <MenuItem value="inprogress" data-testid="task-status-inprogress">
+              In Progress
+            </MenuItem>
+            <MenuItem value="done" data-testid="task-status-done">
+              Done
+            </MenuItem>
+          </Select>
+        </FormControl>
 
-          {/* Status */}
-          <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
-            <Select value={status} label="Status" onChange={(e) => setStatus(e.target.value)}>
-              <MenuItem value="open">Open</MenuItem>
-              <MenuItem value="inprogress">In Progress</MenuItem>
-              <MenuItem value="done">Done</MenuItem>
-            </Select>
-          </FormControl>
+        {/* Due Date */}
+        <TextField
+          label="Due Date"
+          type="datetime-local"
+          InputLabelProps={{ shrink: true }}
+          value={dueAt}
+          onChange={(e) => setDueAt(e.target.value)}
+          fullWidth
+          data-testid="task-due-date-input"
+        />
+      </DialogContent>
 
-          {/* Due Date */}
-          <TextField
-            label="Due Date"
-            type="datetime-local"
-            InputLabelProps={{ shrink: true }}
-            value={dueAt}
-            onChange={(e) => setDueAt(e.target.value)}
-            fullWidth
-          />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setOpen(false)} disabled={loading}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-            {loading ? <CircularProgress size={22} /> : "Create Task"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Success Snackbar */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
+      <DialogActions data-testid="create-task-actions">
+        <Button
+          onClick={() => setOpen(false)}
+          disabled={loading}
+          data-testid="create-task-cancel-button"
         >
-          Task created successfully!
-        </Alert>
-      </Snackbar>
-    </>
-  );
+          Cancel
+        </Button>
+
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          disabled={loading}
+          data-testid="create-task-submit-button"
+        >
+          {loading ? (
+            <CircularProgress size={22} data-testid="create-task-loading" />
+          ) : (
+            "Create Task"
+          )}
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    {/* Success Snackbar */}
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={() => setSnackbarOpen(false)}
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      data-testid="create-task-snackbar"
+    >
+      <Alert
+        onClose={() => setSnackbarOpen(false)}
+        severity="success"
+        variant="filled"
+        sx={{ width: "100%" }}
+        data-testid="create-task-snackbar-alert"
+      >
+        Task created successfully!
+      </Alert>
+    </Snackbar>
+  </>
+);
+
 };
 
 export default CreateTaskButton;

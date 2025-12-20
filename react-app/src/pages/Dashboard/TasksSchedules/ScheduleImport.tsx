@@ -81,68 +81,106 @@ const ScheduleImportPage: React.FC = () => {
   };
 
   return (
-    <Box p={3} id="import-schedules-container">
-      {/* File Input */}
-      <label htmlFor="csv-file-input" id="csv-file-label">
-        Select a CSV file
-      </label>
-      <br />
-      <input
-        type="file"
-        accept=".csv"
-        onChange={handleFileChange}
-        style={{ marginBottom: "16px" }}
-        id="csv-file-input"
-      />
+  <Box
+    p={3}
+    id="import-schedules-container"
+    data-testid="import-schedules-container"
+  >
+    {/* File Input */}
+    <label
+      htmlFor="csv-file-input"
+      id="csv-file-label"
+      data-testid="csv-file-label"
+    >
+      Select a CSV file
+    </label>
+    <br />
+    <input
+      type="file"
+      accept=".csv"
+      onChange={handleFileChange}
+      style={{ marginBottom: "16px" }}
+      id="csv-file-input"
+      data-testid="csv-file-input"
+    />
 
-      {/* Action Buttons */}
-      <Box display="flex" gap={2} mb={2} id="import-buttons-box">
-        <Button
-          variant="contained"
-          onClick={handleUpload}
-          disabled={loading || !file}
-          id="upload-csv-button"
-        >
-          {loading ? <CircularProgress size={20} id="upload-loading-spinner" /> : "Upload CSV"}
-        </Button>
-
-        <Button
-          variant="outlined"
-          onClick={handleCheckStatus}
-          disabled={loading || !jobId}
-          id="check-status-button"
-        >
-          Check Status
-        </Button>
-      </Box>
-
-      {/* Job Status Display */}
-      {jobId && (
-        <Typography id="job-status-text">
-          <strong>Job ID:</strong> <span id="job-id">{jobId}</span> <br />
-          <strong>Status:</strong> <span id="job-status">{status}</span>
-        </Typography>
-      )}
-
-      {/* Snackbar Alerts */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        id="import-snackbar"
+    {/* Action Buttons */}
+    <Box
+      display="flex"
+      gap={2}
+      mb={2}
+      id="import-buttons-box"
+      data-testid="import-buttons-box"
+    >
+      <Button
+        variant="contained"
+        onClick={handleUpload}
+        disabled={loading || !file}
+        id="upload-csv-button"
+        data-testid="upload-csv-button"
       >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
-          id="import-snackbar-alert"
-        >
-          {snackbarMsg}
-        </Alert>
-      </Snackbar>
+        {loading ? (
+          <CircularProgress
+            size={20}
+            id="upload-loading-spinner"
+            data-testid="upload-loading-spinner"
+          />
+        ) : (
+          "Upload CSV"
+        )}
+      </Button>
+
+      <Button
+        variant="outlined"
+        onClick={handleCheckStatus}
+        disabled={loading || !jobId}
+        id="check-status-button"
+        data-testid="check-status-button"
+      >
+        Check Status
+      </Button>
     </Box>
-  );
+
+    {/* Job Status Display */}
+    {jobId && (
+      <Typography
+        id="job-status-text"
+        data-testid="job-status-text"
+      >
+        <strong>Job ID:</strong>{" "}
+        <span id="job-id" data-testid="job-id">
+          {jobId}
+        </span>
+        <br />
+        <strong>Status:</strong>{" "}
+        <span id="job-status" data-testid="job-status">
+          {status}
+        </span>
+      </Typography>
+    )}
+
+    {/* Snackbar Alerts */}
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={() => setSnackbarOpen(false)}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      id="import-snackbar"
+      data-testid="import-snackbar"
+    >
+      <Alert
+        onClose={() => setSnackbarOpen(false)}
+        severity={snackbarSeverity}
+        sx={{ width: "100%" }}
+        id="import-snackbar-alert"
+        data-testid="import-snackbar-alert"
+      >
+        {snackbarMsg}
+      </Alert>
+    </Snackbar>
+  </Box>
+);
+
 
 };
 

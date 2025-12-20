@@ -110,53 +110,148 @@ const AddFeedbackDialog: React.FC<Props> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Create Feedback</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      data-testid="create-feedback-dialog"
+    >
+      <DialogTitle data-testid="create-feedback-title">
+        Create Feedback
+      </DialogTitle>
 
-      <DialogContent>
-        <TextField fullWidth label="Title" value={title} onChange={(e) => setTitle(e.target.value)} sx={{ mt: 1 }} />
-        <TextField fullWidth label="Category" value={category} onChange={(e) => setCategory(e.target.value)} sx={{ mt: 2 }} />
+      <DialogContent data-testid="create-feedback-content">
+        {/* Title */}
+        <TextField
+          fullWidth
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          sx={{ mt: 1 }}
+          data-testid="feedback-title-input"
+        />
 
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>Priority</InputLabel>
-          <Select value={priority} label="Priority" onChange={(e) => setPriority(e.target.value)}>
-            <MenuItem value="low">Low</MenuItem>
-            <MenuItem value="medium">Medium</MenuItem>
-            <MenuItem value="high">High</MenuItem>
+        {/* Category */}
+        <TextField
+          fullWidth
+          label="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          sx={{ mt: 2 }}
+          data-testid="feedback-category-input"
+        />
+
+        {/* Priority */}
+        <FormControl
+          fullWidth
+          sx={{ mt: 2 }}
+          data-testid="feedback-priority-select-wrapper"
+        >
+          <InputLabel data-testid="feedback-priority-label">
+            Priority
+          </InputLabel>
+          <Select
+            value={priority}
+            label="Priority"
+            onChange={(e) => setPriority(e.target.value)}
+            data-testid="feedback-priority-select"
+          >
+            <MenuItem value="low" data-testid="priority-option-low">
+              Low
+            </MenuItem>
+            <MenuItem value="medium" data-testid="priority-option-medium">
+              Medium
+            </MenuItem>
+            <MenuItem value="high" data-testid="priority-option-high">
+              High
+            </MenuItem>
           </Select>
         </FormControl>
 
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>Assignee</InputLabel>
-          <Select value={assigneeId} label="Assignee" onChange={(e) => setAssigneeId(Number(e.target.value))}>
+        {/* Assignee */}
+        <FormControl
+          fullWidth
+          sx={{ mt: 2 }}
+          data-testid="feedback-assignee-select-wrapper"
+        >
+          <InputLabel data-testid="feedback-assignee-label">
+            Assignee
+          </InputLabel>
+          <Select
+            value={assigneeId}
+            label="Assignee"
+            onChange={(e) => setAssigneeId(Number(e.target.value))}
+            data-testid="feedback-assignee-select"
+          >
             {users.map((u) => (
-              <MenuItem key={u.id} value={u.id}>{u.display_name}</MenuItem>
+              <MenuItem
+                key={u.id}
+                value={u.id}
+                data-testid={`assignee-option-${u.id}`}
+              >
+                {u.display_name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
 
-        <Box sx={{ mt: 3 }}>
-          <Button variant="outlined" component="label">
+        {/* Attachments */}
+        <Box sx={{ mt: 3 }} data-testid="feedback-attachments-section">
+          <Button
+            variant="outlined"
+            component="label"
+            data-testid="feedback-upload-button"
+          >
             Upload Files
-            <input hidden multiple type="file" onChange={handleFileSelect} />
+            <input
+              hidden
+              multiple
+              type="file"
+              onChange={handleFileSelect}
+              data-testid="feedback-file-input"
+            />
           </Button>
 
           {attachments.map((f, i) => (
-            <Typography key={i} variant="body2">
+            <Typography
+              key={i}
+              variant="body2"
+              data-testid={`attachment-item-${i}`}
+            >
               • {f.file_name} ({f.file_type})
             </Typography>
           ))}
         </Box>
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={loading}>
-          {loading ? <CircularProgress size={20} /> : "Submit"}
+      <DialogActions data-testid="create-feedback-actions">
+        <Button
+          onClick={onClose}
+          data-testid="create-feedback-cancel-button"
+        >
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading}
+          data-testid="create-feedback-submit-button"
+        >
+          {loading ? (
+            <CircularProgress
+              size={20}
+              data-testid="create-feedback-loading"
+            />
+          ) : (
+            "Submit"
+          )}
         </Button>
       </DialogActions>
     </Dialog>
   );
+
 };
 
 export default AddFeedbackDialog;

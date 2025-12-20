@@ -81,50 +81,101 @@ export default function KpiActualsImport() {
   };
 
   return (
-    <Box p={3}>
-      {/* <Typography variant="h5" sx={{ mb: 2 }}>
-        Import KPI Actuals
-      </Typography> */}
+  <Box
+    p={3}
+    id="kpi-import-container"
+    data-testid="kpi-import-container"
+  >
+    {/* <Typography variant="h5" sx={{ mb: 2 }}>
+      Import KPI Actuals
+    </Typography> */}
 
-      <input type="file" accept=".csv" onChange={handleFileChange} />
-      <Box mt={2} display="flex" gap={2}>
-        <Button id="upload-csv-button" variant="contained" onClick={handleUpload} disabled={loading}>
-          Upload
-        </Button>
-        {loading && <CircularProgress size={24} />}
-      </Box>
+    <input
+      type="file"
+      accept=".csv"
+      onChange={handleFileChange}
+      id="kpi-import-file-input"
+      data-testid="kpi-import-file-input"
+    />
 
-      {jobId && (
-        <Box mt={3}>
-          <Typography>
-            <strong>Job ID:</strong> {jobId}
-          </Typography>
-          <Typography>
-            <strong>Status:</strong> {jobStatus}
-          </Typography>
-          {jobResult && (
-            <Typography>
-              <strong>Result:</strong> {jobResult}
-            </Typography>
-          )}
-        </Box>
-      )}
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+    <Box
+      mt={2}
+      display="flex"
+      gap={2}
+      id="kpi-import-actions"
+      data-testid="kpi-import-actions"
+    >
+      <Button
+        id="upload-csv-button"
+        data-testid="upload-csv-button"
+        variant="contained"
+        onClick={handleUpload}
+        disabled={loading}
       >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        Upload
+      </Button>
+
+      {loading && (
+        <CircularProgress
+          size={24}
+          id="kpi-import-loading-spinner"
+          data-testid="kpi-import-loading-spinner"
+        />
+      )}
     </Box>
-  );
+
+    {jobId && (
+      <Box
+        mt={3}
+        id="kpi-import-job-status"
+        data-testid="kpi-import-job-status"
+      >
+        <Typography
+          id="kpi-import-job-id"
+          data-testid="kpi-import-job-id"
+        >
+          <strong>Job ID:</strong> {jobId}
+        </Typography>
+
+        <Typography
+          id="kpi-import-job-status-text"
+          data-testid="kpi-import-job-status-text"
+        >
+          <strong>Status:</strong> {jobStatus}
+        </Typography>
+
+        {jobResult && (
+          <Typography
+            id="kpi-import-job-result"
+            data-testid="kpi-import-job-result"
+          >
+            <strong>Result:</strong> {jobResult}
+          </Typography>
+        )}
+      </Box>
+    )}
+
+    {/* Snackbar */}
+    <Snackbar
+      open={snackbar.open}
+      autoHideDuration={4000}
+      onClose={() => setSnackbar({ ...snackbar, open: false })}
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      id="kpi-import-snackbar"
+      data-testid="kpi-import-snackbar"
+    >
+      <Alert
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        severity={snackbar.severity}
+        sx={{ width: "100%" }}
+        id="kpi-import-snackbar-alert"
+        data-testid="kpi-import-snackbar-alert"
+      >
+        {snackbar.message}
+      </Alert>
+    </Snackbar>
+  </Box>
+);
+
+
 }

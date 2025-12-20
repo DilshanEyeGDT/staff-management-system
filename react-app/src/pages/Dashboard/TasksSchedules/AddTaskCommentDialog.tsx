@@ -71,50 +71,74 @@ const AddTaskCommentDialog: React.FC<Props> = ({ taskId, open, onClose }) => {
   };
 
   return (
-    <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Add Comment</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Comment"
-            multiline
-            rows={4}
-            fullWidth
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? <CircularProgress size={20} /> : "Add"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+  <>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      data-testid="add-task-comment-dialog"
+    >
+      <DialogTitle data-testid="add-task-comment-title">
+        Add Comment
+      </DialogTitle>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+      <DialogContent data-testid="add-task-comment-content">
+        <TextField
+          label="Comment"
+          multiline
+          rows={4}
+          fullWidth
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          sx={{ mt: 1 }}
+          data-testid="add-task-comment-input"
+        />
+      </DialogContent>
+
+      <DialogActions data-testid="add-task-comment-actions">
+        <Button
+          onClick={onClose}
+          disabled={loading}
+          data-testid="add-task-comment-cancel-button"
         >
-          {snackbarMsg}
-        </Alert>
-      </Snackbar>
-    </>
-  );
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading}
+          data-testid="add-task-comment-submit-button"
+        >
+          {loading ? (
+            <CircularProgress size={20} data-testid="add-task-comment-loading" />
+          ) : (
+            "Add"
+          )}
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={() => setSnackbarOpen(false)}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      data-testid="add-task-comment-snackbar"
+    >
+      <Alert
+        onClose={() => setSnackbarOpen(false)}
+        severity={snackbarSeverity}
+        sx={{ width: "100%" }}
+        data-testid="add-task-comment-snackbar-alert"
+      >
+        {snackbarMsg}
+      </Alert>
+    </Snackbar>
+  </>
+);
+
 };
 
 export default AddTaskCommentDialog;

@@ -96,86 +96,131 @@ const FeedbackDetailsDialog: React.FC<Props> = ({
   }, [feedbackId]);
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogContent dividers>
-        {loading || !feedback ? (
-          <CircularProgress />
-        ) : (
-          <Box>
-            {/* ---------- HEADER ---------- */}
-            <Typography variant="h6" fontWeight={600}>
-              {feedback.title}
-            </Typography>
+  <Dialog
+    open={open}
+    onClose={onClose}
+    maxWidth="md"
+    fullWidth
+    data-testid="feedback-details-dialog"
+  >
+    <DialogContent dividers data-testid="feedback-details-content">
+      {loading || !feedback ? (
+        <CircularProgress data-testid="feedback-details-loading" />
+      ) : (
+        <Box data-testid="feedback-details-container">
+          {/* ---------- HEADER ---------- */}
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            data-testid="feedback-title"
+          >
+            {feedback.title}
+          </Typography>
 
-            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-              <Chip label={feedback.status} color="primary" />
-              <Chip label={feedback.priority} />
-              <Chip label={feedback.category} />
-            </Box>
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* ---------- ATTACHMENTS ---------- */}
-            <Typography variant="subtitle1" fontWeight={600}>
-              📎 Attachments
-            </Typography>
-
-            {feedback.attachments.length === 0 ? (
-              <Typography>No attachments</Typography>
-            ) : (
-              feedback.attachments.map((file) => (
-                <Typography
-                  key={file.feedback_attachment_id}
-                  variant="body2"
-                >
-                  • {file.file_name} ({file.file_type})
-                </Typography>
-              ))
-            )}
-
-            <Divider sx={{ my: 2 }} />
-
-            {/* ---------- MESSAGES ---------- */}
-            <Typography variant="subtitle1" fontWeight={600}>
-              💬 Messages
-            </Typography>
-
-            {feedback.messages.length === 0 ? (
-              <Typography>No messages</Typography>
-            ) : (
-              feedback.messages.map((msg) => (
-                <Box
-                  key={msg.feedback_message_id}
-                  sx={{
-                    mb: 2,
-                    p: 1.5,
-                    borderRadius: 1,
-                    background: "#f9f9f9",
-                  }}
-                >
-                  <Typography fontWeight={600}>
-                    {getUserName(msg.sender_id)}
-                  </Typography>
-
-                  <Typography variant="body2" sx={{ mt: 0.5 }}>
-                    {msg.message}
-                  </Typography>
-
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
-                    {/* {msg.created_at} */}
-                    {dayjs(msg.created_at).format("DD MMM YYYY, hh:mm A")}
-                  </Typography>
-                </Box>
-              ))
-            )}
+          <Box
+            sx={{ display: "flex", gap: 1, mt: 1 }}
+            data-testid="feedback-meta-chips"
+          >
+            <Chip
+              label={feedback.status}
+              color="primary"
+              data-testid="feedback-status-chip"
+            />
+            <Chip
+              label={feedback.priority}
+              data-testid="feedback-priority-chip"
+            />
+            <Chip
+              label={feedback.category}
+              data-testid="feedback-category-chip"
+            />
           </Box>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* ---------- ATTACHMENTS ---------- */}
+          <Typography
+            variant="subtitle1"
+            fontWeight={600}
+            data-testid="feedback-attachments-title"
+          >
+            📎 Attachments
+          </Typography>
+
+          {feedback.attachments.length === 0 ? (
+            <Typography data-testid="feedback-no-attachments">
+              No attachments
+            </Typography>
+          ) : (
+            feedback.attachments.map((file, index) => (
+              <Typography
+                key={file.feedback_attachment_id}
+                variant="body2"
+                data-testid={`feedback-attachment-${index}`}
+              >
+                • {file.file_name} ({file.file_type})
+              </Typography>
+            ))
+          )}
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* ---------- MESSAGES ---------- */}
+          <Typography
+            variant="subtitle1"
+            fontWeight={600}
+            data-testid="feedback-messages-title"
+          >
+            💬 Messages
+          </Typography>
+
+          {feedback.messages.length === 0 ? (
+            <Typography data-testid="feedback-no-messages">
+              No messages
+            </Typography>
+          ) : (
+            feedback.messages.map((msg, index) => (
+              <Box
+                key={msg.feedback_message_id}
+                sx={{
+                  mb: 2,
+                  p: 1.5,
+                  borderRadius: 1,
+                  background: "#f9f9f9",
+                }}
+                data-testid={`feedback-message-${index}`}
+              >
+                <Typography
+                  fontWeight={600}
+                  data-testid={`feedback-message-sender-${index}`}
+                >
+                  {getUserName(msg.sender_id)}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 0.5 }}
+                  data-testid={`feedback-message-text-${index}`}
+                >
+                  {msg.message}
+                </Typography>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  data-testid={`feedback-message-date-${index}`}
+                >
+                  {dayjs(msg.created_at).format("DD MMM YYYY, hh:mm A")}
+                </Typography>
+              </Box>
+            ))
+          )}
+        </Box>
+      )}
+    </DialogContent>
+  </Dialog>
+);
+
 };
 
 export default FeedbackDetailsDialog;

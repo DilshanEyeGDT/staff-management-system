@@ -1,0 +1,176 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 3,
+    "passes": 3,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-19T19:49:38.150Z",
+    "end": "2025-12-19T19:50:14.226Z",
+    "duration": 36076,
+    "testsRegistered": 3,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "645b5dbe-5013-486c-85f4-266f2ee75cdd",
+      "title": "",
+      "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase3\\roomBooking.test.js",
+      "file": "\\tests\\phase3\\roomBooking.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "6e51e700-0e45-4fe8-9184-66dba8f75362",
+          "title": "Room & Resource Booking UI test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase3\\roomBooking.test.js",
+          "file": "\\tests\\phase3\\roomBooking.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Room & Resource Booking UI test\"",
+              "fullTitle": "Room & Resource Booking UI test \"before all\" hook in \"Room & Resource Booking UI test\"",
+              "timedOut": false,
+              "duration": 8698,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--start-maximized\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();\nconsole.log(\"🚀 Opening dashboard...\");\nawait driver.get(DASHBOARD_URL);\n// Inject valid Admin token manually\nawait driver.executeScript(\n  `window.localStorage.setItem('token', '${ACCESS_TOKEN}');`\n);\nawait driver.navigate().refresh();\n// Wait until dashboard sidebar appears\nawait driver.wait(until.elementLocated(By.id(\"dashboard-side-panel\")), 30000);\nconst title = await driver.findElement(By.id(\"dashboard-title\")).getText();\nassert.ok(title.includes(\"Admin Portal\"), \"Admin Portal title missing\");\nconsole.log(\"✅ Dashboard loaded successfully as Admin\");",
+              "err": {},
+              "uuid": "a815bcf9-f977-4576-9059-9ff510b65f91",
+              "parentUUID": "6e51e700-0e45-4fe8-9184-66dba8f75362",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Room & Resource Booking UI test\"",
+              "fullTitle": "Room & Resource Booking UI test \"after all\" hook in \"Room & Resource Booking UI test\"",
+              "timedOut": false,
+              "duration": 492,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) {\n  console.log(\"🚀 Closing browser...\");\n  await driver.quit(); // closes all tabs and ends session\n  }",
+              "err": {},
+              "uuid": "769c4c4f-a939-4244-83e7-963f5290ab48",
+              "parentUUID": "6e51e700-0e45-4fe8-9184-66dba8f75362",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should navigate to Room & Resource Booking page",
+              "fullTitle": "Room & Resource Booking UI test should navigate to Room & Resource Booking page",
+              "timedOut": false,
+              "duration": 467,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const feedbackNav = await driver.findElement(\n  By.id(\"nav-roomBooking\")\n);\nawait feedbackNav.click();\nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"room-booking-title\")),\n  10000\n);\nassert.strictEqual(await pageTitle.getText(), \"Room & Resource Booking\");\nconsole.log(\"✅ Room & Resource Booking page loaded\");",
+              "err": {},
+              "uuid": "35fe751f-b67d-417d-a026-530bac883d7d",
+              "parentUUID": "6e51e700-0e45-4fe8-9184-66dba8f75362",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should filter room reservations by user name and room name",
+              "fullTitle": "Room & Resource Booking UI test should filter room reservations by user name and room name",
+              "timedOut": false,
+              "duration": 3597,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* =======================\n   GO TO ALL RESERVATIONS TAB\n======================= */\nconst reservationsTab = await driver.wait(\n  until.elementLocated(By.id(\"tab-room-reservations\")),\n  10000\n);\nawait driver.executeScript(\"arguments[0].click();\", reservationsTab);\nconsole.log(\"📑 Navigated to All Reservations tab\");\n/* =======================\n   CONFIRM TAB CONTENT\n======================= */\nconst tabContent = await driver.wait(\n  until.elementLocated(By.id(\"tab-content-room-reservations\")),\n  10000\n);\nassert.ok(tabContent, \"Reservations tab content not loaded\");\nconsole.log(\"✅ Reservations tab content rendered\");\n/* =======================\n   WAIT FOR INITIAL FETCH\n======================= */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(\n    By.id(\"all-bookings-loading-spinner\")\n  );\n  return loaders.length === 0;\n}, 20000);\nconsole.log(\"📦 Initial bookings fetch completed\");\n/* =======================\n   APPLY FILTERS\n======================= */\nconst userNameFilter = await driver.wait(\n  until.elementLocated(By.id(\"filter-user-name\")),\n  5000\n);\nconst roomNameFilter = await driver.wait(\n  until.elementLocated(By.id(\"filter-room-name\")),\n  5000\n);\n// Clear existing values (safe)\nawait userNameFilter.clear();\nawait roomNameFilter.clear();\nawait userNameFilter.sendKeys(\"tha\");\nawait roomNameFilter.sendKeys(\"conf\");\nconsole.log(\"🔍 Filters applied: user='tha', room='conf'\");\n/* =======================\n   WAIT FOR FILTERED RESULTS\n======================= */\nawait driver.wait(async () => {\n  const bookingCards = await driver.findElements(\n    By.css('[data-testid^=\"booking-card-\"]')\n  );\n  const emptyState = await driver.findElements(\n    By.id(\"bookings-empty\")\n  );\n  return bookingCards.length > 0 || emptyState.length > 0;\n}, 10000);\n/* =======================\n   ASSERT RESULTS\n======================= */\nconst bookingCards = await driver.findElements(\n  By.css('[data-testid^=\"booking-card-\"]')\n);\nif (bookingCards.length > 0) {\n  console.log(`✅ ${bookingCards.length} booking(s) displayed after filtering`);\n  assert.ok(bookingCards.length > 0, \"Filtered bookings not displayed\");\n} else {\n  const emptyText = await driver.findElement(By.id(\"bookings-empty\"));\n  assert.strictEqual(\n    await emptyText.getText(),\n    \"No bookings found.\",\n    \"Unexpected empty bookings message\"\n  );\n  console.log(\"⚠️ No bookings matched filters (empty state shown)\");\n}",
+              "err": {},
+              "uuid": "b2aabfb5-af9a-4d67-8571-61efca7e332b",
+              "parentUUID": "6e51e700-0e45-4fe8-9184-66dba8f75362",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should fetch room utilization report and download PDF",
+              "fullTitle": "Room & Resource Booking UI test should fetch room utilization report and download PDF",
+              "timedOut": false,
+              "duration": 22808,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* =======================\n   GO TO KPI TAB\n======================= */\nconst kpiTab = await driver.wait(\n  until.elementLocated(By.id(\"tab-kpi\")),\n  10000\n);\nawait driver.executeScript(\"arguments[0].click();\", kpiTab);\nconsole.log(\"📊 Navigated to Rooms KPI tab\");\n/* =======================\n   CONFIRM KPI PAGE\n======================= */\nconst kpiPage = await driver.wait(\n  until.elementLocated(By.id(\"room-utilization-page\")),\n  10000\n);\nassert.ok(kpiPage, \"Room Utilization page not loaded\");\nconsole.log(\"✅ Room Utilization page loaded\");\n    /* =======================\n   MANUAL DATE PICKERS (EXTENDED TIME)\n======================= */\nconst startDateInput = await driver.wait(\n  until.elementLocated(\n    By.css('[data-testid=\"utilization-filter-start-date\"] input')\n  ),\n  5000\n);\nconst endDateInput = await driver.wait(\n  until.elementLocated(\n    By.css('[data-testid=\"utilization-filter-end-date\"] input')\n  ),\n  5000\n);\n// START DATE\nawait driver.executeScript(\"arguments[0].click();\", startDateInput);\nconsole.log(\"⏱ Please manually select START date...\");\nawait driver.sleep(10000); // ⬅️ increased to 10 seconds\n// END DATE\nawait driver.executeScript(\"arguments[0].click();\", endDateInput);\nconsole.log(\"⏱ Please manually select END date...\");\nawait driver.sleep(10000); // ⬅️ increased to 10 seconds\n\n/* =======================\n   SELECT GROUP BY = TIME\n======================= */\nconst groupBySelect = await driver.findElement(\n  By.id(\"utilization-filter-groupby\")\n);\nawait groupBySelect.click();\nconst groupByTime = await driver.wait(\n  until.elementLocated(By.id(\"utilization-groupby-time\")),\n  10000\n);\nawait groupByTime.click();\nconsole.log(\"✅ Group By filter set to TIME\");\n/* =======================\n   FETCH REPORT\n======================= */\nconst fetchBtn = await driver.findElement(\n  By.id(\"utilization-fetch-btn\")\n);\nawait driver.executeScript(\"arguments[0].click();\", fetchBtn);\nconsole.log(\"🚀 Fetch report clicked\");\n/* =======================\n   WAIT FOR FETCH RESULT\n======================= */\nawait driver.wait(async () => {\n  const loader = await driver.findElements(\n    By.id(\"room-utilization-loading-spinner\")\n  );\n  const table = await driver.findElements(\n    By.id(\"room-utilization-table\")\n  );\n  const snackbar = await driver.findElements(\n    By.id(\"room-utilization-snackbar\")\n  );\n  return loader.length === 0 && (table.length > 0 || snackbar.length > 0);\n}, 20000);\nconsole.log(\"📈 Report fetch completed\");\n/* =======================\n   ASSERT TABLE OR NO DATA\n======================= */\nconst table = await driver.findElements(\n  By.id(\"room-utilization-table\")\n);\nif (table.length > 0) {\n  console.log(\"✅ Utilization table displayed\");\n  const rows = await driver.findElements(\n    By.css('[data-testid^=\"utilization-row-\"]')\n  );\n  assert.ok(rows.length > 0, \"Utilization table has no rows\");\n} else {\n  const snackbar = await driver.findElement(\n    By.id(\"room-utilization-snackbar\")\n  );\n  const text = await snackbar.getText();\n  assert.ok(\n    text.toLowerCase().includes(\"no data\"),\n    \"Expected no data snackbar not shown\"\n  );\n  console.log(\"⚠️ No data available for selected range\");\n}\n/* =======================\n   DOWNLOAD PDF\n======================= */\nconst downloadBtn = await driver.findElement(\n  By.id(\"utilization-download-btn\")\n);\nawait driver.executeScript(\"arguments[0].click();\", downloadBtn);\nconsole.log(\"📄 Download PDF button clicked\");",
+              "err": {},
+              "uuid": "44e559ae-63ee-411a-9da0-9e35c7e0a57a",
+              "parentUUID": "6e51e700-0e45-4fe8-9184-66dba8f75362",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "35fe751f-b67d-417d-a026-530bac883d7d",
+            "b2aabfb5-af9a-4d67-8571-61efca7e332b",
+            "44e559ae-63ee-411a-9da0-9e35c7e0a57a"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 26872,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}
