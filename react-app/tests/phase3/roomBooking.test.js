@@ -448,6 +448,13 @@ describe("Room & Resource Booking UI test", function () {
     await driver.executeScript("arguments[0].click();", downloadBtn);
 
     console.log("📄 Download PDF button clicked");
+
+    /* =======================
+       WAIT FOR DOWNLOAD
+    ======================= */
+
+    console.log("⏳ Waiting for PDF download to complete...");
+    await driver.sleep(5000); // ⬅️ wait 8 seconds for download
   });
 
 
