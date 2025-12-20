@@ -122,86 +122,153 @@ const EditScheduleDialog: React.FC<Props> = ({ schedule, open, onClose, onUpdate
   };
 
   return (
-    <>
-      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Edit or Delete Schedule</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-          <FormControl fullWidth>
-            <InputLabel>Assignee</InputLabel>
-            <Select
-              value={assigneeUserId}
-              onChange={(e) => setAssigneeUserId(Number(e.target.value))}
-              label="Assignee"
-            >
-              {users.map((u) => (
-                <MenuItem key={u.id} value={u.id}>
-                  {u.displayName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+  <>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      data-testid="edit-schedule-dialog"
+    >
+      <DialogTitle data-testid="edit-schedule-title">
+        Edit or Delete Schedule
+      </DialogTitle>
 
-          <TextField
-            label="Start Time"
-            type="datetime-local"
-            value={startAt}
-            onChange={(e) => setStartAt(e.target.value)}
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            label="End Time"
-            type="datetime-local"
-            value={endAt}
-            onChange={(e) => setEndAt(e.target.value)}
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button color="error" onClick={() => setDeleteConfirmOpen(true)} disabled={loading}>
-            Delete
-          </Button>
-          <Button onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleUpdate} disabled={loading}>
-            {loading ? <CircularProgress size={20} /> : "Update"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* ---------- Delete Confirmation Dialog ---------- */}
-      <Dialog open={deleteConfirmOpen} onClose={() => setDeleteConfirmOpen(false)}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete this schedule?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteConfirmOpen(false)}>Cancel</Button>
-          <Button color="error" variant="contained" onClick={handleDelete}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* ---------- Snackbar Alert ---------- */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      <DialogContent
+        sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}
+        data-testid="edit-schedule-content"
       >
-        <Alert
-          onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
+        <FormControl fullWidth data-testid="edit-schedule-assignee-control">
+          <InputLabel data-testid="edit-schedule-assignee-label">
+            Assignee
+          </InputLabel>
+          <Select
+            value={assigneeUserId}
+            onChange={(e) => setAssigneeUserId(Number(e.target.value))}
+            label="Assignee"
+            data-testid="edit-schedule-assignee-select"
+          >
+            {users.map((u) => (
+              <MenuItem
+                key={u.id}
+                value={u.id}
+                data-testid={`edit-schedule-assignee-${u.id}`}
+              >
+                {u.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <TextField
+          label="Start Time"
+          type="datetime-local"
+          value={startAt}
+          onChange={(e) => setStartAt(e.target.value)}
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          data-testid="edit-schedule-start-time-input"
+        />
+
+        <TextField
+          label="End Time"
+          type="datetime-local"
+          value={endAt}
+          onChange={(e) => setEndAt(e.target.value)}
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          data-testid="edit-schedule-end-time-input"
+        />
+      </DialogContent>
+
+      <DialogActions data-testid="edit-schedule-actions">
+        <Button
+          color="error"
+          onClick={() => setDeleteConfirmOpen(true)}
+          disabled={loading}
+          data-testid="edit-schedule-delete-button"
         >
-          {snackbarMsg}
-        </Alert>
-      </Snackbar>
-    </>
-  );
+          Delete
+        </Button>
+
+        <Button
+          onClick={onClose}
+          disabled={loading}
+          data-testid="edit-schedule-cancel-button"
+        >
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleUpdate}
+          disabled={loading}
+          data-testid="edit-schedule-update-button"
+        >
+          {loading ? (
+            <CircularProgress size={20} data-testid="edit-schedule-update-loading" />
+          ) : (
+            "Update"
+          )}
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    {/* ---------- Delete Confirmation Dialog ---------- */}
+    <Dialog
+      open={deleteConfirmOpen}
+      onClose={() => setDeleteConfirmOpen(false)}
+      data-testid="delete-schedule-confirm-dialog"
+    >
+      <DialogTitle data-testid="delete-schedule-confirm-title">
+        Confirm Delete
+      </DialogTitle>
+
+      <DialogContent data-testid="delete-schedule-confirm-content">
+        <Typography data-testid="delete-schedule-confirm-text">
+          Are you sure you want to delete this schedule?
+        </Typography>
+      </DialogContent>
+
+      <DialogActions data-testid="delete-schedule-confirm-actions">
+        <Button
+          onClick={() => setDeleteConfirmOpen(false)}
+          data-testid="delete-schedule-confirm-cancel"
+        >
+          Cancel
+        </Button>
+
+        <Button
+          color="error"
+          variant="contained"
+          onClick={handleDelete}
+          data-testid="delete-schedule-confirm-delete"
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    {/* ---------- Snackbar Alert ---------- */}
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={() => setSnackbarOpen(false)}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      data-testid="schedule-snackbar"
+    >
+      <Alert
+        onClose={() => setSnackbarOpen(false)}
+        severity={snackbarSeverity}
+        sx={{ width: "100%" }}
+        data-testid="schedule-snackbar-alert"
+      >
+        {snackbarMsg}
+      </Alert>
+    </Snackbar>
+  </>
+);
+
 };
 
 export default EditScheduleDialog;
