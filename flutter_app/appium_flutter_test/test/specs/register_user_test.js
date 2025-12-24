@@ -85,9 +85,9 @@ describe("Flutter User Registration Flow", function () {
       console.log("✅ Register screen loaded successfully.");
 
       // === Step 2: Fill Registration Details ===
-      await enterFlutterText(driver, "register_email_field", "tharakadilshan506+test1@gmail.com", "Email Field");
+      await enterFlutterText(driver, "register_email_field", "tharakadilshan506+test2@gmail.com", "Email Field");
       await enterFlutterText(driver, "register_password_field", "Tharaka@1234", "Password Field");
-      await enterFlutterText(driver, "register_username_field", "TharakaOfficial", "Preferred Username");
+      await enterFlutterText(driver, "register_username_field", "TharakaAppium", "Preferred Username");
 
       // === Step 3: Tap Register ===
       await tapFlutterElement(driver, "register_action_button", "Register Button");

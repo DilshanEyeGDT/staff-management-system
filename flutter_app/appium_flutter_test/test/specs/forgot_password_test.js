@@ -149,7 +149,7 @@ describe("Flutter Forgot Password Flow", function () {
       await enterFlutterText(
         driver,
         "forgot_email_field",
-        "tharakadilshan506+test1@gmail.com",
+        "tharakadilshan506+test2@gmail.com",
         "Forgot Password Email Field"
       );
 
@@ -168,9 +168,9 @@ describe("Flutter Forgot Password Flow", function () {
     //   );
       console.log("✅ Verification code message displayed.");
 
-      // 6️⃣ Pause 30s for manual OTP entry
-      console.log("⏸️ Please manually enter the OTP in the app (waiting 30 seconds)...");
-      await driver.pause(30000);
+      // 6️⃣ Pause 60s for manual OTP entry
+      console.log("⏸️ Please manually enter the OTP in the app (waiting 60 seconds)...");
+      await driver.pause(60000);
 
       // 7️⃣ Enter new password
       await enterFlutterText(
@@ -206,4 +206,3 @@ describe("Flutter Forgot Password Flow", function () {
     }
   });
 });
-286962
