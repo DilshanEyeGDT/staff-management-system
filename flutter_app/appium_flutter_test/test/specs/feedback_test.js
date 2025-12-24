@@ -398,7 +398,7 @@ async function clickFirstFeedbackCard(driver) {
 }
 
 // === Main Test ===
-describe("Flutter Login Flow", function () {
+describe("Flutter Feedback Flow", function () {
   this.timeout(240000); // 3 minutes timeout
   let driver;
 
