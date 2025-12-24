@@ -84,44 +84,102 @@ class _FeedbackTabState extends State<FeedbackTab> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text(feedback['title'] ?? ''),
+          key: const Key('feedback_details_dialog'),
+
+          // ================= TITLE =================
+          title: Text(
+            feedback['title'] ?? '',
+            key: const Key('feedback_details_title'),
+          ),
+
+          // ================= CONTENT =================
           content: SingleChildScrollView(
+            key: const Key('feedback_details_scroll_view'),
             child: Column(
+              key: const Key('feedback_details_column'),
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Category: ${feedback['category']}'),
-                Text('Priority: ${feedback['priority']}'),
-                Text('Status: ${feedback['status']}'),
-                Text('Created by: ${feedback['user_name']}'),
-                Text('Assignee: ${feedback['assignee_name']}'),
-                const SizedBox(height: 8),
                 Text(
+                  'Category: ${feedback['category']}',
+                  key: const Key('feedback_details_category'),
+                ),
+                Text(
+                  'Priority: ${feedback['priority']}',
+                  key: const Key('feedback_details_priority'),
+                ),
+                Text(
+                  'Status: ${feedback['status']}',
+                  key: const Key('feedback_details_status'),
+                ),
+                Text(
+                  'Created by: ${feedback['user_name']}',
+                  key: const Key('feedback_details_created_by'),
+                ),
+                Text(
+                  'Assignee: ${feedback['assignee_name']}',
+                  key: const Key('feedback_details_assignee'),
+                ),
+
+                const SizedBox(
+                  height: 8,
+                  key: Key('feedback_details_spacing_1'),
+                ),
+
+                // ================= ATTACHMENTS =================
+                const Text(
                   'Attachments:',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  key: Key('feedback_details_attachments_label'),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+
                 ...List<Widget>.from(
-                  (feedback['attachments'] ?? []).map(
-                    (a) => Text(a['file_name'] ?? ''),
-                  ),
+                  (feedback['attachments'] ?? []).asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final a = entry.value;
+                    return Text(
+                      a['file_name'] ?? '',
+                      key: Key('feedback_attachment_item_$index'),
+                    );
+                  }),
                 ),
-                const SizedBox(height: 8),
-                Text(
+
+                const SizedBox(
+                  height: 8,
+                  key: Key('feedback_details_spacing_2'),
+                ),
+
+                // ================= MESSAGES =================
+                const Text(
                   'Messages:',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  key: Key('feedback_details_messages_label'),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
+
                 ...List<Widget>.from(
-                  (feedback['messages'] ?? []).map((m) {
+                  (feedback['messages'] ?? []).asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final m = entry.value;
                     final senderName = _userMap[m['sender_id']] ?? 'Unknown';
-                    return Text("${m['message']} (by $senderName)");
+
+                    return Text(
+                      "${m['message']} (by $senderName)",
+                      key: Key('feedback_message_item_$index'),
+                    );
                   }),
                 ),
               ],
             ),
           ),
+
+          // ================= ACTIONS =================
           actions: [
             TextButton(
+              key: const Key('feedback_details_close_button'),
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: const Text(
+                'Close',
+                key: Key('feedback_details_close_button_text'),
+              ),
             ),
           ],
         ),
@@ -143,8 +201,17 @@ class _FeedbackTabState extends State<FeedbackTab> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Add Comment'),
+              key: const Key('add_comment_dialog'),
+
+              // ================= TITLE =================
+              title: const Text(
+                'Add Comment',
+                key: Key('add_comment_dialog_title'),
+              ),
+
+              // ================= CONTENT =================
               content: TextField(
+                key: const Key('add_comment_text_field'),
                 controller: _commentController,
                 maxLines: 4,
                 decoration: const InputDecoration(
@@ -152,12 +219,22 @@ class _FeedbackTabState extends State<FeedbackTab> {
                   border: OutlineInputBorder(),
                 ),
               ),
+
+              // ================= ACTIONS =================
               actions: [
+                // -------- Cancel Button --------
                 TextButton(
+                  key: const Key('add_comment_cancel_button'),
                   onPressed: submitting ? null : () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    key: Key('add_comment_cancel_button_text'),
+                  ),
                 ),
+
+                // -------- Submit Button --------
                 TextButton(
+                  key: const Key('add_comment_submit_button'),
                   onPressed: submitting
                       ? null
                       : () async {
@@ -166,6 +243,7 @@ class _FeedbackTabState extends State<FeedbackTab> {
                           if (message.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key('add_comment_empty_snackbar'),
                                 content: Text('Comment cannot be empty'),
                               ),
                             );
@@ -189,6 +267,9 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
+                                  key: Key(
+                                    'add_comment_user_identify_error_snackbar',
+                                  ),
                                   content: Text(
                                     'Unable to identify current user',
                                   ),
@@ -200,7 +281,7 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             await _laravelService.addFeedbackMessage(
                               feedbackId: feedbackId,
-                              senderId: senderId, // ✅ now int (not int?)
+                              senderId: senderId,
                               message: message,
                             );
 
@@ -210,6 +291,7 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key('add_comment_success_snackbar'),
                                 content: Text('Comment added successfully'),
                                 backgroundColor: Colors.green,
                               ),
@@ -222,19 +304,26 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                key: const Key('add_comment_failure_snackbar'),
                                 content: Text('Failed to add comment: $e'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                         },
+
+                  // -------- Loading / Text --------
                   child: submitting
                       ? const SizedBox(
+                          key: Key('add_comment_submit_loading_indicator'),
                           width: 18,
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Submit'),
+                      : const Text(
+                          'Submit',
+                          key: Key('add_comment_submit_button_text'),
+                        ),
                 ),
               ],
             );
@@ -269,12 +358,23 @@ class _FeedbackTabState extends State<FeedbackTab> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Edit Feedback'),
+              key: const Key('edit_feedback_dialog'),
+
+              // ================= TITLE =================
+              title: const Text(
+                'Edit Feedback',
+                key: Key('edit_feedback_dialog_title'),
+              ),
+
+              // ================= CONTENT =================
               content: SingleChildScrollView(
+                key: const Key('edit_feedback_scroll_view'),
                 child: Column(
+                  key: const Key('edit_feedback_form_column'),
                   children: [
-                    /// STATUS
+                    /// ================= STATUS =================
                     DropdownButtonFormField<String>(
+                      key: const Key('edit_feedback_status_dropdown'),
                       value: status,
                       decoration: const InputDecoration(labelText: 'Status'),
                       items: const [
@@ -291,10 +391,14 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       onChanged: (v) => setDialogState(() => status = v!),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                      key: Key('edit_feedback_spacing_1'),
+                    ),
 
-                    /// PRIORITY
+                    /// ================= PRIORITY =================
                     DropdownButtonFormField<String>(
+                      key: const Key('edit_feedback_priority_dropdown'),
                       value: priority,
                       decoration: const InputDecoration(labelText: 'Priority'),
                       items: const [
@@ -308,10 +412,14 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       onChanged: (v) => setDialogState(() => priority = v!),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                      key: Key('edit_feedback_spacing_2'),
+                    ),
 
-                    /// ASSIGNEE
+                    /// ================= ASSIGNEE =================
                     DropdownButtonFormField<int>(
+                      key: const Key('edit_feedback_assignee_dropdown'),
                       value: assigneeId,
                       decoration: const InputDecoration(labelText: 'Assignee'),
                       items: _userMap.entries
@@ -327,18 +435,31 @@ class _FeedbackTabState extends State<FeedbackTab> {
                   ],
                 ),
               ),
+
+              // ================= ACTIONS =================
               actions: [
+                // -------- Cancel --------
                 TextButton(
+                  key: const Key('edit_feedback_cancel_button'),
                   onPressed: submitting ? null : () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    key: Key('edit_feedback_cancel_button_text'),
+                  ),
                 ),
+
+                // -------- Update --------
                 TextButton(
+                  key: const Key('edit_feedback_update_button'),
                   onPressed: submitting
                       ? null
                       : () async {
                           if (assigneeId == null || assigneeId == -1) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key(
+                                  'edit_feedback_assignee_required_snackbar',
+                                ),
                                 content: Text('Please select an assignee'),
                               ),
                             );
@@ -362,6 +483,9 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key(
+                                  'edit_feedback_update_success_snackbar',
+                                ),
                                 content: Text('Feedback updated successfully'),
                                 backgroundColor: Colors.green,
                               ),
@@ -373,19 +497,28 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                key: const Key(
+                                  'edit_feedback_update_failure_snackbar',
+                                ),
                                 content: Text('Update failed: $e'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                         },
+
+                  // -------- Loading / Text --------
                   child: submitting
                       ? const SizedBox(
+                          key: Key('edit_feedback_update_loading_indicator'),
                           width: 18,
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Update'),
+                      : const Text(
+                          'Update',
+                          key: Key('edit_feedback_update_button_text'),
+                        ),
                 ),
               ],
             );
@@ -412,12 +545,23 @@ class _FeedbackTabState extends State<FeedbackTab> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Create Feedback'),
+              key: const Key('create_feedback_dialog'),
+
+              // ================= TITLE =================
+              title: const Text(
+                'Create Feedback',
+                key: Key('create_feedback_dialog_title'),
+              ),
+
+              // ================= CONTENT =================
               content: SingleChildScrollView(
+                key: const Key('create_feedback_scroll_view'),
                 child: Column(
+                  key: const Key('create_feedback_form_column'),
                   children: [
-                    /// TITLE
+                    /// ================= TITLE =================
                     TextField(
+                      key: const Key('create_feedback_title_field'),
                       controller: titleController,
                       decoration: const InputDecoration(
                         labelText: 'Title',
@@ -425,10 +569,14 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                      key: Key('create_feedback_spacing_1'),
+                    ),
 
-                    /// CATEGORY
+                    /// ================= CATEGORY =================
                     DropdownButtonFormField<String>(
+                      key: const Key('create_feedback_category_dropdown'),
                       value: category,
                       decoration: const InputDecoration(labelText: 'Category'),
                       items: const [
@@ -445,10 +593,14 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       onChanged: (v) => setDialogState(() => category = v!),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                      key: Key('create_feedback_spacing_2'),
+                    ),
 
-                    /// PRIORITY
+                    /// ================= PRIORITY =================
                     DropdownButtonFormField<String>(
+                      key: const Key('create_feedback_priority_dropdown'),
                       value: priority,
                       decoration: const InputDecoration(labelText: 'Priority'),
                       items: const [
@@ -462,10 +614,14 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       onChanged: (v) => setDialogState(() => priority = v!),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                      key: Key('create_feedback_spacing_3'),
+                    ),
 
-                    /// ASSIGNEE
+                    /// ================= ASSIGNEE =================
                     DropdownButtonFormField<int>(
+                      key: const Key('create_feedback_assignee_dropdown'),
                       value: assigneeId,
                       decoration: const InputDecoration(labelText: 'Assignee'),
                       items: _userMap.entries
@@ -479,18 +635,27 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       onChanged: (v) => setDialogState(() => assigneeId = v),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(
+                      height: 12,
+                      key: Key('create_feedback_spacing_4'),
+                    ),
 
-                    /// ATTACHMENTS (simple version)
+                    /// ================= ATTACHMENTS =================
                     Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton.icon(
+                        key: const Key('create_feedback_add_attachment_button'),
                         icon: const Icon(Icons.attach_file),
-                        label: const Text('Add Attachment'),
+                        label: const Text(
+                          'Add Attachment',
+                          key: Key(
+                            'create_feedback_add_attachment_button_text',
+                          ),
+                        ),
                         onPressed: () async {
                           final result = await FilePicker.platform.pickFiles(
                             allowMultiple: true,
-                            withData: false, // we do NOT need file bytes
+                            withData: false,
                           );
 
                           if (result == null) return;
@@ -509,13 +674,25 @@ class _FeedbackTabState extends State<FeedbackTab> {
                       ),
                     ),
 
-                    ...attachments.map(
-                      (a) => ListTile(
+                    // -------- Attachment List --------
+                    ...attachments.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final a = entry.value;
+
+                      return ListTile(
+                        key: Key('create_feedback_attachment_item_$index'),
                         dense: true,
                         leading: const Icon(Icons.insert_drive_file, size: 18),
-                        title: Text(a['file_name'] ?? ''),
-                        subtitle: Text(a['file_type'] ?? ''),
+                        title: Text(
+                          a['file_name'] ?? '',
+                          key: Key('create_feedback_attachment_name_$index'),
+                        ),
+                        subtitle: Text(
+                          a['file_type'] ?? '',
+                          key: Key('create_feedback_attachment_type_$index'),
+                        ),
                         trailing: IconButton(
+                          key: Key('create_feedback_attachment_remove_$index'),
                           icon: const Icon(Icons.close, size: 18),
                           onPressed: () {
                             setDialogState(() {
@@ -523,17 +700,27 @@ class _FeedbackTabState extends State<FeedbackTab> {
                             });
                           },
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),
+
+              // ================= ACTIONS =================
               actions: [
+                // -------- Cancel --------
                 TextButton(
+                  key: const Key('create_feedback_cancel_button'),
                   onPressed: submitting ? null : () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    key: Key('create_feedback_cancel_button_text'),
+                  ),
                 ),
+
+                // -------- Create --------
                 TextButton(
+                  key: const Key('create_feedback_submit_button'),
                   onPressed: submitting
                       ? null
                       : () async {
@@ -541,6 +728,7 @@ class _FeedbackTabState extends State<FeedbackTab> {
                               assigneeId == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key('create_feedback_validation_snackbar'),
                                 content: Text('Title & assignee are required'),
                               ),
                             );
@@ -581,6 +769,7 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key('create_feedback_success_snackbar'),
                                 content: Text('Feedback created successfully'),
                                 backgroundColor: Colors.green,
                               ),
@@ -592,19 +781,28 @@ class _FeedbackTabState extends State<FeedbackTab> {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                key: const Key(
+                                  'create_feedback_failure_snackbar',
+                                ),
                                 content: Text('Failed to create feedback: $e'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                         },
+
+                  // -------- Loading / Text --------
                   child: submitting
                       ? const SizedBox(
+                          key: Key('create_feedback_submit_loading_indicator'),
                           width: 18,
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Create'),
+                      : const Text(
+                          'Create',
+                          key: Key('create_feedback_submit_button_text'),
+                        ),
                 ),
               ],
             );
@@ -617,37 +815,63 @@ class _FeedbackTabState extends State<FeedbackTab> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          key: Key('feedback_loading_indicator'),
+        ),
+      );
     }
 
     if (_feedbacks.isEmpty) {
-      return const Center(child: Text('No feedback available.'));
+      return const Center(
+        child: Text('No feedback available.', key: Key('feedback_empty_text')),
+      );
     }
 
-    // 🔍 DEBUG: inspect feedback structure (ADD THIS)
+    // 🔍 DEBUG: inspect feedback structure
     safePrint(_feedbacks.first);
 
     return Scaffold(
+      key: const Key('feedback_screen'),
+
+      // ================= FAB =================
       floatingActionButton: FloatingActionButton(
+        key: const Key('feedback_create_fab'),
         onPressed: _showCreateFeedbackDialog,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, key: Key('feedback_create_fab_icon')),
       ),
+
+      // ================= BODY =================
       body: Column(
+        key: const Key('feedback_body_column'),
         children: [
-          /// ASSIGNEE FILTER
+          /// ================= ASSIGNEE FILTER =================
           Padding(
+            key: const Key('feedback_filter_container'),
             padding: const EdgeInsets.all(16),
             child: DropdownButtonFormField<int>(
+              key: const Key('feedback_filter_assignee_dropdown'),
               value: _selectedAssigneeId,
               decoration: const InputDecoration(
                 labelText: 'Filter by Assignee',
                 border: OutlineInputBorder(),
               ),
               items: [
-                const DropdownMenuItem<int>(value: null, child: Text('All')),
+                const DropdownMenuItem<int>(
+                  value: null,
+                  child: Text(
+                    'All',
+                    key: Key('feedback_filter_assignee_all_option'),
+                  ),
+                ),
                 ..._userMap.entries.map(
-                  (e) =>
-                      DropdownMenuItem<int>(value: e.key, child: Text(e.value)),
+                  (e) => DropdownMenuItem<int>(
+                    value: e.key,
+                    child: Text(
+                      e.value,
+                      key: Key('feedback_filter_assignee_option_${e.key}'),
+                    ),
+                  ),
                 ),
               ],
               onChanged: (value) {
@@ -658,56 +882,113 @@ class _FeedbackTabState extends State<FeedbackTab> {
             ),
           ),
 
-          /// FEEDBACK LIST
+          /// ================= FEEDBACK LIST =================
           Expanded(
+            key: const Key('feedback_list_expanded'),
             child: _filteredFeedbacks.isEmpty
-                ? const Center(child: Text('No feedback for selected assignee'))
+                ? const Center(
+                    child: Text(
+                      'No feedback for selected assignee',
+                      key: Key('feedback_filtered_empty_text'),
+                    ),
+                  )
                 : ListView.builder(
+                    key: const Key('feedback_list_view'),
                     itemCount: _filteredFeedbacks.length,
                     itemBuilder: (context, index) {
                       final feedback = _filteredFeedbacks[index];
+                      final feedbackId = feedback['feedback_id'];
 
                       return Card(
+                        key: Key('feedback_card_$feedbackId'),
                         margin: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
                         ),
                         child: InkWell(
-                          onTap: () =>
-                              _showFeedbackDetails(feedback['feedback_id']),
+                          key: Key('feedback_tile_$feedbackId'),
+                          onTap: () => _showFeedbackDetails(feedbackId),
                           child: Padding(
+                            key: Key('feedback_tile_padding_$feedbackId'),
                             padding: const EdgeInsets.all(16),
                             child: Column(
+                              key: Key('feedback_tile_column_$feedbackId'),
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // -------- Title --------
                                 Text(
                                   feedback['title'] ?? '',
+                                  key: Key('feedback_title_$feedbackId'),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text('Category: ${feedback['category']}'),
-                                Text('Priority: ${feedback['priority']}'),
-                                Text('Status: ${feedback['status']}'),
-                                Text('Created by: ${feedback['user_name']}'),
-                                Text('Assignee: ${feedback['assignee_name']}'),
-                                const SizedBox(height: 8),
+
+                                const SizedBox(
+                                  height: 4,
+                                  key: Key('feedback_tile_spacing_1'),
+                                ),
+
+                                // -------- Metadata --------
+                                Text(
+                                  'Category: ${feedback['category']}',
+                                  key: Key('feedback_category_$feedbackId'),
+                                ),
+                                Text(
+                                  'Priority: ${feedback['priority']}',
+                                  key: Key('feedback_priority_$feedbackId'),
+                                ),
+                                Text(
+                                  'Status: ${feedback['status']}',
+                                  key: Key('feedback_status_$feedbackId'),
+                                ),
+                                Text(
+                                  'Created by: ${feedback['user_name']}',
+                                  key: Key('feedback_created_by_$feedbackId'),
+                                ),
+                                Text(
+                                  'Assignee: ${feedback['assignee_name']}',
+                                  key: Key('feedback_assignee_$feedbackId'),
+                                ),
+
+                                const SizedBox(
+                                  height: 8,
+                                  key: Key('feedback_tile_spacing_2'),
+                                ),
+
+                                // -------- ACTIONS --------
                                 Row(
+                                  key: Key('feedback_actions_row_$feedbackId'),
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     TextButton(
+                                      key: Key(
+                                        'feedback_edit_button_$feedbackId',
+                                      ),
                                       onPressed: () =>
                                           _showEditFeedbackDialog(feedback),
-                                      child: const Text('Edit'),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    TextButton(
-                                      onPressed: () => _showAddCommentDialog(
-                                        feedback['feedback_id'],
+                                      child: const Text(
+                                        'Edit',
+                                        key: Key('feedback_edit_button_text'),
                                       ),
-                                      child: const Text('Add Comment'),
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                      key: Key('feedback_actions_spacing'),
+                                    ),
+                                    TextButton(
+                                      key: Key(
+                                        'feedback_add_comment_button_$feedbackId',
+                                      ),
+                                      onPressed: () =>
+                                          _showAddCommentDialog(feedbackId),
+                                      child: const Text(
+                                        'Add Comment',
+                                        key: Key(
+                                          'feedback_add_comment_button_text',
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
