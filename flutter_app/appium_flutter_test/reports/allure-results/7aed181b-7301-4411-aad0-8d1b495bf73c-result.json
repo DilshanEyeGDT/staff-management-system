@@ -1,0 +1,1 @@
+{"uuid":"7aed181b-7301-4411-aad0-8d1b495bf73c","name":"\"before all\" hook for Flutter Login Flow","statusDetails":{},"stage":"pending","steps":[],"attachments":[],"parameters":[{"name":"device","value":"emulator-5554"}],"labels":[],"links":[],"start":1766061632791,"fixtures":[{"name":"\"before all\" hook in \"{root}\"","type":"before","status":"passed","stage":"finished"}]}
