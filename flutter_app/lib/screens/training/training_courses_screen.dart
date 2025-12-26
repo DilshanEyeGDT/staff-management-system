@@ -71,7 +71,10 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error loading training courses: $e")),
+        SnackBar(
+          key: const Key('training_assignments_error_snackbar'),
+          content: Text("Error loading training courses: $e"),
+        ),
       );
     } finally {
       if (!mounted) return;
@@ -97,19 +100,26 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
         return StatefulBuilder(
           builder: (context, setPopupState) {
             return AlertDialog(
-              title: Text("Edit Training Assignment"),
+              key: const Key('edit_assignment_dialog'),
+              title: const Text(
+                "Edit Training Assignment",
+                key: Key('edit_assignment_title'),
+              ),
               content: SizedBox(
+                key: const Key('edit_assignment_content'),
                 width: 300,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Progress Dropdown
                     DropdownButton<int>(
+                      key: const Key('assignment_progress_dropdown'),
                       isExpanded: true,
                       value: currentProgress,
                       items: List.generate(
                         11,
                         (i) => DropdownMenuItem(
+                          key: Key('progress_option_${i * 10}'),
                           value: i * 10,
                           child: Text("${i * 10}%"),
                         ),
@@ -125,18 +135,22 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
 
                     // Status Dropdown
                     DropdownButton<String>(
+                      key: const Key('assignment_status_dropdown'),
                       isExpanded: true,
                       value: currentStatus,
                       items: const [
                         DropdownMenuItem(
+                          key: Key('status_pending'),
                           value: "pending",
                           child: Text("Pending"),
                         ),
                         DropdownMenuItem(
+                          key: Key('status_in_progress'),
                           value: "in_progress",
                           child: Text("In Progress"),
                         ),
                         DropdownMenuItem(
+                          key: Key('status_completed'),
                           value: "completed",
                           child: Text("Completed"),
                         ),
@@ -152,6 +166,7 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
 
                     // Due Date Selector
                     Row(
+                      key: const Key('assignment_due_date_row'),
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -160,9 +175,14 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
                                   selectedDate!.toIso8601String(),
                                 )
                               : "Select Date",
+                          key: const Key('assignment_due_date_text'),
                         ),
                         TextButton(
-                          child: const Text("Pick"),
+                          key: const Key('assignment_due_date_pick_button'),
+                          child: const Text(
+                            "Pick",
+                            key: Key('assignment_due_date_pick_text'),
+                          ),
                           onPressed: () async {
                             DateTime now = DateTime.now();
                             final picked = await showDatePicker(
@@ -186,11 +206,19 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
               ),
               actions: [
                 TextButton(
-                  child: const Text("Cancel"),
+                  key: const Key('edit_assignment_cancel_button'),
+                  child: const Text(
+                    "Cancel",
+                    key: Key('edit_assignment_cancel_text'),
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
                 ElevatedButton(
-                  child: const Text("Save"),
+                  key: const Key('edit_assignment_save_button'),
+                  child: const Text(
+                    "Save",
+                    key: Key('edit_assignment_save_text'),
+                  ),
                   onPressed: () async {
                     final body = {
                       "progress": currentProgress,
@@ -211,12 +239,16 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
 
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Updated successfully!")),
+                        const SnackBar(
+                          key: Key('edit_assignment_success_snackbar'),
+                          content: Text("Updated successfully!"),
+                        ),
                       );
                       _fetchAssignments();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
+                          key: Key('edit_assignment_failed_snackbar'),
                           content: Text("Failed to update assignment"),
                         ),
                       );
@@ -236,13 +268,23 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: const Key('training_courses_screen'),
       appBar: AppBar(
-        title: const Text("Training Courses"),
+        key: const Key('training_courses_appbar'),
+        title: const Text(
+          "Training Courses",
+          key: Key('training_courses_title'),
+        ),
         actions: [
           Stack(
+            key: const Key('training_notifications_stack'),
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications),
+                key: const Key('training_notifications_button'),
+                icon: const Icon(
+                  Icons.notifications,
+                  key: Key('training_notifications_icon'),
+                ),
                 onPressed: () async {
                   // Open bottom sheet
                   await showModalBottomSheet(
@@ -254,7 +296,9 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
                         top: Radius.circular(20),
                       ),
                     ),
-                    builder: (context) => const TrainingNotificationsSheet(),
+                    builder: (context) => const TrainingNotificationsSheet(
+                      key: Key('training_notifications_sheet'),
+                    ),
                   );
 
                   // Reset notification count after reading
@@ -268,9 +312,11 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
               // ----------- RED BADGE -----------
               if (_notificationCount > 0)
                 Positioned(
+                  key: const Key('training_notifications_badge_positioned'),
                   right: 8,
                   top: 8,
                   child: Container(
+                    key: const Key('training_notifications_badge'),
                     padding: const EdgeInsets.all(5),
                     decoration: const BoxDecoration(
                       color: Colors.red,
@@ -278,6 +324,7 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
                     ),
                     child: Text(
                       _notificationCount.toString(),
+                      key: const Key('training_notifications_badge_text'),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -291,40 +338,78 @@ class _TrainingCoursesScreenState extends State<TrainingCoursesScreen> {
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              key: Key('training_assignments_loading'),
+              child: CircularProgressIndicator(
+                key: Key('training_assignments_loading_indicator'),
+              ),
+            )
           : _assignments.isEmpty
-          ? const Center(child: Text("No training courses found."))
+          ? const Center(
+              key: Key('training_assignments_empty'),
+              child: Text(
+                "No training courses found.",
+                key: Key('training_assignments_empty_text'),
+              ),
+            )
           : ListView.builder(
+              key: const Key('training_assignments_list'),
               itemCount: _assignments.length,
               itemBuilder: (context, index) {
                 final a = _assignments[index];
 
                 return GestureDetector(
+                  key: Key(
+                    'training_assignment_gesture_${a["trainingAssignmentId"]}',
+                  ),
                   onTap: () => _openEditDialog(a),
                   child: Card(
+                    key: Key(
+                      'training_assignment_card_${a["trainingAssignmentId"]}',
+                    ),
                     margin: const EdgeInsets.all(12),
                     elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
+                        key: Key(
+                          'training_assignment_card_content_${a["trainingAssignmentId"]}',
+                        ),
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             a["courseTitle"] ?? "Untitled Course",
+                            key: Key(
+                              'training_assignment_course_title_${a["trainingAssignmentId"]}',
+                            ),
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text("Status: ${a["status"]}"),
-                          Text("Progress: ${a["progress"]}%"),
+                          Text(
+                            "Status: ${a["status"]}",
+                            key: Key(
+                              'training_assignment_status_${a["trainingAssignmentId"]}',
+                            ),
+                          ),
+                          Text(
+                            "Progress: ${a["progress"]}%",
+                            key: Key(
+                              'training_assignment_progress_${a["trainingAssignmentId"]}',
+                            ),
+                          ),
                           Text(
                             "Due Date: ${DateTimeUtils.formatDateTime(a["dueDate"])}",
+                            key: Key(
+                              'training_assignment_due_date_${a["trainingAssignmentId"]}',
+                            ),
                           ),
                           const SizedBox(height: 8),
                           const Text(
                             "Tap to edit",
+                            key: Key('training_assignment_tap_to_edit'),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.blueGrey,
