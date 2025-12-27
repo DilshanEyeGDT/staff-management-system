@@ -77,9 +77,12 @@ class _LeaveTabState extends State<LeaveTab>
     final leaveBalance = await _lambdaService.getLeaveBalance(token, userId);
     if (leaveBalance == null || leaveBalance.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("No leave balance found.")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('leave_balance_empty_snackbar'),
+          content: Text("No leave balance found."),
+        ),
+      );
       return;
     }
 
@@ -111,21 +114,31 @@ class _LeaveTabState extends State<LeaveTab>
 
             return AlertDialog(
               key: const Key('leave_request_dialog'),
+
+              // ================= TITLE =================
               title: const Text(
                 "Create Leave Request",
-                key: Key('dialog_title'),
+                key: Key('leave_request_dialog_title'),
               ),
+
+              // ================= CONTENT =================
               content: SingleChildScrollView(
+                key: const Key('leave_request_scroll_view'),
                 child: Column(
+                  key: const Key('leave_request_form_column'),
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    /// ================= LEAVE TYPE =================
                     DropdownButtonFormField<int>(
-                      key: const Key('dropdown_leave_type'),
+                      key: const Key('leave_request_type_dropdown'),
                       decoration: const InputDecoration(
                         labelText: "Leave Type",
                       ),
-                      items: leaveBalance.map((e) {
+                      items: leaveBalance.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final e = entry.value;
                         return DropdownMenuItem<int>(
+                          key: Key('leave_request_type_option_$index'),
                           value: e['leave_type_id'],
                           enabled: e['remaining_days'] > 0,
                           child: Text(
@@ -140,16 +153,26 @@ class _LeaveTabState extends State<LeaveTab>
                       },
                       initialValue: selectedLeavePolicyId,
                     ),
-                    const SizedBox(height: 12),
+
+                    const SizedBox(
+                      height: 12,
+                      key: Key('leave_request_spacing_1'),
+                    ),
+
+                    /// ================= DATE PICKERS =================
                     Row(
+                      key: const Key('leave_request_date_row'),
                       children: [
                         Expanded(
                           child: TextButton(
-                            key: const Key('button_pick_start_date'),
+                            key: const Key(
+                              'leave_request_pick_start_date_button',
+                            ),
                             child: Text(
                               startDate == null
                                   ? "Pick Start Date"
                                   : "Start: ${DateFormat("yyyy-MM-dd").format(startDate!)}",
+                              key: const Key('leave_request_start_date_text'),
                             ),
                             onPressed: () async {
                               final picked = await showDatePicker(
@@ -171,14 +194,20 @@ class _LeaveTabState extends State<LeaveTab>
                             },
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(
+                          width: 12,
+                          key: Key('leave_request_date_spacing'),
+                        ),
                         Expanded(
                           child: TextButton(
-                            key: const Key('button_pick_end_date'),
+                            key: const Key(
+                              'leave_request_pick_end_date_button',
+                            ),
                             child: Text(
                               endDate == null
                                   ? "Pick End Date"
                                   : "End: ${DateFormat("yyyy-MM-dd").format(endDate!)}",
+                              key: const Key('leave_request_end_date_text'),
                             ),
                             onPressed: () async {
                               final picked = await showDatePicker(
@@ -202,33 +231,46 @@ class _LeaveTabState extends State<LeaveTab>
                         ),
                       ],
                     ),
+
+                    /// ================= TOTAL DAYS =================
                     if (totalDays > 0)
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           "Total Days: $totalDays",
-                          key: const Key('text_total_days'),
+                          key: const Key('leave_request_total_days_text'),
                         ),
                       ),
-                    const SizedBox(height: 12),
+
+                    const SizedBox(
+                      height: 12,
+                      key: Key('leave_request_spacing_2'),
+                    ),
+
+                    /// ================= REASON =================
                     TextField(
-                      key: const Key('textfield_reason'),
+                      key: const Key('leave_request_reason_textfield'),
                       controller: reasonController,
                       decoration: const InputDecoration(labelText: "Reason"),
                     ),
                   ],
                 ),
               ),
+
+              // ================= ACTIONS =================
               actions: [
                 TextButton(
-                  key: const Key('button_cancel'),
+                  key: const Key('leave_request_cancel_button'),
                   onPressed: () {
                     Navigator.pop(dialogContext);
                   },
-                  child: const Text("Cancel"),
+                  child: const Text(
+                    "Cancel",
+                    key: Key('leave_request_cancel_button_text'),
+                  ),
                 ),
                 ElevatedButton(
-                  key: const Key('button_submit'),
+                  key: const Key('leave_request_submit_button'),
                   onPressed: isSubmitEnabled()
                       ? () async {
                           final resp = await _lambdaService.createLeaveRequest(
@@ -245,6 +287,7 @@ class _LeaveTabState extends State<LeaveTab>
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              key: const Key('leave_request_submit_snackbar'),
                               content: Text(resp['message'] ?? "Unknown error"),
                             ),
                           );
@@ -252,7 +295,10 @@ class _LeaveTabState extends State<LeaveTab>
                           _loadData();
                         }
                       : null,
-                  child: const Text("Submit"),
+                  child: const Text(
+                    "Submit",
+                    key: Key('leave_request_submit_button_text'),
+                  ),
                 ),
               ],
             );
