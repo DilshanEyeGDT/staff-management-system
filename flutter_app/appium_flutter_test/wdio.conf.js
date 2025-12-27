@@ -66,6 +66,7 @@ exports.config = {
         "appium:noReset": true,
         // 'appium:dartObservatoryUri': 'ws://127.0.0.1:54970/40006l_g1vk=/ws',
         "appium:driver": "flutter",
+        // "appium:flutterSystemPort": 4724,
         },
     ],    
 

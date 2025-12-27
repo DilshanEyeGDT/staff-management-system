@@ -9,8 +9,14 @@ class FeedbackScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Feedback')),
-      body: const FeedbackTab(),
+      key: const Key('feedback_screen'),
+
+      appBar: AppBar(
+        key: const Key('feedback_app_bar'),
+        title: const Text('Feedback', key: Key('feedback_app_bar_title')),
+      ),
+
+      body: const FeedbackTab(key: Key('feedback_tab')),
     );
   }
 }

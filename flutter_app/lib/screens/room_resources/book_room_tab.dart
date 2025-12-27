@@ -79,14 +79,16 @@ class _BookRoomTabState extends State<BookRoomTab> {
     if (_isLoading) {
       return const Center(
         key: Key('book_room_loading'),
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          key: Key('book_room_loading_indicator'),
+        ),
       );
     }
 
     if (_errorMessage.isNotEmpty) {
       return Center(
         key: const Key('book_room_error'),
-        child: Text(_errorMessage),
+        child: Text(_errorMessage, key: const Key('book_room_error_text')),
       );
     }
 
@@ -106,6 +108,7 @@ class _BookRoomTabState extends State<BookRoomTab> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
+              key: Key('room_card_content_${room['room_id']}'),
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Room Name
@@ -118,32 +121,38 @@ class _BookRoomTabState extends State<BookRoomTab> {
                   ),
                 ),
                 const SizedBox(height: 8),
+
                 // Description
                 Text(
                   room['description'] ?? '',
                   key: Key('room_description_${room['room_id']}'),
                 ),
                 const SizedBox(height: 8),
+
                 // Capacity
                 Text(
                   'Capacity: ${room['capacity'] ?? 0}',
                   key: Key('room_capacity_${room['room_id']}'),
                 ),
                 const SizedBox(height: 4),
+
                 // Location
                 Text(
                   'Location: ${formatFloor(room['location'])}',
                   key: Key('room_location_${room['room_id']}'),
                 ),
                 const SizedBox(height: 4),
+
                 // Equipments
                 Text(
                   'Equipments: ${(room['equipments'] as List<dynamic>?)?.join(", ") ?? '-'}',
                   key: Key('room_equipments_${room['room_id']}'),
                 ),
                 const SizedBox(height: 12),
+
                 // Buttons Row
                 Row(
+                  key: Key('room_actions_row_${room['room_id']}'),
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // Check Availability Button
@@ -186,15 +195,26 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                 ),
                                 title: Text(
                                   "Availability - ${room['room_name']}",
+                                  key: Key(
+                                    'availability_dialog_title_${room['room_id']}',
+                                  ),
                                 ),
-                                content: Text(timelineStr),
+                                content: Text(
+                                  timelineStr,
+                                  key: Key(
+                                    'availability_dialog_content_${room['room_id']}',
+                                  ),
+                                ),
                                 actions: [
                                   TextButton(
                                     key: Key(
                                       'availability_close_button_${room['room_id']}',
                                     ),
                                     onPressed: () => Navigator.pop(context),
-                                    child: const Text("Close"),
+                                    child: const Text(
+                                      "Close",
+                                      key: Key('availability_close_text'),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -202,6 +222,7 @@ class _BookRoomTabState extends State<BookRoomTab> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                key: Key('availability_empty_snackbar'),
                                 content: Text("No availability data found"),
                               ),
                             );
@@ -209,14 +230,19 @@ class _BookRoomTabState extends State<BookRoomTab> {
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              key: const Key('availability_error_snackbar'),
                               content: Text("Error fetching availability: $e"),
                             ),
                           );
                         }
                       },
-                      child: const Text("Check availability"),
+                      child: const Text(
+                        "Check availability",
+                        key: Key('check_availability_text'),
+                      ),
                     ),
                     const SizedBox(width: 8),
+
                     // Book Button
                     ElevatedButton(
                       key: Key('book_room_${room['room_id']}'),
@@ -233,9 +259,11 @@ class _BookRoomTabState extends State<BookRoomTab> {
                         final userId = await _lambdaService.getCurrentUserId(
                           idToken,
                         );
+
                         if (userId == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
+                              key: Key('user_id_error_snackbar'),
                               content: Text("Failed to fetch user ID"),
                             ),
                           );
@@ -247,11 +275,18 @@ class _BookRoomTabState extends State<BookRoomTab> {
                           builder: (_) => StatefulBuilder(
                             builder: (context, setState) => AlertDialog(
                               key: Key('book_dialog_${room['room_id']}'),
-                              title: Text("Book Room - ${room['room_name']}"),
+                              title: Text(
+                                "Book Room - ${room['room_name']}",
+                                key: Key(
+                                  'book_dialog_title_${room['room_id']}',
+                                ),
+                              ),
                               content: Column(
+                                key: Key(
+                                  'book_dialog_content_${room['room_id']}',
+                                ),
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Date Picker
                                   TextButton(
                                     key: Key('select_date_${room['room_id']}'),
                                     onPressed: () async {
@@ -263,17 +298,21 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                           const Duration(days: 365),
                                         ),
                                       );
-                                      if (date != null)
+                                      if (date != null) {
                                         setState(() => selectedDate = date);
+                                      }
                                     },
                                     child: Text(
                                       selectedDate == null
                                           ? "Select Date"
                                           : "Date: ${selectedDate!.toLocal().toString().split(' ')[0]}",
+                                      key: Key(
+                                        'selected_date_text_${room['room_id']}',
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  // Start Time Picker
+
                                   TextButton(
                                     key: Key(
                                       'select_start_time_${room['room_id']}',
@@ -283,17 +322,21 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                         context: context,
                                         initialTime: TimeOfDay.now(),
                                       );
-                                      if (time != null)
+                                      if (time != null) {
                                         setState(() => startTime = time);
+                                      }
                                     },
                                     child: Text(
                                       startTime == null
                                           ? "Select Start Time"
                                           : "Start: ${startTime!.format(context)}",
+                                      key: Key(
+                                        'selected_start_time_text_${room['room_id']}',
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  // End Time Picker
+
                                   TextButton(
                                     key: Key(
                                       'select_end_time_${room['room_id']}',
@@ -303,13 +346,17 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                         context: context,
                                         initialTime: TimeOfDay.now(),
                                       );
-                                      if (time != null)
+                                      if (time != null) {
                                         setState(() => endTime = time);
+                                      }
                                     },
                                     child: Text(
                                       endTime == null
                                           ? "Select End Time"
                                           : "End: ${endTime!.format(context)}",
+                                      key: Key(
+                                        'selected_end_time_text_${room['room_id']}',
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -318,7 +365,10 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                 TextButton(
                                   key: Key('book_cancel_${room['room_id']}'),
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text("Cancel"),
+                                  child: const Text(
+                                    "Cancel",
+                                    key: Key('book_cancel_text'),
+                                  ),
                                 ),
                                 ElevatedButton(
                                   key: Key('book_submit_${room['room_id']}'),
@@ -330,6 +380,7 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                         context,
                                       ).showSnackBar(
                                         const SnackBar(
+                                          key: Key('book_validation_snackbar'),
                                           content: Text(
                                             "Please select date and times",
                                           ),
@@ -369,6 +420,7 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                           context,
                                         ).showSnackBar(
                                           const SnackBar(
+                                            key: Key('book_success_snackbar'),
                                             content: Text(
                                               "Room booked successfully",
                                             ),
@@ -380,6 +432,9 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                           context,
                                         ).showSnackBar(
                                           SnackBar(
+                                            key: const Key(
+                                              'book_failed_snackbar',
+                                            ),
                                             content: Text(
                                               "Booking failed: ${response.statusCode}",
                                             ),
@@ -390,18 +445,24 @@ class _BookRoomTabState extends State<BookRoomTab> {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
-                                        SnackBar(content: Text("Error: $e")),
+                                        SnackBar(
+                                          key: const Key('book_error_snackbar'),
+                                          content: Text("Error: $e"),
+                                        ),
                                       );
                                     }
                                   },
-                                  child: const Text("Submit"),
+                                  child: const Text(
+                                    "Submit",
+                                    key: Key('book_submit_text'),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         );
                       },
-                      child: const Text("Book"),
+                      child: const Text("Book", key: Key('book_room_text')),
                     ),
                   ],
                 ),

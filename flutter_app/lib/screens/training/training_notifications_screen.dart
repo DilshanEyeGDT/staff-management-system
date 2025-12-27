@@ -44,43 +44,75 @@ class _TrainingNotificationsSheetState
       if (!mounted) return;
 
       setState(() => _loading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          key: const Key('training_notifications_error_snackbar'),
+          content: Text("Error: $e"),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
+      key: const Key('training_notifications_sheet_root'),
       expand: false,
       initialChildSize: 0.55,
       minChildSize: 0.35,
       maxChildSize: 0.9,
       builder: (context, scrollController) {
         return Container(
+          key: const Key('training_notifications_container'),
           padding: const EdgeInsets.all(16),
           child: _loading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(
+                  key: Key('training_notifications_loading'),
+                  child: CircularProgressIndicator(
+                    key: Key('training_notifications_loading_indicator'),
+                  ),
+                )
               : _items.isEmpty
-              ? const Center(child: Text("No notifications"))
+              ? const Center(
+                  key: Key('training_notifications_empty'),
+                  child: Text(
+                    "No notifications",
+                    key: Key('training_notifications_empty_text'),
+                  ),
+                )
               : ListView.builder(
+                  key: const Key('training_notifications_list'),
                   controller: scrollController,
                   itemCount: _items.length,
                   itemBuilder: (context, index) {
                     final n = _items[index];
 
                     return Card(
+                      key: Key(
+                        'training_notification_card_${n["trainingNotificationId"] ?? index}',
+                      ),
                       margin: const EdgeInsets.all(12),
                       child: ListTile(
-                        title: Text(n["courseTitle"]),
+                        key: Key(
+                          'training_notification_tile_${n["trainingNotificationId"] ?? index}',
+                        ),
+                        title: Text(
+                          n["courseTitle"],
+                          key: Key(
+                            'training_notification_course_title_${n["trainingNotificationId"] ?? index}',
+                          ),
+                        ),
                         subtitle: Column(
+                          key: Key(
+                            'training_notification_subtitle_${n["trainingNotificationId"] ?? index}',
+                          ),
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Text("Status: ${n["status"]}"),
-                            // Text("Progress: ${n["progress"]}%"),
                             Text(
                               "Due: ${DateTimeUtils.formatDateTime(n["dueDate"])}",
+                              key: Key(
+                                'training_notification_due_date_${n["trainingNotificationId"] ?? index}',
+                              ),
                             ),
                           ],
                         ),
