@@ -38,9 +38,12 @@ class _MyBookingsTabState extends State<MyBookingsTab> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error fetching bookings: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          key: const Key('room_bookings_fetch_error_snackbar'),
+          content: Text("Error fetching bookings: $e"),
+        ),
+      );
     } finally {
       if (!mounted) return;
       setState(() => _loading = false);
@@ -64,18 +67,27 @@ class _MyBookingsTabState extends State<MyBookingsTab> {
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Booking cancelled successfully")),
+          const SnackBar(
+            key: Key('room_booking_cancel_success_snackbar'),
+            content: Text("Booking cancelled successfully"),
+          ),
         );
         _fetchBookings(); // refresh list
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to cancel booking")),
+          const SnackBar(
+            key: Key('room_booking_cancel_failure_snackbar'),
+            content: Text("Failed to cancel booking"),
+          ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error cancelling booking: $e")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          key: const Key('room_booking_cancel_error_snackbar'),
+          content: Text("Error cancelling booking: $e"),
+        ),
+      );
     }
   }
 
