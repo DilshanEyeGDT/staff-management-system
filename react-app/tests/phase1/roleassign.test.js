@@ -1,7 +1,7 @@
 const { Builder, By, until, Select } = require("selenium-webdriver");
 require("chromedriver");
 const assert = require("assert");
-const { ACCESS_TOKEN, BASE_URL, DASHBOARD_URL } = require("./config");
+const { ACCESS_TOKEN, BASE_URL, DASHBOARD_URL } = require("../config");
 
 describe("Role Assign Section UI Test (Admin User)", function () {
   this.timeout(80000);

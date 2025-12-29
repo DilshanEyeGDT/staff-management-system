@@ -1,7 +1,7 @@
 const { Builder, By, until } = require("selenium-webdriver");
 require("chromedriver");
 const assert = require("assert");
-const { BASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD } = require("./config");
+const { BASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD } = require("../config");
 
 describe("Login & Logout Flow Tests", function () {
   this.timeout(120000); // Cognito + redirects

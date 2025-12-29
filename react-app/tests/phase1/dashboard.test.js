@@ -1,7 +1,7 @@
 const { Builder, By, until } = require("selenium-webdriver");
 require("chromedriver");
 const assert = require("assert");
-const { ACCESS_TOKEN, BASE_URL, DASHBOARD_URL } = require("./config");
+const { ACCESS_TOKEN, BASE_URL, DASHBOARD_URL } = require("../config");
 
 describe("Dashboard Page UI Test (Admin User)", function () {
   this.timeout(60000); // 1 minute timeout (since backend calls may take time)
