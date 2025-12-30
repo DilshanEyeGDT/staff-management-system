@@ -1,0 +1,214 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 5,
+    "passes": 5,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-20T11:49:54.123Z",
+    "end": "2025-12-20T11:51:19.818Z",
+    "duration": 85695,
+    "testsRegistered": 5,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "924e2e6c-0dd0-4316-ae24-899ab9940cd2",
+      "title": "",
+      "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase5\\performance.test.js",
+      "file": "\\tests\\phase5\\performance.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "32827f7e-4775-474e-a373-222701a14fe1",
+          "title": "Performance & Training UI test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase5\\performance.test.js",
+          "file": "\\tests\\phase5\\performance.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Performance & Training UI test\"",
+              "fullTitle": "Performance & Training UI test \"before all\" hook in \"Performance & Training UI test\"",
+              "timedOut": false,
+              "duration": 5918,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--start-maximized\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();\nconsole.log(\"🚀 Opening dashboard...\");\nawait driver.get(DASHBOARD_URL);\n// Inject valid Admin token manually\nawait driver.executeScript(\n  `window.localStorage.setItem('token', '${ACCESS_TOKEN}');`\n);\nawait driver.navigate().refresh();\n// Wait until dashboard sidebar appears\nawait driver.wait(until.elementLocated(By.id(\"dashboard-side-panel\")), 30000);\nconst title = await driver.findElement(By.id(\"dashboard-title\")).getText();\nassert.ok(title.includes(\"Admin Portal\"), \"Admin Portal title missing\");\nconsole.log(\"✅ Dashboard loaded successfully as Admin\");",
+              "err": {},
+              "uuid": "d1e1c571-4a69-4a79-af48-ddcd90393968",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Performance & Training UI test\"",
+              "fullTitle": "Performance & Training UI test \"after all\" hook in \"Performance & Training UI test\"",
+              "timedOut": false,
+              "duration": 528,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) {\n  console.log(\"🚀 Closing browser...\");\n  await driver.quit(); // closes all tabs and ends session\n  }",
+              "err": {},
+              "uuid": "857edf35-6c6e-442e-bdfa-9b1c2032a1b4",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should navigate to Performance & Training page",
+              "fullTitle": "Performance & Training UI test should navigate to Performance & Training page",
+              "timedOut": false,
+              "duration": 547,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const feedbackNav = await driver.findElement(\n  By.id(\"nav-performanceTraining\")\n);\nawait feedbackNav.click();\nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"performance-training-title\")),\n  10000\n);\nassert.strictEqual(await pageTitle.getText(), \"Performace & Training\");\nconsole.log(\"✅ Performance & Training page loaded\");",
+              "err": {},
+              "uuid": "2f5062d6-afdf-4732-afd6-9e9820a56bef",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should search, open course, and assign to user",
+              "fullTitle": "Performance & Training UI test should search, open course, and assign to user",
+              "timedOut": false,
+              "duration": 12487,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* ✅ 1. Verify we are on FIRST TAB (Training Courses) */\nconst trainingTab = await driver.findElement(By.id(\"tab-training\"));\nassert.ok(await trainingTab.isDisplayed(), \"Training tab not visible\");\nconst trainingContent = await driver.wait(\n  until.elementLocated(By.id(\"training-course-list\")),\n  10000\n);\nassert.ok(await trainingContent.isDisplayed(), \"Training content not loaded\");\nconsole.log(\"✅ Default tab is Training Courses\");\n/* ✅ 2. Search for 'cyber' */\nconst searchInput = await driver.findElement(\n  By.id(\"training-search-input\")\n);\nawait searchInput.clear();\nawait searchInput.sendKeys(\"cyber\");\nconst searchButton = await driver.findElement(\n  By.id(\"training-search-button\")\n);\nawait searchButton.click();\nconsole.log(\"🔍 Searching for course: cyber\");\n/* ✅ 3. Wait for search result (single course expected) */\nconst courseCard = await driver.wait(\n  until.elementLocated(\n    By.css('[data-testid^=\"training-course-card-\"]')\n  ),\n  15000\n);\nawait courseCard.click();\nconsole.log(\"📘 Training course selected\");\n/* ✅ 4. Verify Assign Course dialog opens */\nconst assignDialog = await driver.wait(\n  until.elementLocated(By.id(\"assign-course-dialog\")),\n  10000\n);\nassert.ok(await assignDialog.isDisplayed(), \"Assign dialog not opened\");\nconst dialogTitle = await driver.findElement(\n  By.id(\"assign-course-dialog-title\")\n);\nassert.strictEqual(\n  await dialogTitle.getText(),\n  \"Assign Course\",\n  \"Dialog title mismatch\"\n);\nconsole.log(\"🪟 Assign Course dialog opened\");\n/* =======================\n   SELECT USER → Dilshan New (MUI FIX)\n======================= */\nconst userSelect = await driver.findElement(\n  By.id(\"assign-user-select\")\n);\n// MUI Select needs mouseDown\nawait driver.actions()\n  .move({ origin: userSelect })\n  .press()\n  .release()\n  .perform();\nconst userOption = await driver.wait(\n  until.elementLocated(\n    By.xpath(\"//li[contains(text(),'Dilshan New')]\")\n  ),\n  10000\n);\nawait userOption.click();\nconsole.log(\"👤 User selected: Dilshan New\");\n/* =======================\n   MANUAL DATE SELECTION\n======================= */\nconst dueDateInput = await driver.findElement(\n  By.css('[data-testid=\"assign-due-date-input\"] input')\n);\nawait driver.executeScript(\"arguments[0].click();\", dueDateInput);\nconsole.log(\"📅 Select DUE DATE manually...\");\nawait driver.sleep(10000); // ⏳ manual date selection time\n/* =======================\n   ASSIGN COURSE\n======================= */\nconst assignButton = await driver.findElement(\n  By.id(\"assign-course-submit-button\")\n);\nawait assignButton.click();\nconsole.log(\"📤 Assign Course button clicked\");\n/* =======================\n SUCCESS SNACKBAR (FIXED)\n======================= */\nconst snackbarAlert = await driver.wait(\nuntil.elementLocated(\n  By.id(\"training-snackbar-alert\")\n),\n15000\n);\n\nawait driver.wait(\nuntil.elementIsVisible(snackbarAlert),\n5000\n);\n\nconst snackbarText = await snackbarAlert.getText();\n\nif (\n!snackbarText.toLowerCase().includes(\"assigned\")\n) {\nthrow new Error(\"Training course assignment snackbar not shown\");\n}\n\nconsole.log(\"🎉 Training course assigned successfully\");",
+              "err": {},
+              "uuid": "8ee6d0b1-93e3-4067-b3df-cf4ae2bb6074",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should assign target KPI to a user",
+              "fullTitle": "Performance & Training UI test should assign target KPI to a user",
+              "timedOut": false,
+              "duration": 23323,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* =======================\n   1. GO TO 2nd TAB\n======================= */\nconst targetKpiTab = await driver.findElement(\n  By.id(\"tab-target-kpis\")\n);\nawait targetKpiTab.click();\nconsole.log(\"➡️ Navigated to Assign Target KPIs tab\");\nconst tabContent = await driver.wait(\n  until.elementLocated(By.id(\"tab-content-performance\")),\n  10000\n);\nassert.ok(await tabContent.isDisplayed(), \"Assign KPI tab not loaded\");\n/* =======================\n   2. VERIFY KPIs LOADED\n======================= */\nconst firstKpiCard = await driver.wait(\n  until.elementLocated(\n    By.css('[data-testid^=\"kpi-card-\"]')\n  ),\n  15000\n);\nawait driver.wait(until.elementIsVisible(firstKpiCard), 5000);\nconsole.log(\"📊 KPIs loaded successfully\");\n/* =======================\n   3. CLICK FIRST KPI\n======================= */\nawait firstKpiCard.click();\nconsole.log(\"📌 KPI selected\");\n/* =======================\n   4. VERIFY ASSIGN KPI DIALOG\n======================= */\nconst assignDialog = await driver.wait(\n  until.elementLocated(By.id(\"assign-kpi-dialog\")),\n  10000\n);\nassert.ok(await assignDialog.isDisplayed(), \"Assign KPI dialog not opened\");\nconst dialogTitle = await driver.findElement(\n  By.id(\"assign-kpi-dialog-title\")\n);\nassert.strictEqual(\n  await dialogTitle.getText(),\n  \"Assign KPI Target\",\n  \"Assign KPI dialog title mismatch\"\n);\nconsole.log(\"🪟 Assign KPI dialog opened\");\n/* =======================\n   5. SELECT USER (MUI FIX)\n======================= */\nconst userSelect = await driver.findElement(\n  By.id(\"assign-kpi-user-select\")\n);\nawait driver.actions()\n  .move({ origin: userSelect })\n  .press()\n  .release()\n  .perform();\nconst userOption = await driver.wait(\n  until.elementLocated(\n    By.xpath(\"//li[contains(text(),'Dilshan New')]\")\n  ),\n  10000\n);\nawait userOption.click();\nconsole.log(\"👤 User selected: Dilshan New\");\n/* =======================\n   6. MANUAL PERIOD START\n======================= */\nconst periodStartInput = await driver.findElement(\n  By.css('[data-testid=\"assign-kpi-period-start\"] input')\n);\nawait driver.executeScript(\"arguments[0].click();\", periodStartInput);\nconsole.log(\"📅 Select PERIOD START manually...\");\nawait driver.sleep(10000);\n/* =======================\n   7. MANUAL PERIOD END\n======================= */\nconst periodEndInput = await driver.findElement(\n  By.css('[data-testid=\"assign-kpi-period-end\"] input')\n);\nawait driver.executeScript(\"arguments[0].click();\", periodEndInput);\nconsole.log(\"📅 Select PERIOD END manually...\");\nawait driver.sleep(10000);\n/* =======================\n   8. ENTER TARGET VALUE\n======================= */\nconst targetValueInput = await driver.findElement(\n  By.id(\"assign-kpi-target-value\")\n);\nawait targetValueInput.clear();\nawait targetValueInput.sendKeys(\"22\");\nconsole.log(\"🎯 Target value entered: 22\");\n/* =======================\n   9. ASSIGN TARGET\n======================= */\nconst assignButton = await driver.findElement(\n  By.id(\"assign-kpi-submit-button\")\n);\nawait assignButton.click();\nconsole.log(\"📤 Assign Target button clicked\");\n/* =======================\n   10. SUCCESS SNACKBAR\n======================= */\nconst snackbarAlert = await driver.wait(\n  until.elementLocated(By.id(\"kpi-snackbar-alert\")),\n  15000\n);\nawait driver.wait(\n  until.elementIsVisible(snackbarAlert),\n  5000\n);\nconst snackbarText = await snackbarAlert.getText();\nif (!snackbarText.toLowerCase().includes(\"assigned\")) {\n  throw new Error(\"KPI assignment success snackbar not shown\");\n}\nconsole.log(\"🎉 KPI target assigned successfully\");",
+              "err": {},
+              "uuid": "3432c189-d918-4857-9817-7aaa29d03286",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should upload KPI actuals CSV and show success message",
+              "fullTitle": "Performance & Training UI test should upload KPI actuals CSV and show success message",
+              "timedOut": false,
+              "duration": 20579,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* =======================\n   1. GO TO IMPORT TAB\n======================= */\nconst importTab = await driver.findElement(\n  By.id(\"tab-import\")\n);\nawait importTab.click();\nconsole.log(\"➡️ Navigated to Import Actual KPIs tab\");\nconst tabContent = await driver.wait(\n  until.elementLocated(By.id(\"kpi-import-container\")),\n  10000\n);\nassert.ok(await tabContent.isDisplayed(), \"KPI Import tab not loaded\");\n/* =======================\n   2. CHOOSE FILE (MANUAL)\n======================= */\nconst fileInput = await driver.findElement(\n  By.id(\"kpi-import-file-input\")\n);\n// Click file input so OS dialog opens\nawait driver.executeScript(\"arguments[0].click();\", fileInput);\nconsole.log(\"📁 Please select CSV file manually...\");\nawait driver.sleep(15000); // ⏳ time for manual file selection\n/* =======================\n   3. CLICK UPLOAD\n======================= */\nconst uploadButton = await driver.findElement(\n  By.id(\"upload-csv-button\")\n);\nawait uploadButton.click();\nconsole.log(\"📤 Upload button clicked\");\n/* =======================\n   4. WAIT FOR SUCCESS SNACKBAR\n======================= */\nconst snackbarAlert = await driver.wait(\n  until.elementLocated(By.id(\"kpi-import-snackbar-alert\")),\n  15000\n);\nawait driver.wait(\n  until.elementIsVisible(snackbarAlert),\n  5000\n);\nconst snackbarText = await snackbarAlert.getText();\nif (!snackbarText.toLowerCase().includes(\"success\")) {\n  throw new Error(\"KPI actuals upload success snackbar not shown\");\n}\nconsole.log(\"🎉 KPI actuals file uploaded successfully\");\n/* =======================\n   5. EXTRA WAIT (JOB RUN)\n======================= */\nconsole.log(\"⏳ Waiting for background job processing...\");\nawait driver.sleep(5000);",
+              "err": {},
+              "uuid": "7ec0dd03-61c2-4d93-aa88-488634fa55b4",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should fetch KPI snapshots for a user and KPI",
+              "fullTitle": "Performance & Training UI test should fetch KPI snapshots for a user and KPI",
+              "timedOut": false,
+              "duration": 22293,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* =======================\n   1. GO TO KPI SNAPSHOTS TAB\n======================= */\nconst snapshotsTab = await driver.findElement(\n  By.id(\"tab-kpi-snapshots\")\n);\nawait snapshotsTab.click();\nconsole.log(\"➡️ Navigated to KPI Snapshots tab\");\nconst tabContent = await driver.wait(\n  until.elementLocated(By.id(\"tab-content-kpi-snapshots\")),\n  10000\n);\nassert.ok(await tabContent.isDisplayed(), \"KPI Snapshots tab not loaded\");\n/* =======================\n   2. SELECT USER (MUI FIX)\n======================= */\nconst userSelect = await driver.findElement(\n  By.id(\"kpi-snapshot-user-select\")\n);\nawait driver.actions()\n  .move({ origin: userSelect })\n  .press()\n  .release()\n  .perform();\nconst adminUserOption = await driver.wait(\n  until.elementLocated(\n    By.xpath(\"//li[contains(text(),'Dilshan New')]\")\n  ),\n  10000\n);\nawait adminUserOption.click();\nconsole.log(\"👤 User selected: Admin User1\");\n/* =======================\n 3. SELECT KPI (PORTAL-SAFE FINAL FIX)\n======================= */\nconst kpiSelect = await driver.findElement(\nBy.id(\"kpi-snapshot-kpi-select\")\n);\n\n// Ensure visible\nawait driver.executeScript(\"arguments[0].scrollIntoView(true);\", kpiSelect);\n\n// Open dropdown (real click)\nawait kpiSelect.click();\nawait driver.sleep(500);\n\n// 🔥 Wait for MUI portal options\nconst kpiOptions = await driver.wait(\nuntil.elementsLocated(\n  By.xpath(\"//li[@role='option']\")\n),\n10000\n);\n\n// Safety check\nif (kpiOptions.length < 2) {\nthrow new Error(\"Not enough KPI options rendered\");\n}\n\n// ✅ Click 2nd option → Task Completion\nawait kpiOptions[0].click();\n\nconsole.log(\"📊 KPI selected: Task Completion\");\n/* =======================\n   4. MANUAL START DATE\n======================= */\nconst startDateInput = await driver.findElement(\n  By.css('[data-testid=\"kpi-snapshot-start-date\"] input')\n);\nawait driver.executeScript(\"arguments[0].click();\", startDateInput);\nconsole.log(\"📅 Select START DATE manually...\");\nawait driver.sleep(10000);\n/* =======================\n   5. MANUAL END DATE\n======================= */\nconst endDateInput = await driver.findElement(\n  By.css('[data-testid=\"kpi-snapshot-end-date\"] input')\n);\nawait driver.executeScript(\"arguments[0].click();\", endDateInput);\nconsole.log(\"📅 Select END DATE manually...\");\nawait driver.sleep(10000);\n/* =======================\n   6. FETCH SNAPSHOTS\n======================= */\nconst fetchButton = await driver.findElement(\n  By.id(\"kpi-snapshot-fetch-button\")\n);\nawait fetchButton.click();\nconsole.log(\"📥 Fetch KPI snapshots\");\n/* =======================\n   7. VERIFY RESULTS\n======================= */\n// Wait for either loading spinner or table\nawait driver.wait(async () => {\n  const loading = await driver.findElements(\n    By.id(\"kpi-snapshot-loading-spinner\")\n  );\n  return loading.length === 0;\n}, 15000);\nconst snapshotRows = await driver.wait(\n  until.elementsLocated(\n    By.css('[data-testid^=\"kpi-snapshot-row-\"]')\n  ),\n  15000\n);\nassert.ok(snapshotRows.length > 0, \"No KPI snapshots found\");\nconsole.log(`📈 ${snapshotRows.length} KPI snapshot(s) fetched successfully`);",
+              "err": {},
+              "uuid": "9dc1106a-7d2a-45a1-b317-b5b722c1b62c",
+              "parentUUID": "32827f7e-4775-474e-a373-222701a14fe1",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "2f5062d6-afdf-4732-afd6-9e9820a56bef",
+            "8ee6d0b1-93e3-4067-b3df-cf4ae2bb6074",
+            "3432c189-d918-4857-9817-7aaa29d03286",
+            "7ec0dd03-61c2-4d93-aa88-488634fa55b4",
+            "9dc1106a-7d2a-45a1-b317-b5b722c1b62c"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 79229,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}

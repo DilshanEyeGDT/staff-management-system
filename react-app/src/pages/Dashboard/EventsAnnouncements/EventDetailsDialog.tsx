@@ -60,67 +60,153 @@ const EventDetailsDialog: React.FC<Props> = ({ open, eventId, onClose, onUpdated
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-        <DialogTitle>Event Details</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        fullWidth
+        maxWidth="md"
+        data-testid="event-details-dialog"
+      >
+        <DialogTitle data-testid="event-details-title">
+          Event Details
+        </DialogTitle>
 
-        <DialogContent dividers>
+        <DialogContent dividers data-testid="event-details-content">
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
-              <CircularProgress />
+            <Box
+              sx={{ display: "flex", justifyContent: "center", py: 3 }}
+              data-testid="event-details-loading"
+            >
+              <CircularProgress data-testid="event-details-loading-spinner" />
             </Box>
           ) : !details ? (
-            <Typography>No data found</Typography>
+            <Typography data-testid="event-details-no-data">
+              No data found
+            </Typography>
           ) : (
             <>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Typography variant="h6">{details.event.title}</Typography>
-                <Typography>{details.event.summary}</Typography>
-
-                <Typography variant="caption" color="text.secondary">
-                  Scheduled: {dayjs(details.event.scheduled_at).format("YYYY-MM-DD HH:mm")}
+              <Box
+                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                data-testid="event-details-body"
+              >
+                <Typography
+                  variant="h6"
+                  data-testid="event-details-event-title"
+                >
+                  {details.event.title}
                 </Typography>
 
-                <Divider />
+                <Typography data-testid="event-details-event-summary">
+                  {details.event.summary}
+                </Typography>
 
-                <Typography variant="subtitle1">Announcement</Typography>
-                <Typography>{details.announcement.content}</Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  data-testid="event-details-event-scheduled"
+                >
+                  Scheduled:{" "}
+                  {dayjs(details.event.scheduled_at).format(
+                    "YYYY-MM-DD HH:mm"
+                  )}
+                </Typography>
 
-                <Divider />
+                <Divider data-testid="event-details-divider-1" />
 
-                <Typography variant="subtitle1">Tags</Typography>
-                {details.tags.map((t: any) => (
-                  <Chip key={t.id} label={t.tag} sx={{ mr: 1, mt: 1 }} />
-                ))}
+                <Typography
+                  variant="subtitle1"
+                  data-testid="event-details-announcement-title"
+                >
+                  Announcement
+                </Typography>
 
-                <Divider />
+                <Typography data-testid="event-details-announcement-content">
+                  {details.announcement.content}
+                </Typography>
 
-                <Typography variant="subtitle1">Audit Logs</Typography>
-                {details.publish_audit.map((log: any) => (
-                  <Box key={log.id} sx={{ mb: 1 }}>
-                    <Typography><strong>Action:</strong> {log.action}</Typography>
-                    <Typography><strong>Channel:</strong> {log.channel}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {dayjs(log.performed_at).format("YYYY-MM-DD HH:mm:ss")}
-                    </Typography>
-                    <Divider sx={{ my: 1 }} />
-                  </Box>
-                ))}
+                <Divider data-testid="event-details-divider-2" />
+
+                <Typography
+                  variant="subtitle1"
+                  data-testid="event-details-tags-title"
+                >
+                  Tags
+                </Typography>
+
+                <Box data-testid="event-details-tags-container">
+                  {details.tags.map((t: any, index: number) => (
+                    <Chip
+                      key={t.id}
+                      label={t.tag}
+                      sx={{ mr: 1, mt: 1 }}
+                      data-testid={`event-details-tag-${index}`}
+                    />
+                  ))}
+                </Box>
+
+                <Divider data-testid="event-details-divider-3" />
+
+                <Typography
+                  variant="subtitle1"
+                  data-testid="event-details-audit-title"
+                >
+                  Audit Logs
+                </Typography>
+
+                <Box data-testid="event-details-audit-container">
+                  {details.publish_audit.map((log: any, index: number) => (
+                    <Box
+                      key={log.id}
+                      sx={{ mb: 1 }}
+                      data-testid={`event-details-audit-${index}`}
+                    >
+                      <Typography data-testid={`event-details-audit-action-${index}`}>
+                        <strong>Action:</strong> {log.action}
+                      </Typography>
+
+                      <Typography data-testid={`event-details-audit-channel-${index}`}>
+                        <strong>Channel:</strong> {log.channel}
+                      </Typography>
+
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        data-testid={`event-details-audit-time-${index}`}
+                      >
+                        {dayjs(log.performed_at).format(
+                          "YYYY-MM-DD HH:mm:ss"
+                        )}
+                      </Typography>
+
+                      <Divider
+                        sx={{ my: 1 }}
+                        data-testid={`event-details-audit-divider-${index}`}
+                      />
+                    </Box>
+                  ))}
+                </Box>
               </Box>
             </>
           )}
         </DialogContent>
 
-        <DialogActions>
+        <DialogActions data-testid="event-details-actions">
           {details?.event.status === "draft" && (
             <Button
               variant="outlined"
               onClick={() => setEditOpen(true)}
+              data-testid="event-details-edit-button"
             >
               Edit
             </Button>
           )}
 
-          <Button onClick={onClose}>Close</Button>
+          <Button
+            onClick={onClose}
+            data-testid="event-details-close-button"
+          >
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -131,7 +217,7 @@ const EventDetailsDialog: React.FC<Props> = ({ open, eventId, onClose, onUpdated
         initialData={details}
         onClose={() => setEditOpen(false)}
         onUpdated={() => {
-          onUpdated();        // refresh events tab
+          onUpdated(); // refresh events tab
           fetchEventDetails(); // refresh this dialog
         }}
         showSnackbar={showSnackbar}
@@ -141,11 +227,18 @@ const EventDetailsDialog: React.FC<Props> = ({ open, eventId, onClose, onUpdated
         open={snack.open}
         autoHideDuration={3000}
         onClose={() => setSnack({ ...snack, open: false })}
+        data-testid="event-details-snackbar"
       >
-        <Alert severity={snack.severity}>{snack.message}</Alert>
+        <Alert
+          severity={snack.severity}
+          data-testid="event-details-snackbar-alert"
+        >
+          {snack.message}
+        </Alert>
       </Snackbar>
     </>
   );
+
 };
 
 export default EventDetailsDialog;

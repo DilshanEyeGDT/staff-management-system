@@ -77,40 +77,57 @@ const EditFeedbackDialog: React.FC<Props> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Edit Feedback</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      data-testid="edit-feedback-dialog"
+    >
+      <DialogTitle data-testid="edit-feedback-dialog-title">Edit Feedback</DialogTitle>
 
       <DialogContent>
         {/* STATUS */}
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>Status</InputLabel>
-          <Select value={status} label="Status" onChange={(e) => setStatus(e.target.value)}>
-            <MenuItem value="open">Open</MenuItem>
-            <MenuItem value="in_progress">In Progress</MenuItem>
-            <MenuItem value="closed">Closed</MenuItem>
+        <FormControl fullWidth sx={{ mt: 2 }} data-testid="edit-feedback-status-control">
+          <InputLabel data-testid="edit-feedback-status-label">Status</InputLabel>
+          <Select
+            value={status}
+            label="Status"
+            onChange={(e) => setStatus(e.target.value)}
+            data-testid="edit-feedback-status-select"
+          >
+            <MenuItem value="open" data-testid="edit-feedback-status-open">Open</MenuItem>
+            <MenuItem value="in_progress" data-testid="edit-feedback-status-in-progress">In Progress</MenuItem>
+            <MenuItem value="closed" data-testid="edit-feedback-status-closed">Closed</MenuItem>
           </Select>
         </FormControl>
 
         {/* PRIORITY */}
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>Priority</InputLabel>
-          <Select value={priority} label="Priority" onChange={(e) => setPriority(e.target.value)}>
-            <MenuItem value="low">Low</MenuItem>
-            <MenuItem value="medium">Medium</MenuItem>
-            <MenuItem value="high">High</MenuItem>
+        <FormControl fullWidth sx={{ mt: 2 }} data-testid="edit-feedback-priority-control">
+          <InputLabel data-testid="edit-feedback-priority-label">Priority</InputLabel>
+          <Select
+            value={priority}
+            label="Priority"
+            onChange={(e) => setPriority(e.target.value)}
+            data-testid="edit-feedback-priority-select"
+          >
+            <MenuItem value="low" data-testid="edit-feedback-priority-low">Low</MenuItem>
+            <MenuItem value="medium" data-testid="edit-feedback-priority-medium">Medium</MenuItem>
+            <MenuItem value="high" data-testid="edit-feedback-priority-high">High</MenuItem>
           </Select>
         </FormControl>
 
         {/* ASSIGNEE */}
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel>Assignee</InputLabel>
+        <FormControl fullWidth sx={{ mt: 2 }} data-testid="edit-feedback-assignee-control">
+          <InputLabel data-testid="edit-feedback-assignee-label">Assignee</InputLabel>
           <Select
             value={assigneeId}
             label="Assignee"
             onChange={(e) => setAssigneeId(Number(e.target.value))}
+            data-testid="edit-feedback-assignee-select"
           >
             {users.map((u) => (
-              <MenuItem key={u.id} value={u.id}>
+              <MenuItem key={u.id} value={u.id} data-testid={`edit-feedback-assignee-option-${u.id}`}>
                 {u.display_name}
               </MenuItem>
             ))}
@@ -119,13 +136,19 @@ const EditFeedbackDialog: React.FC<Props> = ({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={loading}>
-          {loading ? <CircularProgress size={20} /> : "Update"}
+        <Button onClick={onClose} data-testid="edit-feedback-cancel-button">Cancel</Button>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading}
+          data-testid="edit-feedback-submit-button"
+        >
+          {loading ? <CircularProgress size={20} data-testid="edit-feedback-loading-indicator" /> : "Update"}
         </Button>
       </DialogActions>
     </Dialog>
   );
+
 };
 
 export default EditFeedbackDialog;

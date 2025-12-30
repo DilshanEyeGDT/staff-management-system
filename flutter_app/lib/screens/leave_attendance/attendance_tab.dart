@@ -42,12 +42,17 @@ class _AttendanceTabState extends State<AttendanceTab> {
   // ----------- Clock In ------------
   Future<void> _clockIn() async {
     setState(() => isLoading = true);
+
     final token = await _getIdToken();
     if (token == null) {
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Failed to get ID token")));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('clock_in_token_failure_snackbar'),
+          content: Text("Failed to get ID token"),
+        ),
+      );
       return;
     }
 
@@ -55,12 +60,18 @@ class _AttendanceTabState extends State<AttendanceTab> {
     setState(() => isLoading = false);
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Clock In Successful ✔")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('clock_in_success_snackbar'),
+          content: Text("Clock In Successful ✔"),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Clock In Failed (${response.statusCode})")),
+        SnackBar(
+          key: const Key('clock_in_failure_snackbar'),
+          content: Text("Clock In Failed (${response.statusCode})"),
+        ),
       );
     }
   }
@@ -68,12 +79,17 @@ class _AttendanceTabState extends State<AttendanceTab> {
   // ----------- Clock Out ------------
   Future<void> _clockOut() async {
     setState(() => isLoading = true);
+
     final token = await _getIdToken();
     if (token == null) {
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Failed to get ID token")));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('clock_out_token_failure_snackbar'),
+          content: Text("Failed to get ID token"),
+        ),
+      );
       return;
     }
 
@@ -81,12 +97,18 @@ class _AttendanceTabState extends State<AttendanceTab> {
     setState(() => isLoading = false);
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Clock Out Successful ✔")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('clock_out_success_snackbar'),
+          content: Text("Clock Out Successful ✔"),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Clock Out Failed (${response.statusCode})")),
+        SnackBar(
+          key: const Key('clock_out_failure_snackbar'),
+          content: Text("Clock Out Failed (${response.statusCode})"),
+        ),
       );
     }
   }
@@ -104,7 +126,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
 
     final response = await _lambdaService.getAttendanceLogs(token);
 
-    if (!mounted) return; // <--- IMPORTANT
+    if (!mounted) return;
 
     if (response.statusCode == 200) {
       final data = Map<String, dynamic>.from(jsonDecode(response.body)['data']);
@@ -128,6 +150,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          key: const Key('attendance_logs_fetch_failure_snackbar'),
           content: Text("Failed to fetch logs (${response.statusCode})"),
         ),
       );
@@ -147,16 +170,19 @@ class _AttendanceTabState extends State<AttendanceTab> {
         : attendanceLogs.take(5).toList(); // show only last 5
 
     return Padding(
+      key: const Key('attendance_root_padding'),
       padding: const EdgeInsets.all(16),
       child: Column(
+        key: const Key('attendance_root_column'),
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // --------- BUTTON ROW TOP ---------
+          // ================= CLOCK BUTTON ROW =================
           Row(
+            key: const Key('attendance_clock_button_row'),
             children: [
               Expanded(
                 child: ElevatedButton(
-                  key: const Key('button_clock_in'), // added key
+                  key: const Key('attendance_clock_in_button'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -166,14 +192,18 @@ class _AttendanceTabState extends State<AttendanceTab> {
                   onPressed: _clockIn,
                   child: const Text(
                     "Clock In",
+                    key: Key('attendance_clock_in_button_text'),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(
+                width: 16,
+                key: Key('attendance_clock_button_spacing'),
+              ),
               Expanded(
                 child: ElevatedButton(
-                  key: const Key('button_clock_out'), // added key
+                  key: const Key('attendance_clock_out_button'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -183,6 +213,7 @@ class _AttendanceTabState extends State<AttendanceTab> {
                   onPressed: _clockOut,
                   child: const Text(
                     "Clock Out",
+                    key: Key('attendance_clock_out_button_text'),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -190,61 +221,63 @@ class _AttendanceTabState extends State<AttendanceTab> {
             ],
           ),
 
-          // --------- SPACING BELOW BUTTONS ---------
-          const SizedBox(height: 24),
+          // ================= SPACING =================
+          const SizedBox(height: 24, key: Key('attendance_section_spacing')),
 
-          // --------- ATTENDANCE LOGS ---------
+          // ================= ATTENDANCE LOGS =================
           Expanded(
+            key: const Key('attendance_logs_section'),
             child: isLogsLoading
                 ? const Center(
                     child: CircularProgressIndicator(
-                      key: Key('loading_indicator'),
+                      key: Key('attendance_logs_loading_indicator'),
                     ),
                   )
                 : Column(
+                    key: const Key('attendance_logs_column'),
                     children: [
                       Expanded(
                         child: ListView.builder(
-                          key: const Key(
-                            'attendance_log_list',
-                          ), // added key for ListView
+                          key: const Key('attendance_log_list'),
                           itemCount: displayLogs.length,
                           itemBuilder: (context, index) {
                             final log = displayLogs[index];
+
                             return Card(
-                              key: Key(
-                                'attendance_log_card_$index',
-                              ), // unique key per log
+                              key: Key('attendance_log_card_$index'),
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: ListTile(
+                                key: Key('attendance_log_tile_$index'),
                                 title: Text(
                                   "Date: ${log.date.split('T')[0]}  Status: ${log.status}",
-                                  key: Key('log_title_$index'), // key for title
+                                  key: Key('attendance_log_title_$index'),
                                 ),
                                 subtitle: Text(
                                   "Clock In: ${formatTime(log.clockIn)}\nClock Out: ${formatTime(log.clockOut)}",
-                                  key: Key(
-                                    'log_subtitle_$index',
-                                  ), // key for subtitle
+                                  key: Key('attendance_log_subtitle_$index'),
                                 ),
                               ),
                             );
                           },
                         ),
                       ),
-                      // SEE MORE BUTTON
+
+                      // ================= SEE MORE =================
                       if (attendanceLogs.length > 5 && !showAllLogs)
                         ElevatedButton(
-                          key: const Key('button_see_more'), // added key
+                          key: const Key('attendance_see_more_button'),
                           onPressed: () {
                             setState(() {
                               showAllLogs = true;
                             });
                           },
-                          child: const Text("See More"),
+                          child: const Text(
+                            "See More",
+                            key: Key('attendance_see_more_button_text'),
+                          ),
                         ),
                     ],
                   ),

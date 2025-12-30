@@ -1,0 +1,310 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 7,
+    "passes": 7,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-18T05:54:56.578Z",
+    "end": "2025-12-18T05:55:47.905Z",
+    "duration": 51327,
+    "testsRegistered": 7,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "46df68f8-3714-440c-b3f1-7bae92654115",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+          "title": "Feedback Exporting Tab UI test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase7\\feedbackTab1.test.js",
+          "file": "\\tests\\phase7\\feedbackTab1.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Feedback Exporting Tab UI test\"",
+              "fullTitle": "Feedback Exporting Tab UI test \"before all\" hook in \"Feedback Exporting Tab UI test\"",
+              "timedOut": false,
+              "duration": 5092,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--start-maximized\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();\nconsole.log(\"🚀 Opening dashboard...\");\nawait driver.get(DASHBOARD_URL);\n// Inject valid Admin token manually\nawait driver.executeScript(\n  `window.localStorage.setItem('token', '${ACCESS_TOKEN}');`\n);\nawait driver.navigate().refresh();\n// Wait until dashboard sidebar appears\nawait driver.wait(until.elementLocated(By.id(\"dashboard-side-panel\")), 30000);\nconst title = await driver.findElement(By.id(\"dashboard-title\")).getText();\nassert.ok(title.includes(\"Admin Portal\"), \"Admin Portal title missing\");\nconsole.log(\"✅ Dashboard loaded successfully as Admin\");",
+              "err": {},
+              "uuid": "88b796a1-2f7d-4abe-aaf6-d2186be6f35d",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Feedback Exporting Tab UI test\"",
+              "fullTitle": "Feedback Exporting Tab UI test \"after all\" hook in \"Feedback Exporting Tab UI test\"",
+              "timedOut": false,
+              "duration": 354,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) {\n  console.log(\"🚀 Closing browser...\");\n  await driver.quit(); // closes all tabs and ends session\n  }",
+              "err": {},
+              "uuid": "ec591b32-7575-4c54-a756-7b3b1af6d580",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should navigate to Feedbacks & Reporting page",
+              "fullTitle": "Feedback Exporting Tab UI test should navigate to Feedbacks & Reporting page",
+              "timedOut": false,
+              "duration": 462,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const feedbackNav = await driver.findElement(\n  By.id(\"nav-feedbacks\")\n);\nawait feedbackNav.click();\nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"feedback-report-title\")),\n  10000\n);\nassert.strictEqual(await pageTitle.getText(), \"Feedback & Reports\");\nconsole.log(\"✅ Feedbacks & Reporting page loaded\");",
+              "err": {},
+              "uuid": "e7fd7927-c30b-4730-86b9-fd8b167f3353",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should create a feedback successfully",
+              "fullTitle": "Feedback Exporting Tab UI test should create a feedback successfully",
+              "timedOut": false,
+              "duration": 9903,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "/* =======================\n    OPEN CREATE DIALOG\n======================= */\nawait driver.wait(\n    until.elementLocated(By.id(\"tab-content-feedback\")),\n    10000\n);\nconst addFeedbackBtn = await driver.wait(\n    until.elementLocated(By.css('[data-testid=\"add-feedback-floating-button\"]')),\n    10000\n);\nawait addFeedbackBtn.click();\n/* =======================\n    WAIT FOR DIALOG\n======================= */\nconst dialog = await driver.wait(\n    until.elementLocated(By.css('[data-testid=\"create-feedback-dialog\"]')),\n    10000\n);\nawait driver.wait(until.elementIsVisible(dialog), 10000);\n/* =======================\n    TITLE (IMPORTANT FIX)\n======================= */\nconst titleInput = await driver.wait(\n    until.elementLocated(\n    By.css('[data-testid=\"feedback-title-input\"] input')\n    ),\n    5000\n);\nawait titleInput.sendKeys(\"Selenium Automation Feedback\");\n/* =======================\n    CATEGORY\n======================= */\nconst categoryInput = await driver.wait(\n    until.elementLocated(\n    By.css('[data-testid=\"feedback-category-input\"] input')\n    ),\n    5000\n);\nawait categoryInput.sendKeys(\"UI Testing\");\n/* =======================\n    PRIORITY (MUI SELECT FIX)\n======================= */\nconst prioritySelect = await driver.findElement(\n    By.css('[data-testid=\"feedback-priority-select\"]')\n);\n// MUI requires mouseDown, not click\nawait driver.actions().move({ origin: prioritySelect }).press().release().perform();\nconst mediumOption = await driver.wait(\n    until.elementLocated(By.css('[data-testid=\"priority-option-medium\"]')),\n    5000\n);\nawait mediumOption.click();\n/* =======================\n    ASSIGNEE (MUI SELECT FIX)\n======================= */\n// 1. Find the select wrapper\n// Open dropdown\n    const assigneeSelect = await driver.findElement(By.css('[data-testid=\"feedback-assignee-select\"]'));\n    await assigneeSelect.click();\n    // Wait for the first option to appear\n    const firstOption = await driver.wait(\n    until.elementLocated(By.css('[data-testid^=\"assignee-option-\"]')),\n    10000\n    );\n    await firstOption.click();\n/* =======================\n    SUBMIT\n======================= */\nconst submitBtn = await driver.wait(\n    until.elementLocated(By.css('[data-testid=\"create-feedback-submit-button\"]')),\n    10000\n);\nawait driver.wait(until.elementIsEnabled(submitBtn), 10000);\nawait submitBtn.click();\n/* =======================\n    SUCCESS SNACKBAR\n======================= */\n// 9. Wait for success snackbar\nconst snackbar = await driver.wait(\nuntil.elementLocated(By.css('[data-testid=\"global-snackbar-alert\"], [data-testid=\"feedback-snackbar-alert\"]')),\n10000\n);\n// Wait until it’s visible\nawait driver.wait(until.elementIsVisible(snackbar), 5000);\nconst snackbarText = await snackbar.getText();\nassert.ok(\nsnackbarText.toLowerCase().includes(\"success\"),\n\"Success snackbar not shown after creating feedback\"\n);\nconsole.log(\"✅ Feedback created successfully\");",
+              "err": {},
+              "uuid": "c0319b50-34b8-4426-bf34-cb17f5cc7f53",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should add a comment to a feedback successfully",
+              "fullTitle": "Feedback Exporting Tab UI test should add a comment to a feedback successfully",
+              "timedOut": false,
+              "duration": 2665,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Wait for the feedback tab content\nawait driver.wait(until.elementLocated(By.id(\"tab-content-feedback\")), 10000);\n// Wait for feedback list to load\nawait driver.wait(until.elementLocated(By.css('[data-testid^=\"feedback-card-\"]')), 5000);\n// Select the first feedback card\nconst firstFeedbackCard = await driver.findElement(By.css('[data-testid^=\"feedback-card-\"]'));\nconst feedbackId = await firstFeedbackCard\n  .getAttribute(\"data-testid\")\n  .then((id) => id.split(\"-\")[2]);\n// Click \"Add Comment\" button\nconst addCommentBtn = await driver.findElement(\n  By.css(`[data-testid=\"feedback-add-comment-button-${feedbackId}\"]`)\n);\nawait driver.wait(until.elementIsVisible(addCommentBtn), 5000);\nawait driver.wait(until.elementIsEnabled(addCommentBtn), 5000);\nawait addCommentBtn.click();\n// Wait for Add Comment dialog to appear\nconst dialog = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"add-comment-dialog\"]')),\n  10000\n);\nawait driver.wait(until.elementIsVisible(dialog), 10000);\n// Locate the actual textarea inside MUI TextField\nconst commentInput = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"add-comment-textfield\"] textarea')),\n  5000\n);\nawait driver.wait(until.elementIsVisible(commentInput), 5000);\nawait driver.wait(until.elementIsEnabled(commentInput), 5000);\n// Focus and type comment\nawait commentInput.click();\nawait commentInput.clear();\nawait commentInput.sendKeys(\"This is a test comment\");\n// Wait for and click Submit button\nconst submitBtn = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"add-comment-submit-button\"]')),\n  5000\n);\nawait driver.wait(until.elementIsEnabled(submitBtn), 5000);\nawait submitBtn.click();\n// Wait for snackbar confirmation\nconst snackbar = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"feedback-snackbar-alert\"]')),\n  5000\n);\nawait driver.wait(until.elementTextContains(snackbar, \"Comment added successfully!\"), 5000);",
+              "err": {},
+              "uuid": "dd6132c7-ad0e-4a95-a0fb-0f4add5cbfbc",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should edit a feedback successfully",
+              "fullTitle": "Feedback Exporting Tab UI test should edit a feedback successfully",
+              "timedOut": false,
+              "duration": 3297,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Wait for feedback list to load\nawait driver.wait(until.elementLocated(By.css('[data-testid^=\"feedback-card-\"]')), 10000);\n// Select the first feedback card\nconst firstFeedbackCard = await driver.findElement(By.css('[data-testid^=\"feedback-card-\"]'));\nconst feedbackId = await firstFeedbackCard.getAttribute(\"data-testid\").then(id => id.split(\"-\")[2]);\n// Click \"Edit\" button\nconst editBtn = await driver.findElement(By.css(`[data-testid=\"feedback-edit-button-${feedbackId}\"]`));\nawait driver.wait(until.elementIsVisible(editBtn), 5000);\nawait driver.wait(until.elementIsEnabled(editBtn), 5000);\nawait editBtn.click();\n// Wait for Edit Feedback dialog\nconst editDialog = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"edit-feedback-dialog\"]')),\n  5000\n);\nawait driver.wait(until.elementIsVisible(editDialog), 5000);\n// Change status to \"In Progress\"\nconst statusSelect = await driver.findElement(By.css('[data-testid=\"edit-feedback-status-select\"]'));\nawait driver.wait(until.elementIsVisible(statusSelect), 5000);\nawait statusSelect.click();\nconst statusOption = await driver.findElement(By.css('[data-testid=\"edit-feedback-status-in-progress\"]'));\nawait driver.wait(until.elementIsVisible(statusOption), 5000);\nawait statusOption.click();\n// Click Update\nconst updateBtn = await driver.findElement(By.css('[data-testid=\"edit-feedback-submit-button\"]'));\nawait driver.wait(until.elementIsEnabled(updateBtn), 5000);\nawait updateBtn.click();\n// Wait for snackbar to appear (with extra timeout for MUI transition)\nconst snackbarAlert = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"feedback-snackbar-alert\"]')),\n  10000\n);\nawait driver.wait(until.elementIsVisible(snackbarAlert), 5000);\n// Wait until snackbar text contains the success message\nawait driver.wait(until.elementTextContains(snackbarAlert, \"Feedback updated successfully\"), 5000);",
+              "err": {},
+              "uuid": "0a02a28d-c7a0-47d4-a9f6-6c9c3202e98b",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should open feedback details dialog and close on outside click",
+              "fullTitle": "Feedback Exporting Tab UI test should open feedback details dialog and close on outside click",
+              "timedOut": false,
+              "duration": 2298,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Wait for feedback list\nawait driver.wait(\n  until.elementLocated(By.css('[data-testid^=\"feedback-card-\"]')),\n  10000\n);\n// Click first feedback card\nconst firstFeedbackCard = await driver.findElement(\n  By.css('[data-testid^=\"feedback-card-\"]')\n);\nawait firstFeedbackCard.click();\n// Wait for dialog to appear\nconst detailsDialog = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"feedback-details-dialog\"]')),\n  10000,\n  \"Feedback details dialog did not appear\"\n);\nawait driver.wait(until.elementIsVisible(detailsDialog), 5000);\nconsole.log(\"✅ Feedback details dialog opened\");\n// Small delay to ensure backdrop animation finishes\nawait driver.sleep(500);\n// Click outside dialog (top-left of page)\nawait driver.actions({ bridge: true })\n  .move({ x: 5, y: 5 }) // definitely outside dialog\n  .click()\n  .perform();\n// Wait for dialog to close\nawait driver.wait(async () => {\n  const dialogs = await driver.findElements(\n    By.css('[data-testid=\"feedback-details-dialog\"]')\n  );\n  return dialogs.length === 0;\n}, 10000, \"Feedback details dialog did not close after outside click\");\nconsole.log(\"✅ Feedback details dialog closed successfully\");",
+              "err": {},
+              "uuid": "9938c039-48d1-4be6-b3a8-221c30eb5150",
+              "parentUUID": "0dd565d7-c4ab-4681-8e93-250d6d4dc38a",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "e7fd7927-c30b-4730-86b9-fd8b167f3353",
+            "c0319b50-34b8-4426-bf34-cb17f5cc7f53",
+            "dd6132c7-ad0e-4a95-a0fb-0f4add5cbfbc",
+            "0a02a28d-c7a0-47d4-a9f6-6c9c3202e98b",
+            "9938c039-48d1-4be6-b3a8-221c30eb5150"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 18625,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        },
+        {
+          "uuid": "fdaf7a42-98f4-43bd-ae60-32c5143252ef",
+          "title": "Feedback Tab UI test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase7\\feedbackTab2.test.js",
+          "file": "\\tests\\phase7\\feedbackTab2.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Feedback Tab UI test\"",
+              "fullTitle": "Feedback Tab UI test \"before all\" hook in \"Feedback Tab UI test\"",
+              "timedOut": false,
+              "duration": 6628,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--start-maximized\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();\nconsole.log(\"🚀 Opening dashboard...\");\nawait driver.get(DASHBOARD_URL);\n// Inject valid Admin token manually\nawait driver.executeScript(\n  `window.localStorage.setItem('token', '${ACCESS_TOKEN}');`\n);\nawait driver.navigate().refresh();\n// Wait until dashboard sidebar appears\nawait driver.wait(until.elementLocated(By.id(\"dashboard-side-panel\")), 30000);\nconst title = await driver.findElement(By.id(\"dashboard-title\")).getText();\nassert.ok(title.includes(\"Admin Portal\"), \"Admin Portal title missing\");\nconsole.log(\"✅ Dashboard loaded successfully as Admin\");",
+              "err": {},
+              "uuid": "94b506e7-2ff0-42f0-984b-8c00a79608bc",
+              "parentUUID": "fdaf7a42-98f4-43bd-ae60-32c5143252ef",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Feedback Tab UI test\"",
+              "fullTitle": "Feedback Tab UI test \"after all\" hook in \"Feedback Tab UI test\"",
+              "timedOut": false,
+              "duration": 983,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) {\n    console.log(\"🚀 Closing browser...\");\n    await driver.quit(); // closes all tabs and ends session\n}",
+              "err": {},
+              "uuid": "8c8c948e-df7d-4de4-9441-7bafb2c2ee65",
+              "parentUUID": "fdaf7a42-98f4-43bd-ae60-32c5143252ef",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should navigate to Feedbacks & Reporting page",
+              "fullTitle": "Feedback Tab UI test should navigate to Feedbacks & Reporting page",
+              "timedOut": false,
+              "duration": 480,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const feedbackNav = await driver.findElement(\n  By.id(\"nav-feedbacks\")\n);\nawait feedbackNav.click();\n  \nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"feedback-report-title\")),\n  10000\n);\n  \nassert.strictEqual(await pageTitle.getText(), \"Feedback & Reports\");\nconsole.log(\"✅ Feedbacks & Reporting page loaded\");",
+              "err": {},
+              "uuid": "2e965cb1-0d32-4321-8d80-922cd7c5ed09",
+              "parentUUID": "fdaf7a42-98f4-43bd-ae60-32c5143252ef",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should switch to Export Feedbacks tab, allow manual date selection, select status, preview and export CSV",
+              "fullTitle": "Feedback Tab UI test should switch to Export Feedbacks tab, allow manual date selection, select status, preview and export CSV",
+              "timedOut": false,
+              "duration": 19145,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// ================= Switch to Export Feedbacks tab =================\nconst exportTab = await driver.wait(\n    until.elementLocated(By.css('[data-testid=\"tab-export-feedbacks\"]')),\n    10000\n);\nawait driver.executeScript(\"arguments[0].click();\", exportTab);\nconst container = await driver.wait(\n    until.elementLocated(By.css('[data-testid=\"export-feedback-container\"]')),\n    10000\n);\nawait driver.executeScript(\"arguments[0].scrollIntoView(true);\", container);\nconsole.log(\"✅ Export Feedbacks tab opened\");\n// ================= Click From DatePicker =================\nconst fromDatePicker = await driver.findElement(By.css('[data-testid=\"export-feedback-from-date\"]'));\nawait driver.executeScript(\"arguments[0].click();\", fromDatePicker);\nconsole.log(\"⏱ Please manually select the FROM date in the calendar...\");\nawait driver.sleep(8000); // wait for manual selection\n// ================= Click To DatePicker =================\nconst toDatePicker = await driver.findElement(By.css('[data-testid=\"export-feedback-to-date\"]'));\nawait driver.executeScript(\"arguments[0].click();\", toDatePicker);\nconsole.log(\"⏱ Please manually select the TO date in the calendar...\");\nawait driver.sleep(8000); // wait for manual selection\n// ================= Select Status =================\nconst statusSelect = await driver.findElement(By.css('[data-testid=\"export-feedback-status-select\"]'));\nawait driver.executeScript(\"arguments[0].click();\", statusSelect);\nawait driver.sleep(500); // wait for dropdown animation\n// Wait for \"In Progress\" option in portal to appear\nconst statusOption = await driver.findElement(By.css('[data-testid=\"export-feedback-status-select\"]'));\nawait driver.actions({ bridge: true }).move({ origin: statusSelect }).click().perform();\nawait driver.sleep(500); // wait for dropdown animation\nawait driver.executeScript(\"arguments[0].scrollIntoView(true); arguments[0].click();\", statusOption);\nconsole.log(\"✅ Status selected: In Progress\");\n// ================= Click Preview =================\nconst previewBtn = await driver.findElement(By.css('[data-testid=\"export-feedback-preview-button\"]'));\nawait driver.executeScript(\"arguments[0].click();\", previewBtn);\n// Wait for preview rows\nawait driver.wait(async () => {\n    const rows = await driver.findElements(By.css('[data-testid^=\"export-feedback-preview-row-\"]'));\n    return rows.length > 0;\n}, 10000, \"Preview did not load\");\nconsole.log(\"✅ Preview loaded\");\n// ================= Click Export CSV =================\nconst exportBtn = await driver.findElement(By.css('[data-testid=\"export-feedback-export-button\"]'));\nawait driver.executeScript(\"arguments[0].click();\", exportBtn);\nawait driver.sleep(1000);\nconsole.log(\"✅ Export CSV clicked\");",
+              "err": {},
+              "uuid": "a00f182b-ec91-4890-8ee4-1540aa2072bc",
+              "parentUUID": "fdaf7a42-98f4-43bd-ae60-32c5143252ef",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "2e965cb1-0d32-4321-8d80-922cd7c5ed09",
+            "a00f182b-ec91-4890-8ee4-1540aa2072bc"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 19625,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}

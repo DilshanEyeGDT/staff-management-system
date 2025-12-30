@@ -75,11 +75,13 @@ const FeedbackReportPage: React.FC = () => {
         autoHideDuration={4000}
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        data-testid="global-snackbar"
       >
         <Alert
           onClose={() => setSnackbarOpen(false)}
           severity={snackbarSeverity}
           sx={{ width: "100%" }}
+          data-testid="global-snackbar-alert"
         >
           {snackbarMsg}
         </Alert>

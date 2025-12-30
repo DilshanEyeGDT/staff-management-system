@@ -146,148 +146,242 @@ const AttendanceLog: React.FC = () => {
   };
 
   return (
-  <Box id="attendance-log-page">
-    <Typography variant="h6" sx={{ mb: 2 }} id="title-attendance-log">
-      Attendance Log
-    </Typography>
+    <Box id="attendance-log-page" data-testid="attendance-log-page">
+      <Typography
+        variant="h6"
+        sx={{ mb: 2 }}
+        id="title-attendance-log"
+        data-testid="title-attendance-log"
+      >
+        Attendance Log
+      </Typography>
 
-    {/* Controls */}
-    <Stack
-      direction={{ xs: "column", sm: "row" }}
-      spacing={2}
-      alignItems="center"
-      sx={{ mb: 2 }}
-      id="filter-section"
-    >
-
-      {/* User Dropdown */}
-      <FormControl sx={{ minWidth: 220 }} id="select-user-container">
-        <InputLabel id="select-user-label">Select User</InputLabel>
-
-        {usersLoading ? (
-          <Box display="flex" alignItems="center" px={2} py={1} id="loading-users">
-            <CircularProgress size={20} id="loading-users-spinner" />
-            <Typography sx={{ ml: 1 }}></Typography>
-          </Box>
-        ) : (
-          <Select
-            id="select-user"
-            labelId="select-user-label"
-            value={selectedUserId}
-            label="Select User"
-            onChange={(e) => handleUserChange(e.target.value as number)}
-            displayEmpty
+      {/* Controls */}
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: 2 }}
+        id="filter-section"
+        data-testid="filter-section"
+      >
+        {/* User Dropdown */}
+        <FormControl
+          sx={{ minWidth: 220 }}
+          id="select-user-container"
+          data-testid="select-user-container"
+        >
+          <InputLabel
+            id="select-user-label"
+            data-testid="select-user-label"
           >
-            <MenuItem value="" id="select-user-empty">
-              <em></em>
-            </MenuItem>
+            Select User
+          </InputLabel>
 
-            {users.map((u) => (
+          {usersLoading ? (
+            <Box
+              display="flex"
+              alignItems="center"
+              px={2}
+              py={1}
+              id="loading-users"
+              data-testid="loading-users"
+            >
+              <CircularProgress
+                size={20}
+                id="loading-users-spinner"
+                data-testid="loading-users-spinner"
+              />
+              <Typography sx={{ ml: 1 }}></Typography>
+            </Box>
+          ) : (
+            <Select
+              id="select-user"
+              data-testid="select-user"
+              labelId="select-user-label"
+              value={selectedUserId}
+              label="Select User"
+              onChange={(e) => handleUserChange(e.target.value as number)}
+              displayEmpty
+              MenuProps={{
+                PaperProps: {
+                  id: "select-user-dropdown-menu",
+                  "data-testid": "select-user-dropdown-menu",
+                },
+              }}
+            >
               <MenuItem
-                key={u.user_id}
-                value={u.user_id}
-                id={`select-user-option-${u.user_id}`}
+                value=""
+                id="select-user-empty"
+                data-testid="select-user-empty"
               >
-                {u.display_name}
+                <em></em>
               </MenuItem>
-            ))}
-          </Select>
-        )}
 
-        {usersError && (
-          <Typography color="error" variant="caption" id="users-error">
-            {usersError}
+              {users.map((u) => (
+                <MenuItem
+                  key={u.user_id}
+                  value={u.user_id}
+                  id={`select-user-option-${u.user_id}`}
+                  data-testid={`select-user-option-${u.user_id}`}
+                >
+                  {u.display_name}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+
+          {usersError && (
+            <Typography
+              color="error"
+              variant="caption"
+              id="users-error"
+              data-testid="users-error"
+            >
+              {usersError}
+            </Typography>
+          )}
+        </FormControl>
+
+        {/* Date Inputs */}
+        <TextField
+          label="Start date"
+          type="date"
+          id="start-date"
+          data-testid="start-date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+
+        <TextField
+          label="End date"
+          type="date"
+          id="end-date"
+          data-testid="end-date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+      </Stack>
+
+      {/* Results */}
+      <Box id="results-section" data-testid="results-section">
+        {logsLoading ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            py={6}
+            id="loading-logs"
+            data-testid="loading-logs"
+          >
+            <CircularProgress
+              id="loading-logs-spinner"
+              data-testid="loading-logs-spinner"
+            />
+          </Box>
+        ) : logsError ? (
+          <Typography
+            color="error"
+            id="logs-error"
+            data-testid="logs-error"
+          >
+            {logsError}
           </Typography>
-        )}
-      </FormControl>
-
-      {/* Date Inputs */}
-      <TextField
-        label="Start date"
-        type="date"
-        id="start-date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        InputLabelProps={{ shrink: true }}
-      />
-
-      <TextField
-        label="End date"
-        type="date"
-        id="end-date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        InputLabelProps={{ shrink: true }}
-      />
-
-      {/* If Search & Clear buttons are re-enabled */}
-      {/* <Button id="btn-search" variant="contained" onClick={handleSearch} disabled={!selectedUserId}>
-        Search
-      </Button>
-
-      <Button id="btn-clear" variant="outlined" onClick={handleClearFilters}>
-        Clear
-      </Button> */}
-    </Stack>
-
-    {/* Results */}
-    <Box id="results-section">
-      {logsLoading ? (
-        <Box display="flex" alignItems="center" justifyContent="center" py={6} id="loading-logs">
-          <CircularProgress id="loading-logs-spinner" />
-        </Box>
-      ) : logsError ? (
-        <Typography color="error" id="logs-error">{logsError}</Typography>
-      ) : !selectedUserId ? (
-        <Typography id="no-user-selected">Please select a user to view attendance logs.</Typography>
-      ) : logs.length === 0 ? (
-        <Typography id="no-logs">No attendance records found for the selected filters.</Typography>
-      ) : (
-        <Table id="logs-table">
-          <TableHead id="logs-table-head">
-            <TableRow>
-              <TableCell id="col-date">Date</TableCell>
-              <TableCell id="col-clock-in">Clock In</TableCell>
-              <TableCell id="col-clock-out">Clock Out</TableCell>
-              <TableCell id="col-status">Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody id="logs-table-body">
-            {logs.map((log) => (
-              <TableRow key={log.attendance_log_id} id={`log-row-${log.attendance_log_id}`}>
-                <TableCell id={`log-date-${log.attendance_log_id}`}>
-                  {new Date(log.date).toLocaleDateString()}
-                </TableCell>
-                <TableCell id={`log-clock-in-${log.attendance_log_id}`}>
-                  {formatDateTime(log.clock_in_time)}
-                </TableCell>
-                <TableCell id={`log-clock-out-${log.attendance_log_id}`}>
-                  {formatDateTime(log.clock_out_time)}
-                </TableCell>
-                <TableCell id={`log-status-${log.attendance_log_id}`}>
-                  {log.attendance_status}
-                </TableCell>
+        ) : !selectedUserId ? (
+          <Typography
+            id="no-user-selected"
+            data-testid="no-user-selected"
+          >
+            Please select a user to view attendance logs.
+          </Typography>
+        ) : logs.length === 0 ? (
+          <Typography
+            id="no-logs"
+            data-testid="no-logs"
+          >
+            No attendance records found for the selected filters.
+          </Typography>
+        ) : (
+          <Table id="logs-table" data-testid="logs-table">
+            <TableHead
+              id="logs-table-head"
+              data-testid="logs-table-head"
+            >
+              <TableRow
+                id="logs-table-head-row"
+                data-testid="logs-table-head-row"
+              >
+                <TableCell data-testid="logs-col-date">Date</TableCell>
+                <TableCell data-testid="logs-col-clock-in">Clock In</TableCell>
+                <TableCell data-testid="logs-col-clock-out">Clock Out</TableCell>
+                <TableCell data-testid="logs-col-status">Status</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+
+            <TableBody
+              id="logs-table-body"
+              data-testid="logs-table-body"
+            >
+              {logs.map((log) => (
+                <TableRow
+                  key={log.attendance_log_id}
+                  id={`log-row-${log.attendance_log_id}`}
+                  data-testid={`log-row-${log.attendance_log_id}`}
+                >
+                  <TableCell
+                    id={`log-date-${log.attendance_log_id}`}
+                    data-testid={`log-date-${log.attendance_log_id}`}
+                  >
+                    {new Date(log.date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell
+                    id={`log-clock-in-${log.attendance_log_id}`}
+                    data-testid={`log-clock-in-${log.attendance_log_id}`}
+                  >
+                    {formatDateTime(log.clock_in_time)}
+                  </TableCell>
+                  <TableCell
+                    id={`log-clock-out-${log.attendance_log_id}`}
+                    data-testid={`log-clock-out-${log.attendance_log_id}`}
+                  >
+                    {formatDateTime(log.clock_out_time)}
+                  </TableCell>
+                  <TableCell
+                    id={`log-status-${log.attendance_log_id}`}
+                    data-testid={`log-status-${log.attendance_log_id}`}
+                  >
+                    {log.attendance_status}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Box>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          mt={2}
+          id="pagination-section"
+          data-testid="pagination-section"
+        >
+          <Pagination
+            id="pagination"
+            data-testid="pagination"
+            count={totalPages}
+            page={page}
+            onChange={(_e, value) => setPage(value)}
+            color="primary"
+          />
+        </Box>
       )}
     </Box>
-
-    {/* Pagination */}
-    {totalPages > 1 && (
-      <Box display="flex" justifyContent="center" mt={2} id="pagination-section">
-        <Pagination
-          id="pagination"
-          count={totalPages}
-          page={page}
-          onChange={(_e, value) => setPage(value)}
-          color="primary"
-        />
-      </Box>
-    )}
-  </Box>
-);
+  );
 
 };
 

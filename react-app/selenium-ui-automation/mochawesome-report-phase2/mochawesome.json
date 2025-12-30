@@ -1,0 +1,233 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 6,
+    "passes": 6,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-19T12:08:30.770Z",
+    "end": "2025-12-19T12:09:29.296Z",
+    "duration": 58526,
+    "testsRegistered": 6,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "38154e8c-ca8f-4ffa-bdcd-1614815f4baf",
+      "title": "",
+      "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase2\\performance.test.js",
+      "file": "\\tests\\phase2\\performance.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+          "title": "Leave & Attendance UI test",
+          "fullFile": "C:\\Users\\TharakaDilshan\\Downloads\\staff-management-system\\react-app\\tests\\phase2\\performance.test.js",
+          "file": "\\tests\\phase2\\performance.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Leave & Attendance UI test\"",
+              "fullTitle": "Leave & Attendance UI test \"before all\" hook in \"Leave & Attendance UI test\"",
+              "timedOut": false,
+              "duration": 9896,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--start-maximized\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();\nconsole.log(\"🚀 Opening dashboard...\");\nawait driver.get(DASHBOARD_URL);\n// Inject valid Admin token manually\nawait driver.executeScript(\n  `window.localStorage.setItem('token', '${ACCESS_TOKEN}');`\n);\nawait driver.navigate().refresh();\n// Wait until dashboard sidebar appears\nawait driver.wait(until.elementLocated(By.id(\"dashboard-side-panel\")), 30000);\nconst title = await driver.findElement(By.id(\"dashboard-title\")).getText();\nassert.ok(title.includes(\"Admin Portal\"), \"Admin Portal title missing\");\nconsole.log(\"✅ Dashboard loaded successfully as Admin\");",
+              "err": {},
+              "uuid": "07125c54-5f13-4f1b-9251-30480da7e3a3",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Leave & Attendance UI test\"",
+              "fullTitle": "Leave & Attendance UI test \"after all\" hook in \"Leave & Attendance UI test\"",
+              "timedOut": false,
+              "duration": 1028,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) {\n  console.log(\"🚀 Closing browser...\");\n  await driver.quit(); // closes all tabs and ends session\n  }",
+              "err": {},
+              "uuid": "822b25a1-d89d-4c85-99eb-f96c62c09490",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should navigate to Leave & Attendance page",
+              "fullTitle": "Leave & Attendance UI test should navigate to Leave & Attendance page",
+              "timedOut": false,
+              "duration": 1649,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const feedbackNav = await driver.findElement(\n  By.id(\"nav-leaveAttendance\")\n);\nawait feedbackNav.click();\nconst pageTitle = await driver.wait(\n  until.elementLocated(By.id(\"leave-attendance-title\")),\n  10000\n);\nassert.strictEqual(await pageTitle.getText(), \"Leave & Attendance\");\nconsole.log(\"✅ Leave & Attendance page loaded\");",
+              "err": {},
+              "uuid": "4dbcbb76-8f17-470b-8bab-a264b19c5e1f",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should load Leave Requests tab by default",
+              "fullTitle": "Leave & Attendance UI test should load Leave Requests tab by default",
+              "timedOut": false,
+              "duration": 2953,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🧪 Verifying default Leave Requests tab...\");\n/* ---------- Confirm Leave Requests page container ---------- */\nconst page = await driver.wait(\n  until.elementLocated(By.id(\"leave-requests-page\")),\n  10000\n);\nassert.ok(await page.isDisplayed(), \"Leave Requests page not visible\");\n/* ---------- Confirm Leave Requests title ---------- */\nconst title = await driver.findElement(By.id(\"leave-requests-title\"));\nassert.strictEqual(\n  await title.getText(),\n  \"Leave Requests\",\n  \"Leave Requests title mismatch\"\n);\nconsole.log(\"✅ Leave Requests page loaded\");\n/* ---------- Confirm Leave Requests filter section ---------- */\nawait driver.wait(\n  until.elementLocated(By.id(\"leave-requests-filter-section\")),\n  10000\n);\nconsole.log(\"✅ Leave Requests filter section visible\");\n/* ---------- Confirm default empty state (no user selected) ---------- */\nconst noUserText = await driver.wait(\n  until.elementLocated(By.id(\"lr-no-user\")),\n  10000\n);\nassert.strictEqual(\n  await noUserText.getText(),\n  \"Please select a user to view leave requests.\"\n);\nconsole.log(\"✅ Default Leave Requests tab confirmed\");",
+              "err": {},
+              "uuid": "372d3b83-dd41-4c43-b563-af760a03033c",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should select Admin User1 and status All, then fetch leave requests",
+              "fullTitle": "Leave & Attendance UI test should select Admin User1 and status All, then fetch leave requests",
+              "timedOut": false,
+              "duration": 5159,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🧪 Selecting user and status filter...\");\n/* ---------- Wait for User dropdown (slow API safe) ---------- */\nconst userSelect = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"lr-user-select\"]')),\n  15000\n);\nawait driver.wait(until.elementIsEnabled(userSelect), 15000);\nconsole.log(\"✅ User dropdown loaded\");\n/* ---------- Open User dropdown ---------- */\nawait userSelect.click(); // normal click works best for MUI\n/* ---------- Select Admin User1 directly ---------- */\nconst adminUserOption = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"lr-user-option-1\"]')),\n  10000\n);\nawait adminUserOption.click();\nconsole.log(\"✅ Selected user: Admin User1\");\n/* ---------- Select Status = All ---------- */\nconst statusSelect = await driver.findElement(\n  By.css('[data-testid=\"lr-status-filter\"]')\n);\nawait statusSelect.click();\nconst statusAll = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"lr-status-all\"]')),\n  10000\n);\nawait statusAll.click();\nconsole.log(\"✅ Status filter set to ALL\");\n/* ---------- Wait for loading to start (if any) ---------- */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(By.css('[data-testid=\"lr-loading\"]'));\n  return loaders.length >= 0; // safe trigger\n}, 5000);\n/* ---------- Wait for loading to finish ---------- */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(By.css('[data-testid=\"lr-loading\"]'));\n  return loaders.length === 0;\n}, 15000);\nconsole.log(\"✅ Leave requests fetch completed\");\n/* ---------- Validate result state ---------- */\nconst table = await driver.findElements(By.css('[data-testid=\"lr-table\"]'));\nconst empty = await driver.findElements(By.css('[data-testid=\"lr-empty\"]'));\nconst error = await driver.findElements(By.css('[data-testid=\"lr-error\"]'));\nassert.ok(\n  table.length > 0 || empty.length > 0,\n  \"Neither leave table nor empty state rendered\"\n);\nif (table.length > 0) {\n  console.log(\"📋 Leave requests table rendered\");\n} else {\n  console.log(\"ℹ️ No leave requests found for selected filters\");\n}",
+              "err": {},
+              "uuid": "dac48821-823c-4981-902b-6bcf598b7912",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should approve a pending leave request if exists",
+              "fullTitle": "Leave & Attendance UI test should approve a pending leave request if exists",
+              "timedOut": false,
+              "duration": 126,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🧪 Checking for pending leave requests...\");\n/* ---------- Wait for table or empty state ---------- */\nawait driver.wait(async () => {\n  const table = await driver.findElements(By.css('[data-testid=\"lr-table\"]'));\n  const empty = await driver.findElements(By.css('[data-testid=\"lr-empty\"]'));\n  return table.length > 0 || empty.length > 0;\n}, 15000);\n/* ---------- No requests case ---------- */\nconst emptyState = await driver.findElements(By.css('[data-testid=\"lr-empty\"]'));\nif (emptyState.length > 0) {\n  console.log(\"ℹ️ No leave requests available\");\n  return;\n}\n/* ---------- Find rows ---------- */\nconst rows = await driver.findElements(By.css('[data-testid^=\"lr-row-\"]'));\nlet approved = false;\nfor (const row of rows) {\n  const statusCell = await row.findElement(\n    By.css('[data-testid^=\"lr-status-\"]')\n  );\n  const status = (await statusCell.getText()).toLowerCase();\n  if (status === \"pending\") {\n    console.log(\"⏳ Pending request found\");\n    /* ---------- Click Approve ---------- */\n    const approveBtn = await row.findElement(\n      By.css('[data-testid^=\"lr-approve-btn-\"]')\n    );\n    await driver.executeScript(\n      \"arguments[0].scrollIntoView({block:'center'});\",\n      approveBtn\n    );\n    await driver.wait(until.elementIsEnabled(approveBtn), 5000);\n    await driver.executeScript(\"arguments[0].click();\", approveBtn);\n    console.log(\"✅ Approve button clicked\");\n    /* ---------- Wait for dialog ---------- */\n    const dialog = await driver.wait(\n      until.elementLocated(By.css('[data-testid=\"lr-dialog\"]')),\n      10000\n    );\n    await driver.wait(until.elementIsVisible(dialog), 5000);\n    /* ---------- Comment input (PHASE-6 STYLE FIX) ---------- */\nconst commentInput = await driver.wait(\nuntil.elementLocated(\n  By.css('[data-testid=\"lr-dialog-comment\"] input')\n),\n5000\n);\n\nawait driver.wait(until.elementIsVisible(commentInput), 5000);\nawait driver.wait(until.elementIsEnabled(commentInput), 5000);\n\nawait commentInput.sendKeys(\"Approved via Selenium automation\");\n\nconsole.log(\"✍️ Comment added\");\n\n    /* ---------- Confirm ---------- */\n    const confirmBtn = await driver.findElement(\n      By.css('[data-testid=\"lr-dialog-confirm\"]')\n    );\n    await driver.wait(until.elementIsEnabled(confirmBtn), 5000);\n    await driver.executeScript(\"arguments[0].click();\", confirmBtn);\n    console.log(\"🚀 Approval confirmed\");\n    /* ---------- Snackbar ---------- */\n    const snackbar = await driver.wait(\n      until.elementLocated(By.css('[data-testid=\"lr-snackbar\"]')),\n      10000\n    );\n    await driver.wait(until.elementIsVisible(snackbar), 5000);\n    const text = await snackbar.getText();\n    assert.ok(\n      text.toLowerCase().includes(\"approved\"),\n      \"Approval snackbar not shown\"\n    );\n    console.log(\"🎉 Leave request approved successfully\");\n    approved = true;\n    break;\n  }\n}\nif (!approved) {\n  console.log(\"ℹ️ No pending leave requests found\");\n}",
+              "err": {},
+              "uuid": "dfcc1bd2-f7d4-4003-9868-cf2262e498ae",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should fetch attendance logs after selecting user and date range",
+              "fullTitle": "Leave & Attendance UI test should fetch attendance logs after selecting user and date range",
+              "timedOut": false,
+              "duration": 18158,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🧪 Navigating to Attendance Log tab...\");\n/* ---------- Click Attendance Log tab ---------- */\nconst attendanceTab = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"tab-attendance-log\"]')),\n  10000\n);\nawait attendanceTab.click();\n/* ---------- Wait for Attendance Log page ---------- */\nawait driver.wait(\n  until.elementLocated(By.css('[data-testid=\"attendance-log-page\"]')),\n  10000\n);\nconst title = await driver.findElement(\n  By.css('[data-testid=\"title-attendance-log\"]')\n);\nassert.strictEqual(await title.getText(), \"Attendance Log\");\nconsole.log(\"✅ Attendance Log tab loaded\");\n/* ---------- Wait for User dropdown (slow API safe) ---------- */\nconst userSelect = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"select-user\"]')),\n  15000\n);\nawait driver.wait(until.elementIsEnabled(userSelect), 15000);\nconsole.log(\"✅ User dropdown loaded\");\n/* ---------- Select Admin User1 (MUI-safe) ---------- */\nawait userSelect.click();\nconst adminUser = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"select-user-option-1\"]')),\n  10000\n);\nawait adminUser.click();\nconsole.log(\"✅ Selected user: Admin User1\");\n/* =======================\n   MANUAL DATE PICKERS\n======================= */\n/* ---------- Start Date ---------- */\nconst startDateInput = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"start-date\"] input')),\n  5000\n);\nawait driver.executeScript(\"arguments[0].click();\", startDateInput);\nconsole.log(\"⏱ Please manually select START date...\");\nawait driver.sleep(6000);\n/* ---------- End Date ---------- */\nconst endDateInput = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"end-date\"] input')),\n  5000\n);\nawait driver.executeScript(\"arguments[0].click();\", endDateInput);\nconsole.log(\"⏱ Please manually select END date...\");\nawait driver.sleep(6000);\n/* ---------- Wait for loading to start (if any) ---------- */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(\n    By.css('[data-testid=\"loading-logs\"]')\n  );\n  return loaders.length >= 0; // safe trigger\n}, 5000);\n/* ---------- Wait for loading to finish ---------- */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(\n    By.css('[data-testid=\"loading-logs\"]')\n  );\n  return loaders.length === 0;\n}, 15000);\nconsole.log(\"✅ Attendance logs fetch completed\");\n/* ---------- Validate result state ---------- */\nconst table = await driver.findElements(\n  By.css('[data-testid=\"logs-table\"]')\n);\nconst empty = await driver.findElements(\n  By.css('[data-testid=\"no-logs\"]')\n);\nconst error = await driver.findElements(\n  By.css('[data-testid=\"logs-error\"]')\n);\nassert.ok(\n  table.length > 0 || empty.length > 0,\n  \"No attendance table or empty state rendered\"\n);\nif (table.length > 0) {\n  console.log(\"📋 Attendance logs table rendered\");\n} else {\n  console.log(\"ℹ️ No attendance logs found for selected filters\");\n}",
+              "err": {},
+              "uuid": "a9345ac4-40bd-45b1-908c-559b409bcecf",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should fetch KPI data after selecting user and date range",
+              "fullTitle": "Leave & Attendance UI test should fetch KPI data after selecting user and date range",
+              "timedOut": false,
+              "duration": 19491,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🧪 Navigating to KPI tab...\");\n/* ---------- Click KPI tab ---------- */\nconst kpiTab = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"tab-kpi\"]')),\n  10000\n);\nawait kpiTab.click();\n/* ---------- Wait for KPI page ---------- */\nawait driver.wait(\n  until.elementLocated(By.css('[data-testid=\"kpi-page\"]')),\n  10000\n);\nconst title = await driver.findElement(\n  By.css('[data-testid=\"kpi-title\"]')\n);\nassert.strictEqual(\n  await title.getText(),\n  \"KPI - Leave & Attendance Summary\"\n);\nconsole.log(\"✅ KPI tab loaded\");\n/* ---------- Wait for User dropdown (slow API safe) ---------- */\nconst userSelect = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"kpi-user-select\"]')),\n  15000\n);\nawait driver.wait(until.elementIsEnabled(userSelect), 15000);\nconsole.log(\"✅ KPI user dropdown loaded\");\n/* ---------- Select Admin User1 (MUI-safe) ---------- */\nawait userSelect.click();\nconst adminUser = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"kpi-user-option-1\"]')),\n  10000\n);\nawait adminUser.click();\nconsole.log(\"✅ Selected user: Admin User1\");\n/* =======================\n   MANUAL DATE PICKERS\n   (EXTRA TIME GIVEN)\n======================= */\n/* ---------- Start Date ---------- */\nconst startDateInput = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"kpi-start-date\"] input')),\n  5000\n);\nawait driver.executeScript(\"arguments[0].click();\", startDateInput);\nconsole.log(\"⏱ Please manually select KPI START date...\");\nawait driver.sleep(8000); // more time\n/* ---------- End Date ---------- */\nconst endDateInput = await driver.wait(\n  until.elementLocated(By.css('[data-testid=\"kpi-end-date\"] input')),\n  5000\n);\nawait driver.executeScript(\"arguments[0].click();\", endDateInput);\nconsole.log(\"⏱ Please manually select KPI END date...\");\nawait driver.sleep(8000); // more time\n/* ---------- Wait for loading to start (if any) ---------- */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(\n    By.css('[data-testid=\"kpi-loading\"]')\n  );\n  return loaders.length >= 0; // safe trigger\n}, 5000);\n/* ---------- Wait for loading to finish ---------- */\nawait driver.wait(async () => {\n  const loaders = await driver.findElements(\n    By.css('[data-testid=\"kpi-loading\"]')\n  );\n  return loaders.length === 0;\n}, 15000);\nconsole.log(\"✅ KPI data fetch completed\");\n/* ---------- Validate result state ---------- */\nconst table = await driver.findElements(\n  By.css('[data-testid=\"kpi-table\"]')\n);\nconst noData = await driver.findElements(\n  By.css('[data-testid=\"kpi-no-data\"]')\n);\nconst error = await driver.findElements(\n  By.css('[data-testid=\"kpi-error\"]')\n);\nassert.ok(\n  table.length > 0 || noData.length > 0,\n  \"No KPI table or no-data state rendered\"\n);\nif (table.length > 0) {\n  console.log(\"📊 KPI table rendered successfully\");\n} else {\n  console.log(\"ℹ️ No KPI data found for selected filters\");\n}",
+              "err": {},
+              "uuid": "427219c8-ce9d-4ef8-9259-cf05c7613553",
+              "parentUUID": "c8c15520-a1c4-4f5e-9c71-5ea79ca0cad6",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "4dbcbb76-8f17-470b-8bab-a264b19c5e1f",
+            "372d3b83-dd41-4c43-b563-af760a03033c",
+            "dac48821-823c-4981-902b-6bcf598b7912",
+            "dfcc1bd2-f7d4-4003-9868-cf2262e498ae",
+            "a9345ac4-40bd-45b1-908c-559b409bcecf",
+            "427219c8-ce9d-4ef8-9259-cf05c7613553"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 47536,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.4"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.0"
+    }
+  }
+}

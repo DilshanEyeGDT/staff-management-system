@@ -68,20 +68,33 @@ const EventsTab: React.FC = () => {
   }, [channel, sinceDate, page]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+      data-testid="events-container"
+    >
       {/* Filters */}
-      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 2 }}>
-        <FormControl sx={{ minWidth: 120 }}>
+      <Box
+        sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 2 }}
+        data-testid="events-filters"
+      >
+        <FormControl sx={{ minWidth: 120 }} data-testid="events-channel-filter">
           <InputLabel id="channel-select-label">Channel</InputLabel>
           <Select
             labelId="channel-select-label"
             value={channel}
             label="Channel"
             onChange={(e) => setChannel(e.target.value)}
+            data-testid="events-channel-select"
           >
-            <MenuItem value="">All</MenuItem> {/* <-- All option */}
-            <MenuItem value="push">Push</MenuItem>
-            <MenuItem value="email">Email</MenuItem>
+            <MenuItem value="" data-testid="events-channel-all">
+              All
+            </MenuItem>
+            <MenuItem value="push" data-testid="events-channel-push">
+              Push
+            </MenuItem>
+            <MenuItem value="email" data-testid="events-channel-email">
+              Email
+            </MenuItem>
           </Select>
         </FormControl>
 
@@ -91,45 +104,75 @@ const EventsTab: React.FC = () => {
           value={sinceDate}
           onChange={(e) => setSinceDate(e.target.value)}
           InputLabelProps={{ shrink: true }}
+          data-testid="events-since-date"
         />
 
-        <Button variant="contained" onClick={fetchEvents}>
+        <Button
+          variant="contained"
+          onClick={fetchEvents}
+          data-testid="events-fetch-button"
+        >
           Fetch Events
         </Button>
       </Box>
 
       {/* Event List */}
       {loading ? (
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <CircularProgress size={20} />
-          <Typography>Loading events...</Typography>
+        <Box
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          data-testid="events-loading"
+        >
+          <CircularProgress size={20} data-testid="events-loading-spinner" />
+          <Typography data-testid="events-loading-text">
+            Loading events...
+          </Typography>
         </Box>
       ) : events.length === 0 ? (
-        <Typography>No events found.</Typography>
+        <Typography data-testid="events-empty">
+          No events found.
+        </Typography>
       ) : (
-        events.map((event) => (
+        events.map((event, index) => (
           <Paper
             key={event.id}
-            sx={{ p: 2,
+            sx={{
+              p: 2,
               cursor: "pointer",
               transition: "transform 0.2s ease, box-shadow 0.2s ease",
               "&:hover": {
                 transform: "scale(1.01)",
-              }, }}
+              },
+            }}
             onClick={() => {
               setSelectedEventId(event.id);
               setDialogOpen(true);
             }}
+            data-testid={`event-card-${index}`}
           >
-            <Typography variant="h6">{event.title}</Typography>
-            <Typography variant="body2">{event.summary}</Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="h6"
+              data-testid={`event-title-${index}`}
+            >
+              {event.title}
+            </Typography>
+            <Typography
+              variant="body2"
+              data-testid={`event-summary-${index}`}
+            >
+              {event.summary}
+            </Typography>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              data-testid={`event-meta-${index}`}
+            >
               By {event.created_by_name} | Status: {event.status} | Scheduled:{" "}
               {dayjs(event.scheduled_at).format("YYYY-MM-DD HH:mm")}
             </Typography>
           </Paper>
         ))
       )}
+
       {/* Floating Add Button */}
       <Button
         variant="contained"
@@ -145,6 +188,7 @@ const EventsTab: React.FC = () => {
           fontSize: 32,
           minWidth: 0,
         }}
+        data-testid="events-add-button"
       >
         +
       </Button>
@@ -155,6 +199,7 @@ const EventsTab: React.FC = () => {
         onClose={() => setOpenCreate(false)}
         onSuccess={fetchEvents}
       />
+
       <EventDetailsDialog
         open={dialogOpen}
         eventId={selectedEventId}
@@ -163,6 +208,7 @@ const EventsTab: React.FC = () => {
       />
     </Box>
   );
+
 };
 
 export default EventsTab;

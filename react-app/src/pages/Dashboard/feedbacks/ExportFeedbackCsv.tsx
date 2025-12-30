@@ -103,91 +103,103 @@ const ExportFeedbackCsv: React.FC<Props> = ({ onShowSnackbar }) => {
   };
 
   return (
-    <Box>
-      {/* FILTER BAR */}
-      <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}>
-        <TextField
-          type="date"
-          label="From"
-          InputLabelProps={{ shrink: true }}
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-          size="small"
-        />
+  <Box data-testid="export-feedback-container">
+    {/* FILTER BAR */}
+    <Box
+      sx={{ display: "flex", gap: 2, flexWrap: "wrap", mb: 3 }}
+      data-testid="export-feedback-filter-bar"
+    >
+      <TextField
+        type="date"
+        label="From"
+        InputLabelProps={{ shrink: true }}
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+        size="small"
+        data-testid="export-feedback-from-date"
+      />
 
-        <TextField
-          type="date"
-          label="To"
-          InputLabelProps={{ shrink: true }}
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          size="small"
-        />
+      <TextField
+        type="date"
+        label="To"
+        InputLabelProps={{ shrink: true }}
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+        size="small"
+        data-testid="export-feedback-to-date"
+      />
 
-        <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={status}
-            label="Status"
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <MenuItem value="">All</MenuItem>
-            <MenuItem value="open">Open</MenuItem>
-            <MenuItem value="in_progress">In Progress</MenuItem>
-            <MenuItem value="closed">Closed</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Button
-          variant="outlined"
-          onClick={handlePreview}
-          disabled={previewLoading}
+      <FormControl size="small" sx={{ minWidth: 150 }} data-testid="export-feedback-status-control">
+        <InputLabel data-testid="export-feedback-status-label">Status</InputLabel>
+        <Select
+          value={status}
+          label="Status"
+          onChange={(e) => setStatus(e.target.value)}
+          data-testid="export-feedback-status-select"
         >
-          {previewLoading ? <CircularProgress size={20} /> : "Preview"}
-        </Button>
+          <MenuItem value="" data-testid="export-feedback-status-all">All</MenuItem>
+          <MenuItem value="open" data-testid="export-feedback-status-open">Open</MenuItem>
+          <MenuItem value="in_progress" data-testid="export-feedback-status-in-progress">In Progress</MenuItem>
+          <MenuItem value="closed" data-testid="export-feedback-status-closed">Closed</MenuItem>
+        </Select>
+      </FormControl>
 
-        <Button
-          variant="contained"
-          onClick={handleExport}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={20} /> : "Export CSV"}
-        </Button>
-      </Box>
+      <Button
+        variant="outlined"
+        onClick={handlePreview}
+        disabled={previewLoading}
+        data-testid="export-feedback-preview-button"
+      >
+        {previewLoading ? <CircularProgress size={20} data-testid="export-feedback-preview-loading" /> : "Preview"}
+      </Button>
 
-      {/* PREVIEW TABLE */}
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1 }}>
-          Preview ({preview.length})
-        </Typography>
-
-        <Divider sx={{ mb: 2 }} />
-
-        {preview.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
-            No data to preview
-          </Typography>
-        ) : (
-          preview.map((fb) => (
-            <Box
-              key={fb.feedback_id}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                py: 1,
-                borderBottom: "1px solid #eee",
-              }}
-            >
-              <Typography fontWeight={600}>{fb.title}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {fb.status} • {fb.priority}
-              </Typography>
-            </Box>
-          ))
-        )}
-      </Paper>
+      <Button
+        variant="contained"
+        onClick={handleExport}
+        disabled={loading}
+        data-testid="export-feedback-export-button"
+      >
+        {loading ? <CircularProgress size={20} data-testid="export-feedback-export-loading" /> : "Export CSV"}
+      </Button>
     </Box>
-  );
+
+    {/* PREVIEW TABLE */}
+    <Paper sx={{ p: 2 }} data-testid="export-feedback-preview-panel">
+      <Typography variant="h6" sx={{ mb: 1 }} data-testid="export-feedback-preview-title">
+        Preview ({preview.length})
+      </Typography>
+
+      <Divider sx={{ mb: 2 }} data-testid="export-feedback-preview-divider" />
+
+      {preview.length === 0 ? (
+        <Typography variant="body2" color="text.secondary" data-testid="export-feedback-no-data">
+          No data to preview
+        </Typography>
+      ) : (
+        preview.map((fb, index) => (
+          <Box
+            key={fb.feedback_id}
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              py: 1,
+              borderBottom: "1px solid #eee",
+            }}
+            data-testid={`export-feedback-preview-row-${index}`}
+          >
+            <Typography fontWeight={600} data-testid={`export-feedback-preview-title-${index}`}>
+              {fb.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" data-testid={`export-feedback-preview-status-${index}`}>
+              {fb.status} • {fb.priority}
+            </Typography>
+          </Box>
+        ))
+      )}
+    </Paper>
+  </Box>
+);
+
 };
 
 export default ExportFeedbackCsv;

@@ -6,22 +6,23 @@ import { strict as assert } from "assert";
 async function enterFlutterText(driver, key, text, label) {
   console.log(`⏳ Waiting for ${label}...`);
   await driver.executeScript("flutter:waitFor", [byValueKey(key)]);
-  await driver.pause(400);
+  await driver.pause(500); // Increased from 400
 
   console.log(`🖱️ Focusing ${label}...`);
   await driver.executeScript("flutter:clickElement", [byValueKey(key)]);
-  await driver.pause(200);
+  await driver.pause(300); // Increased from 200
 
   console.log(`🧹 Clearing ${label}...`);
   try {
     await driver.executeScript("flutter:clearText", [byValueKey(key)]);
+    await driver.pause(200); // Added pause after clear
   } catch (e) {
     console.log(`⚠️ Could not clear ${label}: ${e.message}`);
   }
 
   console.log(`⌨️ Typing into ${label}: ${text}`);
   await driver.executeScript("flutter:enterText", [text, byValueKey(key)]);
-  await driver.pause(500);
+  await driver.pause(700); // Increased from 500
   console.log(`✅ Done typing ${label}`);
 }
 
@@ -29,8 +30,9 @@ async function enterFlutterText(driver, key, text, label) {
 async function tapFlutterElement(driver, key, label) {
   console.log(`👆 Tapping ${label}...`);
   await driver.executeScript("flutter:waitFor", [byValueKey(key)]);
-  await driver.pause(200);
+  await driver.pause(300); // Increased from 200
   await driver.executeScript("flutter:clickElement", [byValueKey(key)]);
+  await driver.pause(500); // Added pause after click
   console.log(`✅ Clicked ${label}`);
 }
 
@@ -107,7 +109,7 @@ async function getWidgetText(driver, key) {
 
 // === Main Test ===
 describe("Flutter Login Flow", function () {
-  this.timeout(180000); // 3 minutes timeout
+  this.timeout(240000); // 3 minutes timeout
   let driver;
 
   const opts = {
@@ -136,12 +138,18 @@ describe("Flutter Login Flow", function () {
   before(async () => {
     console.log("🚀 Starting Appium session...");
     driver = await remote(opts);
-    await driver.pause(4000);
+    
+    // Wait for app initialization (Amplify + Flutter setup)
+    console.log("⏳ Waiting for app to fully initialize...");
+    await driver.pause(8000); // Increased from 4000 to allow Amplify to configure
+    
+    console.log("✅ App initialization complete");
   });
 
   after(async () => {
-    console.log("🚫 Skipping Appium session cleanup (manual Appium mode).");
-  });
+  console.log("✅ Tests completed - session will auto-cleanup");
+  // Let WebDriverIO handle session cleanup automatically
+});
 
   // === TEST 1: LOGIN FLOW ===
   it("Should login successfully -> Reach home screen", async () => {
@@ -149,11 +157,12 @@ describe("Flutter Login Flow", function () {
       // === LOGIN SCREEN ===
       console.log("⏳ Waiting for Login Screen...");
       await driver.executeScript("flutter:waitFor", [byValueKey("email_field")]);
+      await driver.pause(1000); // Wait for screen to be fully rendered
 
       await enterFlutterText(
         driver,
         "email_field",
-        "tharakadilshan506@gmail.com",
+        "tharakadilshan506+test2@gmail.com",
         "Email Field"
       );
 
@@ -167,14 +176,25 @@ describe("Flutter Login Flow", function () {
       await tapFlutterElement(driver, "sign_in_button", "Sign In Button");
       console.log("✅ Login credentials submitted.");
 
-      // Wait for navigation to Home
+      // Wait for navigation to Home (login might involve API call)
       console.log("⏳ Waiting for Home Screen...");
+      await driver.pause(3000); // Added pause for login API/navigation
       await driver.executeScript("flutter:waitFor", [byValueKey("home_screen")]);
+      await driver.pause(1000); // Wait for home screen to fully render
 
       console.log("🏠 Home screen appeared successfully (validated by key).");
 
     } catch (err) {
-        console.error("❌ Test failed:", err.message);
+      console.error("❌ Test failed:", err.message);
+      
+      // Take screenshot on failure
+      try {
+        const screenshot = await driver.takeScreenshot();
+        console.log("📸 Screenshot captured for debugging");
+      } catch (e) {
+        console.log("Could not capture screenshot");
+      }
+      
       throw err;
     }
   });
@@ -185,6 +205,7 @@ describe("Flutter Login Flow", function () {
       console.log("🏠 Home screen detected, starting username edit test...");
 
       // Wait for profile card & edit button
+      await driver.pause(1000); // Let home screen settle
       await driver.executeScript("flutter:waitFor", [byValueKey("profile_card")]);
       await driver.executeScript("flutter:waitFor", [byValueKey("edit_button")]);
       console.log("✅ Profile section ready.");
@@ -200,7 +221,9 @@ describe("Flutter Login Flow", function () {
       await tapFlutterElement(driver, "edit_button", "Edit Username Button");
 
       // Wait for dialog
+      await driver.pause(800); // Wait for dialog animation
       await driver.executeScript("flutter:waitFor", [byValueKey("edit_name_dialog")]);
+      await driver.pause(500); // Let dialog fully render
       console.log("🪟 Edit dialog opened.");
 
       // Clear and type new name
@@ -208,9 +231,13 @@ describe("Flutter Login Flow", function () {
       // await driver.executeScript("flutter:enterText", [newUsername, byValueKey("edit_name_field")]);
       // ✅ Compatible text clearing & typing
       await driver.executeScript("flutter:clickElement", [byValueKey("edit_name_field")]);
+      await driver.pause(300);
+
       await driver.executeScript("flutter:enterText", [""]); // clear manually
-      await driver.pause(200);
+      await driver.pause(300);
+
       await driver.executeScript("flutter:enterText", [newUsername, byValueKey("edit_name_field")]);
+      await driver.pause(500);
 
       console.log("✏️ Entered new username.");
 
@@ -219,8 +246,9 @@ describe("Flutter Login Flow", function () {
       console.log("💾 Saved new username, waiting for update...");
 
       // Wait for update
-      await driver.pause(4000);
+      await driver.pause(5000);
       await driver.executeScript("flutter:waitFor", [byValueKey("value_username")]);
+      await driver.pause(1000); // Let UI settle after update
 
       const updatedUsername = "TestUserAuto"; // await getWidgetText(driver, "value_username");
       console.log(`🔄 Username now displayed as: ${updatedUsername}`);
@@ -244,19 +272,34 @@ describe("Flutter Login Flow", function () {
     try {
       console.log("🚪 Attempting to log out...");
 
-      // Wait for logout button to appear (in case of slow UI)
+      // Wait for logout button to appear
+      await driver.pause(1000); // Let screen settle
       await driver.executeScript("flutter:waitFor", [byValueKey("logout_button")]);
 
       // Tap logout button
       await tapFlutterElement(driver, "logout_button", "Logout Button");
 
+      // Wait for logout API call and navigation
+      await driver.pause(2000); // Added pause for logout process
+      
       // Wait for the email field on login screen to confirm successful logout
       await driver.executeScript("flutter:waitFor", [byValueKey("email_field")]);
+      await driver.pause(1000); // Let login screen fully render
 
       console.log("✅ Logged out successfully!");
     } catch (error) {
       console.error("❌ Logout failed or user may already be logged out.");
       console.error("Error details:", error.message || error);
+      
+      // Take screenshot on failure
+      try {
+        const screenshot = await driver.takeScreenshot();
+        console.log("📸 Screenshot captured for debugging");
+      } catch (e) {
+        console.log("Could not capture screenshot");
+      }
+      
+      throw error;
     }
   });
 

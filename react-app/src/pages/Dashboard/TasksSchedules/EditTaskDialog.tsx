@@ -118,122 +118,180 @@ const EditTaskDialog: React.FC<Props> = ({ task, open, onClose, onUpdated }) => 
   };
 
   return (
-    <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-        <DialogTitle>Edit Task</DialogTitle>
+  <>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      data-testid="edit-task-dialog"
+    >
+      <DialogTitle data-testid="edit-task-title">
+        Edit Task
+      </DialogTitle>
 
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField
-            fullWidth
-            label="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          <TextField
-            fullWidth
-            label="Description"
-            multiline
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-
-          <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
-            <Select
-              label="Status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <MenuItem value="open">Open</MenuItem>
-              <MenuItem value="inprogress">In Progress</MenuItem>
-              <MenuItem value="done">Done</MenuItem>
-              <MenuItem value="cancelled">Cancelled</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel>Priority</InputLabel>
-            <Select
-              label="Priority"
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value))}
-            >
-              <MenuItem value={1}>1 - Low</MenuItem>
-              <MenuItem value={2}>2 - Medium</MenuItem>
-              <MenuItem value={3}>3 - High</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth>
-            <InputLabel>Assignee</InputLabel>
-            <Select
-              label="Assignee"
-              value={assigneeUserId}
-              onChange={(e) => setAssigneeUserId(Number(e.target.value))}
-            >
-              {users.map((u) => (
-                <MenuItem key={u.id} value={u.id}>
-                  {u.displayName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <TextField
-            fullWidth
-            label="Due At"
-            type="datetime-local"
-            InputLabelProps={{ shrink: true }}
-            value={dueAt}
-            onChange={(e) => setDueAt(e.target.value)}
-          />
-
-          {/* ADD COMMENT BUTTON (no logic yet) */}
-          <Button
-            variant="outlined"
-            onClick={() => setCommentDialogOpen(true)}
-            disabled={!task}
-            >
-            Add Comment
-            </Button>
-
-        </DialogContent>
-
-        <AddTaskCommentDialog
-            taskId={task?.taskId || null}
-            open={commentDialogOpen}
-            onClose={() => setCommentDialogOpen(false)}
-            />
-
-
-        <DialogActions>
-          <Button onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleUpdate} disabled={loading}>
-            {loading ? <CircularProgress size={20} /> : "Update Task"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        onClose={() => setSnackbarOpen(false)}
+      <DialogContent
+        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        data-testid="edit-task-content"
       >
-        <Alert
-          severity={snackbarSeverity}
-          onClose={() => setSnackbarOpen(false)}
-          variant="filled"
+        <TextField
+          fullWidth
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          data-testid="edit-task-title-input"
+        />
+
+        <TextField
+          fullWidth
+          label="Description"
+          multiline
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          data-testid="edit-task-description-input"
+        />
+
+        <FormControl fullWidth data-testid="edit-task-status-control">
+          <InputLabel data-testid="edit-task-status-label">
+            Status
+          </InputLabel>
+          <Select
+            label="Status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            data-testid="edit-task-status-select"
+          >
+            <MenuItem value="open" data-testid="edit-task-status-open">
+              Open
+            </MenuItem>
+            <MenuItem value="inprogress" data-testid="edit-task-status-inprogress">
+              In Progress
+            </MenuItem>
+            <MenuItem value="done" data-testid="edit-task-status-done">
+              Done
+            </MenuItem>
+            <MenuItem value="cancelled" data-testid="edit-task-status-cancelled">
+              Cancelled
+            </MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth data-testid="edit-task-priority-control">
+          <InputLabel data-testid="edit-task-priority-label">
+            Priority
+          </InputLabel>
+          <Select
+            label="Priority"
+            value={priority}
+            onChange={(e) => setPriority(Number(e.target.value))}
+            data-testid="edit-task-priority-select"
+          >
+            <MenuItem value={1} data-testid="edit-task-priority-1">
+              1 - Low
+            </MenuItem>
+            <MenuItem value={2} data-testid="edit-task-priority-2">
+              2 - Medium
+            </MenuItem>
+            <MenuItem value={3} data-testid="edit-task-priority-3">
+              3 - High
+            </MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth data-testid="edit-task-assignee-control">
+          <InputLabel data-testid="edit-task-assignee-label">
+            Assignee
+          </InputLabel>
+          <Select
+            label="Assignee"
+            value={assigneeUserId}
+            onChange={(e) => setAssigneeUserId(Number(e.target.value))}
+            data-testid="edit-task-assignee-select"
+          >
+            {users.map((u) => (
+              <MenuItem
+                key={u.id}
+                value={u.id}
+                data-testid={`edit-task-assignee-${u.id}`}
+              >
+                {u.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <TextField
+          fullWidth
+          label="Due At"
+          type="datetime-local"
+          InputLabelProps={{ shrink: true }}
+          value={dueAt}
+          onChange={(e) => setDueAt(e.target.value)}
+          data-testid="edit-task-due-at-input"
+        />
+
+        {/* ADD COMMENT BUTTON (no logic yet) */}
+        <Button
+          variant="outlined"
+          onClick={() => setCommentDialogOpen(true)}
+          disabled={!task}
+          data-testid="edit-task-add-comment-button"
         >
-          {snackbarMsg}
-        </Alert>
-      </Snackbar>
-    </>
-  );
+          Add Comment
+        </Button>
+      </DialogContent>
+
+      <AddTaskCommentDialog
+        taskId={task?.taskId || null}
+        open={commentDialogOpen}
+        onClose={() => setCommentDialogOpen(false)}
+        data-testid="add-task-comment-dialog"
+      />
+
+      <DialogActions data-testid="edit-task-actions">
+        <Button
+          onClick={onClose}
+          disabled={loading}
+          data-testid="edit-task-cancel-button"
+        >
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleUpdate}
+          disabled={loading}
+          data-testid="edit-task-update-button"
+        >
+          {loading ? (
+            <CircularProgress size={20} data-testid="edit-task-update-loading" />
+          ) : (
+            "Update Task"
+          )}
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    {/* Snackbar */}
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      onClose={() => setSnackbarOpen(false)}
+      data-testid="edit-task-snackbar"
+    >
+      <Alert
+        severity={snackbarSeverity}
+        onClose={() => setSnackbarOpen(false)}
+        variant="filled"
+        data-testid="edit-task-snackbar-alert"
+      >
+        {snackbarMsg}
+      </Alert>
+    </Snackbar>
+  </>
+);
+
 };
 
 export default EditTaskDialog;
