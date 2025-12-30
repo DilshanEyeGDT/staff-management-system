@@ -2,7 +2,7 @@ const { Builder, By, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const assert = require("assert");
 require("chromedriver");
-const { ACCESS_TOKEN, DASHBOARD_URL } = require("./config");
+const { ACCESS_TOKEN, DASHBOARD_URL } = require("../config");
 
 describe("Health Check Page UI Test (Admin User)", function () {
   this.timeout(120000); // increased timeout for multiple health checks
